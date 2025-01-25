@@ -24,6 +24,10 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+
+  .card-shadow {
+    box-shadow: -10px 37px 40px 0px #2836731a;
+  }
 }
 
 .hide-scrollbar::-webkit-scrollbar {
@@ -33,6 +37,19 @@ body {
 .hide-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+.auth-background {
+  background-image: linear-gradient(
+      rgb(248, 248, 250, 1),
+      rgb(248, 248, 250, 1)
+    ),
+    url("/auth-background.webp");
+  background-blend-mode: screen;
+  background-size: cover;
+
+  background-position: center;
+  background-repeat: no-repeat;
 }
 
 @layer base {
@@ -99,3 +116,4 @@ body {
     @apply bg-background text-foreground;
   }
 }
+

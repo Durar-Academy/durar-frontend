@@ -37,4 +37,4 @@ next-env.d.ts
 
 # setup files
 durar-app-structure.md
-routes-middleware.txt
+*.txt
