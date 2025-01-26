@@ -36,7 +36,7 @@ export function Register() {
                   <FormLabel className="text-low text-sm font-medium mb-2">Select Title</FormLabel>
 
                   <FormControl>
-                    <Select onValueChange={field.onChange} defaultValue={field.value} {...field}>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <SelectTrigger
                         className="shadow-none px-4 py-2 rounded-xl h-12 placeholder:text-low text-high text-sm
                       
@@ -195,7 +195,7 @@ export function Register() {
                   <FormLabel className="text-low text-sm font-medium mb-2">Dialing Code</FormLabel>
 
                   <FormControl>
-                    <Select onValueChange={field.onChange} defaultValue={field.value} {...field}>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <SelectTrigger
                         className="shadow-none px-4 py-2 rounded-xl h-12 placeholder:text-low text-high text-sm
                       
@@ -281,7 +281,7 @@ export function Register() {
                   <FormLabel className="text-low text-sm font-medium mb-2">Country</FormLabel>
 
                   <FormControl>
-                    <Select onValueChange={field.onChange} defaultValue={field.value} {...field}>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <SelectTrigger
                         className="shadow-none px-4 py-2 rounded-xl h-12 placeholder:text-low text-high text-sm
                       

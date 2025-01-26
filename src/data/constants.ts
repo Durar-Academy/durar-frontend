@@ -9,3 +9,5 @@ export const COUNTRIES = COUNTRY_DATA.map((country) => country.name) as unknown 
 export const DAILING_CODES = Array.from(
   new Set(COUNTRY_DATA.map((country) => `${country.name} (${country.dialingCode})`))
 ) as unknown as readonly [string, ...string[]];
+
+export const STORE_KEY = "durar-academy";

@@ -9,7 +9,7 @@ export const useLoginForm = () => useForm<z.infer<typeof loginFormSchema>>({
   defaultValues: {
     email: "",
     password: "",
-    rememberPassword: false,
+    rememberMe: false,
   },
 });
 

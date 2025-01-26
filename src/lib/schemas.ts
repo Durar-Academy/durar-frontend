@@ -12,7 +12,7 @@ export const loginFormSchema = z.object({
 
   password: z.string().min(1, "Password is required."),
 
-  rememberPassword: z.boolean()
+  rememberMe: z.boolean()
 });
 
 
