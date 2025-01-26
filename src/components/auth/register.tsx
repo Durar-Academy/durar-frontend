@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { z } from "zod";
+import toast from "react-hot-toast";
 
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -12,12 +14,45 @@ import { PasswordField } from "./password-field";
 import { registerFormSchema } from "@/lib/schemas";
 import { useRegisterForm } from "@/hooks/useForm";
 import { COUNTRIES, DAILING_CODES, GENDERS, TITLES } from "@/data/constants";
+import { createAccount } from "@/lib/auth";
+import { extractDialingCode } from "@/lib/utils";
 
 export function Register() {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const registrationFormController = useRegisterForm();
 
-  function handleSubmit(values: z.infer<typeof registerFormSchema>) {
+  async function handleSubmit(values: z.infer<typeof registerFormSchema>) {
+    setIsSubmitting(true);
     console.log("Registration Form Values: ", values);
+
+    const payload = {
+      email: values.email,
+      password: values.password,
+      firstName: values.firstName,
+      lastName: values.lastName,
+      middleName: values.middleName ?? "",
+      gender: values.gender.toLowerCase(),
+      country: values.country,
+      title: values.title,
+      phone: `${extractDialingCode(values.dialingCode)}${values.phoneNumber}`,
+    };
+    console.log("Registration Form Payload", payload);
+
+    try {
+      const response = await createAccount(payload);
+      console.log("Registration Form Response Data", response.data);
+
+      if (response.status)
+        toast.success("Account created successfully!\n\nPlease check your email to verify your account.");
+
+      registrationFormController.reset();
+    } catch (error) {
+      console.error("Registration Form Error", error);
+
+      toast.error("Unable to create account. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -320,8 +355,9 @@ export function Register() {
           <Button
             type="submit"
             className="mt-8 px-5 py-3 rounded-xl bg-green hover:bg-green/80 text-white sm:text-sm text-base font-medium h-12 transition-colors"
+            disabled={isSubmitting}
           >
-            Create Account
+            {isSubmitting ? <>Creating Account...</> : <>Create Account</>}
           </Button>
         </form>
       </Form>

@@ -4,3 +4,15 @@ type EncryptionPayload = {
   iv: Uint8Array;
   key: Uint8Array;
 };
+
+type CreateAccountPayload = {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  middleName: string;
+  gender: string;
+  country: string;
+  phone: string;
+  title: "Mr" | "Mrs" | "Ms" | "Dr";
+};
