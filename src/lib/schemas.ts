@@ -12,9 +12,8 @@ export const loginFormSchema = z.object({
 
   password: z.string().min(1, "Password is required."),
 
-  rememberMe: z.boolean()
+  rememberMe: z.boolean(),
 });
-
 
 export const registerFormSchema = z
   .object({
@@ -69,3 +68,10 @@ export const registerFormSchema = z
     message: "Passwords don't match",
     path: ["confirmPassword"],
   });
+
+export const resetPasswordFormSchema = z
+  .string()
+  .min(1, {
+    message: "Email is required.",
+  })
+  .email("Invalid Email!");
