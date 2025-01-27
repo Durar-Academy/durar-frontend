@@ -3,10 +3,12 @@
 import Image from "next/image";
 import { FormEvent, useState } from "react";
 import toast from "react-hot-toast";
+import Link from "next/link";
 
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+
 import { resetPasswordFormSchema } from "@/lib/schemas";
 import { cn } from "@/lib/utils";
 import { initiatePasswordReset } from "@/lib/auth";
@@ -15,6 +17,8 @@ export default function ForgotPassword() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [email, setEmail] = useState("");
   const [inputError, setInputError] = useState("");
+  
+  const [resetSuccessful, setResetSuccessful] = useState(false);
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -35,15 +39,58 @@ export default function ForgotPassword() {
         toast.success("We sent a password reset link to your email.\n\nPlease check your inbox.");
       }
 
-      setEmail("");
+      setResetSuccessful(true);
     } catch (error) {
       console.error("Reset Password Form Error", error);
 
-      toast.error("Something went wrong. Please try again later.");
+      toast.error("The email provided is not associated with any account.");
     } finally {
       setIsSubmitting(false);
     }
   }
+
+  async function handleResendEmail() {
+    const response = await initiatePasswordReset({ email });
+    console.log("RESEND: Password Reset Response Data", response.data);
+
+    if (response.status) {
+      toast.success("We sent a password reset link to your email.\n\nPlease check your inbox.");
+    }
+  }
+
+  if (resetSuccessful)
+    return (
+      <div className="card-shadow rounded-[24px] bg-white p-5 w-full max-w-[500px] mx-auto border border-shade-1">
+        <div className="mb-8 h-[58px] w-[186px] relative mx-auto">
+          <Image fill src={"/logo-green.svg"} alt="Logo Image" priority />
+        </div>
+
+        <div>
+          <div className="text-center flex flex-col items-center">
+            <Image src={"/mail-icon.svg"} width={100} height={100} alt="Mail Icon" />
+
+            <h1 className="mt-6 font-semibold text-high text-xl">Check your email</h1>
+
+            <p className="text-low font-normal text-sm mt-3 px-12">
+              We sent a password reset link to your email. Please check your inbox
+            </p>
+          </div>
+
+          <div className="mt-8 text-center">
+            <Link href={"https://mail.google.com/mail/u/0/#inbox"} target="_blank">
+              <Button className="w-full text-base font-medium leading-5 text-center py-3"> Open Gmail</Button>
+            </Link>
+
+            <p className="mt-4">
+              Didn&apos;t receive the email?{" "}
+              <button className="text-orange underline underline-offset-2" onClick={handleResendEmail}>
+                Resend
+              </button>
+            </p>
+          </div>
+        </div>
+      </div>
+    );
 
   return (
     <div className="card-shadow rounded-[24px] bg-white p-5 w-full max-w-[500px] mx-auto border border-shade-1">
@@ -89,7 +136,7 @@ export default function ForgotPassword() {
               disabled={isSubmitting}
               type="submit"
             >
-              {isSubmitting ? <>Submiting...</> : <>Submit</>}
+              {isSubmitting ? <>Submitting...</> : <>Submit</>}
             </Button>
           </div>
         </form>
