@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { z } from "zod";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -16,10 +17,13 @@ import { useRegisterForm } from "@/hooks/useForm";
 import { COUNTRIES, DAILING_CODES, GENDERS, TITLES } from "@/data/constants";
 import { createAccount } from "@/lib/auth";
 import { extractDialingCode } from "@/lib/utils";
+import { STORE_EMAIL_KEY, storeItem } from "@/lib/storage";
 
 export function Register() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const registrationFormController = useRegisterForm();
+
+  const router = useRouter();
 
   async function handleSubmit(values: z.infer<typeof registerFormSchema>) {
     setIsSubmitting(true);
@@ -36,6 +40,7 @@ export function Register() {
       title: values.title,
       phone: `${extractDialingCode(values.dialingCode)}${values.phoneNumber}`,
     };
+    storeItem(STORE_EMAIL_KEY, values.email);
     console.log("Registration Form Payload", payload);
 
     try {
@@ -43,9 +48,10 @@ export function Register() {
       console.log("Registration Form Response Data", response.data);
 
       if (response.status)
-        toast.success("Account created successfully!\n\nPlease check your email to verify your account.");
+        toast.success("Account created successfully!\nPlease check your email to verify your account.");
 
       registrationFormController.reset();
+      router.push("/auth/request-verification");
     } catch (error) {
       console.error("Registration Form Error", error);
 

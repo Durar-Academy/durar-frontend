@@ -5,7 +5,7 @@ import { ChevronLeft } from "lucide-react";
 
 export default function NotFound() {
   return (
-    <section className="auth-background h-full">
+    <section className="auth-background h-screen">
       <div className="w-full h-full flex justify-center items-center">
         <div>
           <div className="relative w-[240px] h-[160px] md:w-[400px] md:h-[280px]">

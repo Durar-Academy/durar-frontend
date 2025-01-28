@@ -1,7 +1,8 @@
 import { STORE_KEY } from "@/data/constants";
 
 const STORE_CREDENTIAL_KEY = `${STORE_KEY}-credentials`;
-const STORE_TOKEN_KEY = `${STORE_KEY}-token`;
+export const STORE_TOKEN_KEY = `${STORE_KEY}-token`;
+export const STORE_EMAIL_KEY = `${STORE_KEY}-email`;
 
 export function storeCredentials({ encryptedEmail, encryptedPassword, iv, key }: EncryptionPayload) {
   try {
@@ -36,16 +37,16 @@ export function deleteCredentials() {
   localStorage.removeItem(STORE_CREDENTIAL_KEY);
 }
 
-export function storeResetToken(token: string) {
-  localStorage.setItem(STORE_TOKEN_KEY, token);
+export function storeItem(key: string, token: string) {
+  localStorage.setItem(key, token);
 }
 
-export function retrieveResetToken() {
-  const token = localStorage.getItem(STORE_TOKEN_KEY);
-  if (!token) return "";
-  return token;
+export function retrieveItem(key: string) {
+  const item = localStorage.getItem(key);
+  if (!item) return "";
+  return item;
 }
 
-export function deleteResetToken(): void {
-  localStorage.removeItem(STORE_TOKEN_KEY);
+export function deleteItem(key: string): void {
+  localStorage.removeItem(key);
 }

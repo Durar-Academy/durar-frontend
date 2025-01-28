@@ -13,7 +13,7 @@ import { PasswordField } from "@/components/auth/password-field";
 import { useSetPasswordForm } from "@/hooks/useForm";
 import { setPasswordFormSchema } from "@/lib/schemas";
 import { setNewPassword } from "@/lib/auth";
-import { deleteResetToken, retrieveResetToken } from "@/lib/storage";
+import { deleteItem, retrieveItem, STORE_TOKEN_KEY } from "@/lib/storage";
 
 export default function SetPassword() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -25,7 +25,7 @@ export default function SetPassword() {
     setIsSubmitting(true);
     console.log("Set Password Form Values: ", values);
 
-    const token = retrieveResetToken();
+    const token = retrieveItem(STORE_TOKEN_KEY);
 
     const payload = { password: values.password, token };
     console.log("Set Password Form Payload: ", payload);
@@ -34,10 +34,10 @@ export default function SetPassword() {
       const response = await setNewPassword(payload);
       console.log("Set Password Form Response Data", response.data);
 
-      if (response.status) toast.success("Password reset successful!\n\nPlease login with your new password.");
+      if (response.status) toast.success("Password reset successful!\nPlease login with your new password.");
 
       setPasswordFormController.reset();
-      deleteResetToken();
+      deleteItem(STORE_TOKEN_KEY);
       setResetCompleted(true);
     } catch (error) {
       console.error("Set Password Form Error", error);

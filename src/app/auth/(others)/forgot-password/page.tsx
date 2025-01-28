@@ -36,7 +36,7 @@ export default function ForgotPassword() {
       console.log("Initiate Password Reset Response Data", response.data);
 
       if (response.status) {
-        toast.success("We sent a password reset link to your email.\n\nPlease check your inbox.");
+        toast.success("We've sent a password reset link to your email.\nPlease check your inbox.");
       }
 
       setVerifiedReset(true);
@@ -54,7 +54,7 @@ export default function ForgotPassword() {
     console.log("RESEND: Password Reset Response Data", response.data);
 
     if (response.status) {
-      toast.success("We sent a password reset link to your email.\n\nPlease check your inbox.");
+      toast.success("We've resent a password reset link to your email.\nPlease check your inbox.");
     }
   }
 
