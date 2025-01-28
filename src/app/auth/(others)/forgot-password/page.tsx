@@ -17,8 +17,8 @@ export default function ForgotPassword() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [email, setEmail] = useState("");
   const [inputError, setInputError] = useState("");
-  
-  const [resetSuccessful, setResetSuccessful] = useState(false);
+
+  const [verifiedReset, setVerifiedReset] = useState(false);
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -39,7 +39,7 @@ export default function ForgotPassword() {
         toast.success("We sent a password reset link to your email.\n\nPlease check your inbox.");
       }
 
-      setResetSuccessful(true);
+      setVerifiedReset(true);
     } catch (error) {
       console.error("Reset Password Form Error", error);
 
@@ -58,7 +58,7 @@ export default function ForgotPassword() {
     }
   }
 
-  if (resetSuccessful)
+  if (verifiedReset)
     return (
       <div className="card-shadow rounded-[24px] bg-white p-5 w-full max-w-[500px] mx-auto border border-shade-1">
         <div className="mb-8 h-[58px] w-[186px] relative mx-auto">
@@ -72,7 +72,7 @@ export default function ForgotPassword() {
             <h1 className="mt-6 font-semibold text-high text-xl">Check your email</h1>
 
             <p className="text-low font-normal text-sm mt-3 px-12">
-              We sent a password reset link to your email. Please check your inbox
+              We&apos;ve sent a password reset link to your email. Please check your inbox.
             </p>
           </div>
 
@@ -103,7 +103,7 @@ export default function ForgotPassword() {
           <h1 className="font-semibold text-high text-xl">Forgot Password</h1>
 
           <p className="text-low font-normal text-sm mt-3">
-            Enter your email address below and we&apos;ll send you a link to reset your password
+            Please enter your email address below and we&apos;ll send you a link to reset your password
           </p>
         </div>
 
