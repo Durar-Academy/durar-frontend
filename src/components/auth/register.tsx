@@ -45,9 +45,9 @@ export function Register() {
 
     try {
       const response = await createAccount(payload);
-      console.log("Registration Form Response Data", response.data);
+      console.log("Registration Form Response Data", response);
 
-      if (response.status)
+      if (response.success)
         toast.success("Account created successfully!\nPlease check your email to verify your account.");
 
       registrationFormController.reset();

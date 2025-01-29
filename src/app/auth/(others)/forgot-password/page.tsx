@@ -24,7 +24,7 @@ export default function ForgotPassword() {
     event.preventDefault();
 
     const zodResponse = resetPasswordFormSchema.safeParse(email);
-    if (!zodresponse.status) {
+    if (!zodResponse.success) {
       setInputError(zodResponse.error?.flatten().formErrors as unknown as string);
       return;
     }
@@ -33,9 +33,9 @@ export default function ForgotPassword() {
 
     try {
       const response = await initiatePasswordReset({ email });
-      console.log("Initiate Password Reset Response Data", response.data);
+      console.log("Initiate Password Reset Response Data", response);
 
-      if (response.status) {
+      {
         toast.success("We've sent a password reset link to your email.\nPlease check your inbox.");
       }
 
@@ -51,9 +51,9 @@ export default function ForgotPassword() {
 
   async function handleResendEmail() {
     const response = await initiatePasswordReset({ email });
-    console.log("RESEND: Password Reset Response Data", response.data);
+    console.log("RESEND: Password Reset Response Data", response);
 
-    if (response.status) {
+    {
       toast.success("We've resent a password reset link to your email.\nPlease check your inbox.");
     }
   }

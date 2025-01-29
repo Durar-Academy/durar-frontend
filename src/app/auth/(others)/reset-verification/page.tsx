@@ -34,7 +34,7 @@ export default function ResetVerification() {
 
     try {
       const response = await confirmPasswordReset({ token, signal: abortControllerRef.current.signal });
-      if (response.status) {
+      {
         toast.success("Account verification successful.\nYou can proceed to login to your account.");
 
         setProgressValue(100);

@@ -2,21 +2,26 @@
 
 import { z } from "zod";
 import Link from "next/link";
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { PasswordField } from "./password-field";
 
 import { loginFormSchema } from "@/lib/schemas";
 import { useLoginForm } from "@/hooks/useForm";
-import { PasswordField } from "./password-field";
 import { decryptCredentials, encryptCredentials } from "@/lib/encryption";
-import { deleteCredentials, retrieveCredentials, storeCredentials } from "@/lib/storage";
+import { deleteCredentials, retrieveCredentials, storeAuthData, storeCredentials } from "@/lib/storage";
+import { loginUser } from "@/lib/auth";
 
 export function Login() {
   const loginFormController = useLoginForm();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   const setValue = useMemo(() => loginFormController.setValue, [loginFormController.setValue]);
 
@@ -28,6 +33,37 @@ export function Login() {
 
       storeCredentials(encryptedCredentials as EncryptionPayload);
     } else deleteCredentials();
+
+    const payload = {
+      email: values.email,
+      password: values.password,
+    };
+
+    setIsSubmitting(true);
+    try {
+      const response = await loginUser(payload);
+      console.log("Login Form Response Data", response);
+
+      if (!response.data.isVerified) {
+        toast.error("Please verify your account to continue.\nCheck your email for the verification link.");
+        router.push("/auth/request-verification");
+        return;
+      }
+
+      toast.success("Login successful!\nWelcome to Durar Academy.");
+
+      const { accessToken, refreshToken } = response.data;
+      storeAuthData(accessToken, refreshToken);
+
+      loginFormController.reset();
+      router.push("/");
+    } catch (error) {
+      console.log("Login Form Error", error);
+
+      toast.error("Invalid credentials. Please try again");
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   useEffect(() => {
@@ -104,8 +140,9 @@ export function Login() {
           <Button
             type="submit"
             className="mt-8 px-5 py-3 rounded-[10px] text-white sm:text-sm text-base font-medium h-12"
+            disabled={isSubmitting}
           >
-            Login
+            {isSubmitting ? <>Logging in...</> : <>Login</>}
           </Button>
         </form>
       </Form>

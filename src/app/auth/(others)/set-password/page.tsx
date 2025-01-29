@@ -32,9 +32,9 @@ export default function SetPassword() {
 
     try {
       const response = await setNewPassword(payload);
-      console.log("Set Password Form Response Data", response.data);
+      console.log("Set Password Form Response Data", response);
 
-      if (response.status) toast.success("Password reset successful!\nPlease login with your new password.");
+      toast.success("Password reset successful!\nPlease login with your new password.");
 
       setPasswordFormController.reset();
       deleteItem(STORE_TOKEN_KEY);

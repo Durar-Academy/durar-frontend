@@ -34,7 +34,7 @@ export default function AccountVerification() {
 
     try {
       const response = await verifyAccount({ token, signal: abortControllerRef.current.signal });
-      if (response.status) {
+      {
         toast.success("Account verification successful.\nYou can proceed to login to your account.");
 
         setProgressValue(100);

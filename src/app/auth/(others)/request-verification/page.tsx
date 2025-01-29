@@ -17,9 +17,9 @@ export default function RequestVerification() {
 
     try {
       const response = await requestAccountVerification({ email });
-      console.log("RESEND: Request Account Verification Response Data", response.data);
+      console.log("RESEND: Request Account Verification Response Data", response);
 
-      if (response.status) {
+      {
         toast.success("We've resent an account verification link to your email.\nPlease check your inbox.");
       }
     } catch (error) {
