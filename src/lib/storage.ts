@@ -1,3 +1,5 @@
+"use client";
+
 import { STORE_KEY } from "@/data/constants";
 
 const STORE_CREDENTIAL_KEY = `${STORE_KEY}-credentials`;

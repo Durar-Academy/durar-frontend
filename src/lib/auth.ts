@@ -1,4 +1,5 @@
 import axios from "axios";
+import { deleteAuthData } from "./storage";
 
 export async function createAccount(payload: CreateAccountPayload) {
   const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/register`, payload);
@@ -46,13 +47,6 @@ export async function loginUser(payload: { email: string; password: string }) {
   return response.data;
 }
 
-// uses bearer token (access token)
-export async function getCurrentUser() {
-  const response = await axios.get(`${process.env.NEXT_PUBLIC_API_BASE_URL}/user/me`);
-  return response.data;
-}
-
-export async function changePassword(payload: { password: string }) {
-  const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/change-password`, payload);
-  return response.data;
+export async function logOutUser() {
+  deleteAuthData();
 }
