@@ -5,8 +5,29 @@ export async function createAccount(payload: CreateAccountPayload) {
   return response;
 }
 
+export async function requestAccountVerification(payload: { email: string }) {
+  const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/send-confirmation-email`, payload);
+  return response;
+}
+
+export async function verifyAccount(payload: { token: string; signal?: AbortSignal }) {
+  const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/verify-account`, payload, {
+    signal: payload.signal,
+  });
+  return response;
+}
+
 export async function initiatePasswordReset(payload: { email: string }) {
   const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/password-reset/initiate`, payload);
+  return response;
+}
+
+export async function confirmPasswordReset(payload: { token: string; signal?: AbortSignal }) {
+  const response = await axios.post(
+    `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/password-reset/validate-token`,
+    payload,
+    { signal: payload.signal }
+  );
   return response;
 }
 
@@ -15,26 +36,8 @@ export async function setNewPassword(payload: { password: string; token: string 
   return response;
 }
 
-export async function requestAccountVerification(payload: { email: string }) {
-  const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/send-confirmation-email`, payload);
-  return response;
-}
-
 export async function refreshAccessToken(payload: { refreshToken: string }) {
   const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/refresh-token`, payload);
-  return response;
-}
-
-export async function confirmPasswordReset(payload: { token: string }) {
-  const response = await axios.post(
-    `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/password-reset/validate-token`,
-    payload
-  );
-  return response;
-}
-
-export async function verifyAccount(payload: { token: string }) {
-  const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/verify-account`, payload);
   return response;
 }
 

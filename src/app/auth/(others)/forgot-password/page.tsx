@@ -24,7 +24,7 @@ export default function ForgotPassword() {
     event.preventDefault();
 
     const zodResponse = resetPasswordFormSchema.safeParse(email);
-    if (!zodResponse.success) {
+    if (!zodresponse.status) {
       setInputError(zodResponse.error?.flatten().formErrors as unknown as string);
       return;
     }
