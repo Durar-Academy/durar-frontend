@@ -16,3 +16,10 @@ type CreateAccountPayload = {
   phone: string;
   title: "Mr" | "Mrs" | "Ms" | "Dr";
 };
+
+type AuthContextProps = {
+  loggedIn: boolean;
+  authLoading: boolean;
+  setAuthLoading: React.Dispatch<React.SetStateAction<boolean>>;
+  setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+};
