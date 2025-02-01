@@ -49,3 +49,22 @@ type ComponentConfig = {
     options?: { value: string; label: string }[];
   };
 };
+
+type User = {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  middleName?: string;
+  gender: "male" | "female";
+  phone: string;
+  country: string;
+  emailVerifiedAt: Date | null;
+  status: "active" | "inactive" | "suspended";
+  lastLoginAt: string | null;
+  role: "admin" | "student" | "tutor";
+  profilePictureId: string | null;
+  deletedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
