@@ -23,3 +23,29 @@ type AuthenticationContextProps = {
   setAuthLoading: React.Dispatch<React.SetStateAction<boolean>>;
   setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
 };
+
+type LinkComponentProps = {
+  href: string;
+  children: React.ReactNode;
+};
+
+type ButtonComponentProps = {
+  href: string;
+  onClick: MouseEventHandler<HTMLButtonElement>;
+  children: React.ReactNode;
+};
+
+type SelectComponentProps = {
+  options: { value: string; label: string }[];
+};
+
+type ComponentConfig = {
+  type: string;
+  component: ElementType;
+  props: {
+    href?: string;
+    onClick?: () => void;
+    children?: React.ReactNode;
+    options?: { value: string; label: string }[];
+  };
+};
