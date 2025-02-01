@@ -1,7 +1,9 @@
 import { axiosInstance } from "@/lib/axios";
 
-export async function getCurrentUser() {
-  const response = await axiosInstance.get("/user/me");
+export async function getCurrentUser(options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get("/user/me", {
+    signal: options?.signal,
+  });
   return response.data;
 }
 

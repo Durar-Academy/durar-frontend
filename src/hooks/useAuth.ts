@@ -2,10 +2,10 @@
 
 import { useContext } from "react";
 
-import { AuthContext } from "@/contexts/auth-provider";
+import { AuthenticationContext } from "@/contexts/authentication-provider";
 
 export function useAuth() {
-  const authContext = useContext(AuthContext);
+  const authContext = useContext(AuthenticationContext);
 
   if (!authContext) throw new Error("Auth Context Error: Not Initialized.");
 

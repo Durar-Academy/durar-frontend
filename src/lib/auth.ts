@@ -1,4 +1,6 @@
 import axios from "axios";
+import { redirect } from "next/navigation";
+
 import { deleteAuthData } from "./storage";
 
 export async function createAccount(payload: CreateAccountPayload) {
@@ -37,8 +39,10 @@ export async function setNewPassword(payload: { password: string; token: string 
   return response.data;
 }
 
-export async function refreshAccessToken(payload: { refreshToken: string }) {
-  const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/refresh-token`, payload);
+export async function refreshAccessToken(payload: { refreshToken: string; signal?: AbortSignal }) {
+  const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/refresh-token`, payload, {
+    signal: payload.signal,
+  });
   return response.data;
 }
 
@@ -49,4 +53,5 @@ export async function loginUser(payload: { email: string; password: string }) {
 
 export async function logOutUser() {
   deleteAuthData();
+  redirect("/auth");
 }

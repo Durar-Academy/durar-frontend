@@ -17,7 +17,7 @@ type CreateAccountPayload = {
   title: "Mr" | "Mrs" | "Ms" | "Dr";
 };
 
-type AuthContextProps = {
+type AuthenticationContextProps = {
   loggedIn: boolean;
   authLoading: boolean;
   setAuthLoading: React.Dispatch<React.SetStateAction<boolean>>;

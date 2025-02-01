@@ -52,11 +52,11 @@ export function Login() {
 
       toast.success("Login successful!\nWelcome to Durar Academy.");
 
-      const { accessToken, refreshToken } = response.data;
-      storeAuthData(accessToken, refreshToken);
+      const { accessToken, refreshToken, role } = response.data;
+      storeAuthData(accessToken, refreshToken, role);
 
       loginFormController.reset();
-      router.push("/");
+      router.push(`/${role.toLowerCase()}`);
     } catch (error) {
       console.log("Login Form Error", error);
 

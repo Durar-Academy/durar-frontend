@@ -1,16 +1,20 @@
+"use client";
+
 import axios from "axios";
 
 import { storeAuthData, retrieveAuthData } from "./storage";
 import { refreshAccessToken } from "./auth";
 
 export const axiosInstance = axios.create({
-  timeout: 5000,
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  withCredentials: true,
+  timeout: 10_000,
 });
 
 axiosInstance.interceptors.request.use(
   (config) => {
     const [accessToken] = retrieveAuthData();
+    console.log("Access Token", accessToken);
     config.headers["Authorization"] = `Bearer ${accessToken}`;
     return config;
   },
@@ -20,8 +24,14 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
+    if (!error.config) {
+      console.error("Request configuration not found:", error);
+      return Promise.reject(error);
+    }
+
     const originalConfig = error.config;
-    originalConfig.retried = false;
+
+    if (originalConfig.retried === undefined) originalConfig.retried = false;
 
     if (error.response) {
       if (error.response.status === 401 && !originalConfig.retried) {
@@ -70,3 +80,45 @@ axiosInstance.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// axiosInstance.interceptors.response.use(
+//   (response) => response,
+//   async (error) => {
+//     if (!error.config) {
+//       return Promise.reject(error);
+//     }
+
+//     const originalConfig = error.config;
+//     if (originalConfig.retried === undefined) originalConfig.retried = false;
+
+//     if (error.response?.status === 401 && !originalConfig.retried) {
+//       originalConfig.retried = true;
+
+//       try {
+//         // Just call refresh endpoint - cookies handled automatically
+//         const response = await refreshAccessToken();
+//         if (!response.success) throw new Error("Unable to refresh Access Token.");
+
+//         return axiosInstance(originalConfig);
+//       } catch (error) {
+//         window.location.href = "/auth";
+//         return Promise.reject(error);
+//       }
+//     }
+
+//     // Error handling
+//     if (error.response) {
+//       const messages = {
+//         403: "Forbidden: You do not have permission to access this resource.",
+//         500: "Server Error: Something went wrong on the server.",
+//       };
+//       console.error(messages[error.response.status] || `An error occurred: ${error.message}`);
+//     } else if (error.request) {
+//       console.error("Network Error: No response received from the server.");
+//     } else {
+//       console.error("Error:", error.message);
+//     }
+
+//     return Promise.reject(error);
+//   }
+// );

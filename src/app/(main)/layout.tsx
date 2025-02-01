@@ -1,9 +1,14 @@
-import { AuthProvider } from "@/contexts/auth-provider";
+import { AuthenticationProvider } from "@/contexts/authentication-provider";
+import { AuthorizationRedirect } from "@/components/auth/authorization-redirect";
 
 export default function MainLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <AuthProvider>{children}</AuthProvider>;
+  return (
+    <AuthenticationProvider>
+      <AuthorizationRedirect>{children}</AuthorizationRedirect>
+    </AuthenticationProvider>
+  );
 }
