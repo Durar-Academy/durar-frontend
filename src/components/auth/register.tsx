@@ -360,8 +360,9 @@ export function Register() {
 
           <Button
             type="submit"
-            className="mt-8 px-5 py-3 rounded-xl bg-green hover:bg-green/80 text-white sm:text-sm text-base font-medium h-12 transition-colors"
+            className="mt-8 px-5 py-3 rounded-xl bg-green hover:bg-green/80 text-white text-sm sm:text-base font-medium h-12 transition-colors"
             disabled={isSubmitting}
+            variant={"_default"}
           >
             {isSubmitting ? <>Creating Account...</> : <>Create Account</>}
           </Button>

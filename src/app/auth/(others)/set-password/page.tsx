@@ -66,7 +66,9 @@ export default function SetPassword() {
 
           <div className="mt-8 text-center">
             <Link href={"/auth"}>
-              <Button className="w-full text-base font-medium leading-5 text-center py-3">Back to Login</Button>
+              <Button className="w-full text-base font-medium leading-5 text-center py-3" variant={"_default"}>
+                Back to Login
+              </Button>
             </Link>
           </div>
         </div>
@@ -105,6 +107,7 @@ export default function SetPassword() {
               type="submit"
               className="mt-8 px-5 py-3 rounded-xl bg-green hover:bg-green/80 text-white sm:text-sm text-base font-medium h-12 transition-colors"
               disabled={isSubmitting}
+              variant={"_default"}
             >
               {isSubmitting ? <>Submitting...</> : <>Submit</>}
             </Button>

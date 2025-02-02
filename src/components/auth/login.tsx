@@ -139,8 +139,9 @@ export function Login() {
 
           <Button
             type="submit"
-            className="mt-8 px-5 py-3 rounded-[10px] text-white sm:text-sm text-base font-medium h-12"
+            className="mt-8 px-5 py-3 rounded-[10px] text-white text-sm sm:text-base font-medium h-12"
             disabled={isSubmitting}
+            variant={"_default"}
           >
             {isSubmitting ? <>Logging in...</> : <>Login</>}
           </Button>

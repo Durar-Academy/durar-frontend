@@ -100,3 +100,12 @@ type TutorClassProps = {
 type EnrollmentData = {
   [key: string]: { month: string; value: number }[];
 };
+
+type PaymentsTableProps = {
+  id: string;
+  amount: string;
+  dateIssued: string;
+  dueDate: string;
+  paymentMethod: string;
+  status: string;
+}[];

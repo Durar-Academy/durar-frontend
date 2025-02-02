@@ -9,12 +9,13 @@ import { ActivitiesCard } from "@/components/admin/activities-card";
 import { Activity } from "@/components/admin/activity";
 import { TutorClass } from "@/components/admin/tutor-class";
 import { EnrollmentTrendGraph } from "@/components/admin/enrollment-trend-graph";
+import { PaymentsTable } from "@/components/admin/payments-table";
 
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useMetrics } from "@/hooks/useMetrics";
 import { formatToNaira } from "@/utils/formatter";
 
-import { activities, enrollmentData, tutorsClasses } from "@/data/mockData";
+import { activities, enrollmentData, payments, tutorsClasses } from "@/data/mockData";
 
 export default function AdminPage() {
   const { data: user, isLoading: topbarLoading } = useCurrentUser();
@@ -129,6 +130,10 @@ export default function AdminPage() {
             </ActivitiesCard>
           </div>
         </div>
+      </div>
+
+      <div>
+        <PaymentsTable payments={payments} />
       </div>
     </section>
   );

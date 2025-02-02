@@ -48,7 +48,9 @@ export function RequestVerification() {
 
         <div className="mt-8 text-center">
           <Link href={"https://mail.google.com/mail/u/0/#inbox"} target="_blank">
-            <Button className="w-full text-base font-medium leading-5 text-center py-3"> Open Gmail</Button>
+            <Button className="w-full text-base font-medium leading-5 text-center py-3" variant={"_default"}>
+              Open Gmail
+            </Button>
           </Link>
 
           <p className="mt-4">
