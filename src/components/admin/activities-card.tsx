@@ -9,7 +9,7 @@ export function ActivitiesCard({ icon, title, children }: ActivitiesCardProps) {
         <span className="text-high font-medium text-base">{title}</span>
       </h3>
 
-      <div className="flex flex-col gap-6 overflow-y-scroll h-40 hide-scrollbar">{children}</div>
+      <div className="flex flex-col gap-6 overflow-y-scroll h-[200px] hide-scrollbar">{children}</div>
     </div>
   );
 }

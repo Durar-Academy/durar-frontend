@@ -6,11 +6,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { TopBar } from "@/components/shared/top-bar";
 import { StatCard } from "@/components/admin/stat-card";
 import { ActivitiesCard } from "@/components/admin/activities-card";
+import { Activity } from "@/components/admin/activity";
+import { TutorClass } from "@/components/admin/tutor-class";
+import { EnrollmentTrendGraph } from "@/components/admin/enrollment-trend-graph";
 
 import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useMetrics } from "@/hooks/useMetrics";
 import { formatToNaira } from "@/utils/formatter";
-import { Activity } from "@/components/admin/activity";
+
+import { activities, enrollmentData, tutorsClasses } from "@/data/mockData";
 
 export default function AdminPage() {
   const { data: user, isLoading: topbarLoading } = useCurrentUser();
@@ -79,8 +83,6 @@ export default function AdminPage() {
     },
   ];
 
-  const activities = ["enrollment", "payment", "payment", "course", "course", "enrollment"];
-
   return (
     <section className="flex flex-col gap-5">
       <div className="top-bar">
@@ -105,12 +107,28 @@ export default function AdminPage() {
         )}
       </div>
 
-      <div className="h-60">
-        <ActivitiesCard icon={User} title={"Recent Activities"}>
-          {activities.map((activity, index) => (
-            <Activity activity={activity} key={index} />
-          ))}
-        </ActivitiesCard>
+      <div className="graphs-classes-activities">
+        <div className="h-[280px] flex gap-4">
+          <div className="w-full ">
+            <EnrollmentTrendGraph enrollmentData={enrollmentData} />
+          </div>
+
+          <div className="w-full max-w-[280px]">
+            <ActivitiesCard icon={User} title={"Tutors Class"}>
+              {tutorsClasses.map((tutorsClass, index) => (
+                <TutorClass classDetail={tutorsClass} key={index} />
+              ))}
+            </ActivitiesCard>
+          </div>
+
+          <div className="w-full max-w-[240px]">
+            <ActivitiesCard icon={User} title={"Recent Activities"}>
+              {activities.map((activity, index) => (
+                <Activity activity={activity} key={index} />
+              ))}
+            </ActivitiesCard>
+          </div>
+        </div>
       </div>
     </section>
   );

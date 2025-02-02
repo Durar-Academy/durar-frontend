@@ -89,3 +89,14 @@ type ActivitiesCardProps = {
   title: string;
   children: React.ReactNode;
 };
+
+type TutorClassProps = {
+  firstName: string;
+  lastName: string;
+  date: string;
+  time: string;
+};
+
+type EnrollmentData = {
+  [key: string]: { month: string; value: number }[];
+};
