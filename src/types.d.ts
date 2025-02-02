@@ -68,3 +68,18 @@ type User = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+type StatCardProps = {
+  title: string;
+  icon: LucideIcon;
+
+  main: {
+    figure: string;
+    label: string;
+  };
+
+  sub: {
+    figure: string;
+    label: string;
+  };
+};

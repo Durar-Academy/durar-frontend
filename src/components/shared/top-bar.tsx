@@ -23,8 +23,8 @@ export function TopBar({ children, subtext, user }: { children: React.ReactNode;
         <Avatar className="h-9 w-9">
           {user?.profilePictureId && <AvatarImage src={user.profilePictureId as string} />}
           <AvatarFallback className="bg-shade-3 text-black">
-            {user?.firstName[0].toUpperCase()}
-            {user?.lastName[0].toUpperCase()}
+            {user.firstName ? user.firstName[0].toUpperCase() : ""}
+            {user.lastName ? user.lastName[0].toUpperCase() : ""}
           </AvatarFallback>
         </Avatar>
 

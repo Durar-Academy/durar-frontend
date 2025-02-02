@@ -14,7 +14,6 @@ export const axiosInstance = axios.create({
 axiosInstance.interceptors.request.use(
   (config) => {
     const [accessToken] = retrieveAuthData();
-    console.log("Access Token", accessToken);
     config.headers["Authorization"] = `Bearer ${accessToken}`;
     return config;
   },
