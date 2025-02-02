@@ -83,3 +83,9 @@ type StatCardProps = {
     label: string;
   };
 };
+
+type ActivitiesCardProps = {
+  icon: LucideIcon;
+  title: string;
+  children: React.ReactNode;
+};

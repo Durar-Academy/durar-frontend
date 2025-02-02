@@ -1,13 +1,16 @@
 "use client";
 
+import { CircleDollarSign, Glasses, User, Users } from "lucide-react";
+
 import { Skeleton } from "@/components/ui/skeleton";
 import { TopBar } from "@/components/shared/top-bar";
+import { StatCard } from "@/components/admin/stat-card";
+import { ActivitiesCard } from "@/components/admin/activities-card";
 
 import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { CircleDollarSign, Glasses, Users } from "lucide-react";
-import { StatCard } from "@/components/admin/stat-card";
-import { formatToNaira } from "@/utils/formatter";
 import { useMetrics } from "@/hooks/useMetrics";
+import { formatToNaira } from "@/utils/formatter";
+import { Activity } from "@/components/admin/activity";
 
 export default function AdminPage() {
   const { data: user, isLoading: topbarLoading } = useCurrentUser();
@@ -76,6 +79,8 @@ export default function AdminPage() {
     },
   ];
 
+  const activities = ["enrollment", "payment", "payment", "course", "course", "enrollment"];
+
   return (
     <section className="flex flex-col gap-5">
       <div className="top-bar">
@@ -98,6 +103,14 @@ export default function AdminPage() {
             ))}
           </div>
         )}
+      </div>
+
+      <div className="h-60">
+        <ActivitiesCard icon={User} title={"Recent Activities"}>
+          {activities.map((activity, index) => (
+            <Activity activity={activity} key={index} />
+          ))}
+        </ActivitiesCard>
       </div>
     </section>
   );
