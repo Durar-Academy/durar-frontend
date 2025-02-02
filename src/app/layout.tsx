@@ -3,7 +3,6 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 
 import { ToastProvider } from "@/contexts/toast-provider";
-import { ReactQueryProvider } from "@/contexts/react-query-provider";
 
 const poppins = Poppins({
   subsets: ["latin"],
@@ -24,10 +23,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.className} antialiased`}>
-        <ReactQueryProvider>
-          <ToastProvider />
-          <div>{children}</div>
-        </ReactQueryProvider>
+        <ToastProvider />
+        <div>{children}</div>
       </body>
     </html>
   );

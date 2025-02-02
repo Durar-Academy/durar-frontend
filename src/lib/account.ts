@@ -4,7 +4,7 @@ export async function getCurrentUser(options?: { signal?: AbortSignal }) {
   const response = await axiosInstance.get("/user/me", {
     signal: options?.signal,
   });
-  return response.data;
+  return response.data.data;
 }
 
 export async function changePassword(payload: { password: string }) {

@@ -5,7 +5,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <section className="w-full h-screen overflow-hidden flex bg-offwhite">
       <AdminSidebar />
 
-      <main className="p-6">{children}</main>
+      <main className="p-6 w-full">{children}</main>
     </section>
   );
 }

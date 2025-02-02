@@ -2,9 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 
 import { getCurrentUser } from "@/lib/account";
 
-export const useCurrentUser = () => {
-  return useQuery<User>({
+export function useCurrentUser() {
+  const query = useQuery({
     queryKey: ["currentUser"],
-    queryFn: ({ signal }) => getCurrentUser({ signal }),
+    queryFn: getCurrentUser,
   });
-};
+
+  return query;
+}

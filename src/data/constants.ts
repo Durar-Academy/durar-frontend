@@ -75,7 +75,7 @@ export const ADMIN_SIDEBAR_LINKS: ComponentConfig[] = [
     type: "link",
     component: LinkComponent,
     props: {
-      href: "/admin/payment",
+      href: "/admin/notification",
       children: [React.createElement(Bell, { key: "icon", className: "h-4 w-4" }), "Notification"],
     },
   },
@@ -83,7 +83,7 @@ export const ADMIN_SIDEBAR_LINKS: ComponentConfig[] = [
     type: "link",
     component: LinkComponent,
     props: {
-      href: "/admin/payment",
+      href: "/admin/settings",
       children: [React.createElement(Settings, { key: "icon", className: "h-4 w-4" }), "Settings"],
     },
   },
