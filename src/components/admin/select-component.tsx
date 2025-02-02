@@ -16,8 +16,13 @@ export function SelectComponent({ options }: SelectComponentProps) {
     router.push(value);
   };
 
+  let selectValue;
+
+  if (pathname === "/admin/students" || pathname === "/admin/tutors") selectValue = pathname;
+  else selectValue = undefined;
+
   return (
-    <Select onValueChange={handleChange}>
+    <Select onValueChange={handleChange} value={selectValue}>
       <SelectTrigger
         className={cn(
           "shadow-none p-3 h-fit rounded-md  text-white text-base border-0 focus:border-0 focus:ring-0 hover:bg-white/20",
@@ -30,11 +35,7 @@ export function SelectComponent({ options }: SelectComponentProps) {
       </SelectTrigger>
       <SelectContent>
         {options.map((option) => (
-          <SelectItem
-            key={option.value}
-            value={option.value}
-            className={cn("text-base font-normal", pathname === option.value ? "bg-shade-3" : "bg-transparent")}
-          >
+          <SelectItem key={option.value} value={option.value} className={cn("text-base font-normal cursor-pointer")}>
             {option.label}
           </SelectItem>
         ))}
