@@ -109,3 +109,7 @@ type PaymentsTableProps = {
   paymentMethod: string;
   status: string;
 }[];
+
+type EnrollmentTrendGraphProps = {
+  users: User[];
+};

@@ -1,17 +1,38 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from "recharts";
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-export function EnrollmentTrendGraph({ enrollmentData }: { enrollmentData: EnrollmentData }) {
-  const [selectedYear, setSelectedYear] = useState("2024");
+import { processEnrollmentData } from "@/utils/process-enrollment";
+
+export function EnrollmentTrendGraph({ users }: EnrollmentTrendGraphProps) {
+  const [enrollmentData, setEnrollmentData] = useState<EnrollmentData>({});
+  const [selectedYear, setSelectedYear] = useState<string>("");
+
+  useEffect(() => {
+    const processedData = processEnrollmentData(users);
+    setEnrollmentData(processedData);
+
+    const years = Object.keys(processedData);
+    if (years.length > 0) {
+      setSelectedYear(years[years.length - 1]);
+    }
+  }, [users]);
 
   const handleYearChange = (value: string) => {
     setSelectedYear(value);
   };
+
+  if (!selectedYear || !enrollmentData[selectedYear]) {
+    return (
+      <Card className="w-full p-4 shadow-none border-0 dashboard-shadow h-full">
+        <div>Loading enrollment data...</div>
+      </Card>
+    );
+  }
 
   return (
     <Card className="w-full p-4 shadow-none border-0 dashboard-shadow h-full">
@@ -25,9 +46,12 @@ export function EnrollmentTrendGraph({ enrollmentData }: { enrollmentData: Enrol
             <SelectValue placeholder="Year" />
           </SelectTrigger>
 
-          <SelectContent className="">
-            <SelectItem value="2024">2024</SelectItem>
-            <SelectItem value="2023">2023</SelectItem>
+          <SelectContent>
+            {Object.keys(enrollmentData).map((year) => (
+              <SelectItem key={year} value={year}>
+                {year}
+              </SelectItem>
+            ))}
           </SelectContent>
         </Select>
       </div>
@@ -38,15 +62,7 @@ export function EnrollmentTrendGraph({ enrollmentData }: { enrollmentData: Enrol
             <BarChart data={enrollmentData[Number(selectedYear)]}>
               <XAxis dataKey="month" axisLine={false} tickLine={false} fontSize={10} tickMargin={8} color="#63767E" />
 
-              <YAxis
-                axisLine={false}
-                tickLine={false}
-                fontSize={10}
-                tickMargin={8}
-                ticks={[0, 15000, 30000, 50000]}
-                tickFormatter={(value) => `${value / 1000}K`}
-                color="#63767E"
-              />
+              <YAxis axisLine={false} tickLine={false} fontSize={10} tickMargin={8} color="#63767E" />
 
               <Bar
                 dataKey="value"

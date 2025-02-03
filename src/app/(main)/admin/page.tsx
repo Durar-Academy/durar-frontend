@@ -15,7 +15,7 @@ import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { useMetrics } from "@/hooks/useMetrics";
 import { formatToNaira } from "@/utils/formatter";
 
-import { activities, enrollmentData, payments, tutorsClasses } from "@/data/mockData";
+import { activities, payments, tutorsClasses } from "@/data/mockData";
 
 export default function AdminPage() {
   const { data: user, isLoading: topbarLoading } = useCurrentUser();
@@ -110,8 +110,8 @@ export default function AdminPage() {
 
       <div className="graphs-classes-activities">
         <div className="h-[280px] flex gap-4">
-          <div className="w-full ">
-            <EnrollmentTrendGraph enrollmentData={enrollmentData} />
+          <div className="w-full">
+            {statsLoading ? <Skeleton className="w-full h-full" /> : <EnrollmentTrendGraph users={metrics?.users} />}
           </div>
 
           <div className="w-full max-w-[280px]">
