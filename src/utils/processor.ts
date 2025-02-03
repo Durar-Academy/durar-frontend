@@ -112,3 +112,25 @@ export const processActivities = (activities: Activity[]) => {
 
   return processedActivities;
 };
+
+export const processPayments = (payments: Payment[]) => {
+  const extractedPayments = payments.map((payment) => {
+    const id = payment.reference;
+    const amount = payment.charge.amount;
+    const { date: dateIssued } = formatDateAndTime(payment.charge.createdAt);
+    const { date: dueDate } = formatDateAndTime(payment.charge.dueAt);
+    const paymentMethod = payment.provider;
+    const status = payment.status;
+
+    return {
+      id,
+      amount,
+      dateIssued,
+      dueDate,
+      paymentMethod,
+      status,
+    };
+  });
+
+  return extractedPayments;
+};

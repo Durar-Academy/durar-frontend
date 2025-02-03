@@ -20,3 +20,10 @@ export async function getActivities(options?: { signal?: AbortSignal }) {
   });
   return response.data.data;
 }
+
+export async function getPayments(options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get("/payment", {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}

@@ -103,11 +103,11 @@ type EnrollmentData = {
 
 type PaymentsTableProps = {
   id: string;
-  amount: string;
+  amount: number;
   dateIssued: string;
   dueDate: string;
   paymentMethod: string;
-  status: string;
+  status: PaymentStatus;
 }[];
 
 type EnrollmentTrendGraphProps = {
@@ -167,9 +167,46 @@ type Activity = {
   action: string;
   context: string;
   contextId: string;
-  metadata: null;
+  metadata: Record<string, never> | null;
   deletedAt: string | null;
   createdAt: string;
   updatedAt: string;
+  user: User;
+};
+
+type PaymentStatus = "pending" | "completed" | "pending_refund" | "refund_failed" | "refunded" | "failed";
+
+type Payment = {
+  id: string;
+  amount: number;
+  currency: string;
+  provider: string;
+  reference: string;
+  refundReference: string | null;
+  chargeId: string;
+  status: PaymentStatus;
+  metadata: Record<string, never> | null;
+  deletedAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  charge: Charge;
+};
+
+type Charge = {
+  id: string;
+  userId: string;
+  amount: number;
+  debitType: string;
+  totalPaid: number;
+  amountRefunded: number;
+  processingAmount: number;
+  chargeAttempt: number;
+  dueAt: Date;
+  isVoid: boolean;
+  billingPlanId: string | null;
+  memo: string;
+  deletedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
   user: User;
 };

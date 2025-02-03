@@ -12,20 +12,20 @@ import { EnrollmentTrendGraph } from "@/components/admin/enrollment-trend-graph"
 import { PaymentsTable } from "@/components/admin/payments-table";
 
 import { useCurrentUser } from "@/hooks/useAccount";
-import { useActivities, useMetrics, useSchedules } from "@/hooks/useDashboard";
-
-import { payments } from "@/data/mockData";
-import { processActivities, processDashboardMetrics, processSchedules } from "@/utils/processor";
+import { useActivities, useMetrics, usePayments, useSchedules } from "@/hooks/useDashboard";
+import { processActivities, processDashboardMetrics, processPayments, processSchedules } from "@/utils/processor";
 
 export default function AdminPage() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: metrics, isLoading: metricsLoading } = useMetrics();
   const { data: schedules, isLoading: schedulesLoading } = useSchedules();
   const { data: activities, isLoading: activitiesLoading } = useActivities();
+  const { data: payments, isLoading: paymentsLoading } = usePayments();
 
   const dashboardMetrics = processDashboardMetrics(metrics) ?? [];
   const tutorsClasses = processSchedules(schedules?.records ?? []);
   const recentActivities = processActivities(activities?.records ?? []);
+  const dashboardPayments = processPayments(payments?.records ?? []);
 
   return (
     <section className="flex flex-col gap-5">
@@ -65,7 +65,7 @@ export default function AdminPage() {
                 {tutorsClasses.length > 0 ? (
                   tutorsClasses.map((tutorsClass, index) => <TutorClass classDetail={tutorsClass} key={index} />)
                 ) : (
-                  <p className="text-sm">No Classes</p>
+                  <p>No Classes</p>
                 )}
               </ActivitiesCard>
             )}
@@ -79,7 +79,7 @@ export default function AdminPage() {
                 {recentActivities.length > 0 ? (
                   recentActivities.map((activity, index) => <Activity activity={activity} key={index} />)
                 ) : (
-                  <p className="text-sm">No Recent Activity</p>
+                  <p>No Recent Activity</p>
                 )}
               </ActivitiesCard>
             )}
@@ -88,7 +88,7 @@ export default function AdminPage() {
       </div>
 
       <div>
-        <PaymentsTable payments={payments} />
+        {paymentsLoading ? <Skeleton className="w-full h-96" /> : <PaymentsTable payments={dashboardPayments} />}
       </div>
     </section>
   );
