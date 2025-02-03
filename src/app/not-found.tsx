@@ -1,9 +1,23 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-
 import { ChevronLeft } from "lucide-react";
 
+import { retrieveAuthData } from "@/lib/storage";
+
 export default function NotFound() {
+  const [homeRoute, setHomeRoute] = useState("auth");
+
+  useEffect(() => {
+    const [, , userRole] = retrieveAuthData();
+
+    if (userRole) {
+      setHomeRoute(userRole.toLowerCase());
+    }
+  }, []);
+
   return (
     <section className="auth-background h-screen">
       <div className="w-full h-full flex justify-center items-center">
@@ -18,7 +32,7 @@ export default function NotFound() {
             <p className="text-lg md:text-2xl mb-4 text-high">Oops, Page not found!</p>
 
             <Link
-              href="/"
+              href={`/${homeRoute}`}
               className="flex items-center justify-center rounded-md py-3 px-4 w-fit mx-auto bg-green text-white text-sm md:text-base group"
             >
               <ChevronLeft className="h-5 w-5 group-hover:transform group-hover:-translate-x-1 transition-transform" />
