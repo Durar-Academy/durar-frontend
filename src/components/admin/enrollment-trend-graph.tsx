@@ -6,7 +6,7 @@ import { BarChart, Bar, XAxis, YAxis, ResponsiveContainer } from "recharts";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-import { processEnrollmentData } from "@/utils/process-enrollment";
+import { processEnrollmentData } from "@/utils/processor";
 
 export function EnrollmentTrendGraph({ users }: EnrollmentTrendGraphProps) {
   const [enrollmentData, setEnrollmentData] = useState<EnrollmentData>({});

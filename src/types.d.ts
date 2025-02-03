@@ -148,3 +148,28 @@ type Schedule = {
   course: Course;
   user: User;
 };
+
+type Metrics = {
+  tutorsCount: number;
+  activeTutorsCount: number;
+  studentsCount: number;
+  activeStudentsCount: number;
+  totalCoursesCount: number;
+  publishedCoursesCount: number;
+  users: User[];
+  creditedPayments: number;
+  pendingPayments: number;
+};
+
+type Activity = {
+  id: string;
+  userId: string;
+  action: string;
+  context: string;
+  contextId: string;
+  metadata: null;
+  deletedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+  user: User;
+};

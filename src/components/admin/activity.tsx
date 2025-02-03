@@ -1,24 +1,34 @@
 import React from "react";
-import { Calendar1, CircleDollarSign, Glasses, LucideIcon } from "lucide-react";
+import { BookOpenCheck, Calendar1, CircleDollarSign, Glasses, LucideIcon, School } from "lucide-react";
 
 export function Activity({ activity }: { activity: string }) {
   let icon;
   let title = "";
 
   switch (activity) {
-    case "enrollment":
+    case "NEW_ENROLLMENT":
       icon = Calendar1;
       title = "Recent Enrollment";
       break;
 
-    case "payment":
+    case " NEW_PAYMENT":
       icon = CircleDollarSign;
       title = "New Payment";
       break;
 
-    case "course":
+    case "NEW_COURSE":
       icon = Glasses;
       title = "New Course";
+      break;
+
+    case "NEW_QUIZ_SUBMISSION":
+      icon = BookOpenCheck;
+      title = "New Quiz Submission";
+      break;
+
+    case "NEW_ASSIGNMENT_SUBMISSION":
+      icon = School;
+      title = "New Assignment Submission";
       break;
   }
 

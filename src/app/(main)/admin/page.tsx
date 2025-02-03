@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleDollarSign, Glasses, User, Users } from "lucide-react";
+import { User } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { TopBar } from "@/components/shared/top-bar";
@@ -12,81 +12,20 @@ import { EnrollmentTrendGraph } from "@/components/admin/enrollment-trend-graph"
 import { PaymentsTable } from "@/components/admin/payments-table";
 
 import { useCurrentUser } from "@/hooks/useAccount";
-import { useMetrics, useSchedules } from "@/hooks/useDashboard";
-import { formatToNaira } from "@/utils/formatter";
+import { useActivities, useMetrics, useSchedules } from "@/hooks/useDashboard";
 
-import { activities, payments } from "@/data/mockData";
-import { processSchedules } from "@/utils/process-schedules";
+import { payments } from "@/data/mockData";
+import { processActivities, processDashboardMetrics, processSchedules } from "@/utils/processor";
 
 export default function AdminPage() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: metrics, isLoading: metricsLoading } = useMetrics();
   const { data: schedules, isLoading: schedulesLoading } = useSchedules();
+  const { data: activities, isLoading: activitiesLoading } = useActivities();
 
-  const dashboardMetrics = [
-    {
-      title: "Students",
-      icon: Users,
-
-      main: {
-        figure: metrics?.studentsCount ?? 0,
-        label: "Total",
-      },
-
-      sub: {
-        figure: metrics?.activeStudentsCount ?? 0,
-        label: "Active",
-      },
-    },
-
-    {
-      title: "Tutors",
-      icon: Users,
-
-      main: {
-        figure: metrics?.tutorsCount ?? 0,
-        label: "Total",
-      },
-
-      sub: {
-        figure: metrics?.activeTutorsCount ?? 0,
-        label: "Active",
-      },
-    },
-
-    {
-      title: "Courses offered",
-      icon: Glasses,
-
-      main: {
-        figure: metrics?.totalCoursesCount ?? 0,
-        label: "Courses",
-      },
-
-      sub: {
-        figure: metrics?.publishedCoursesCount ?? 0,
-        label: "Published",
-      },
-    },
-
-    {
-      title: "Payments",
-      icon: CircleDollarSign,
-
-      main: {
-        figure: formatToNaira(metrics?.creditedPayments ?? 0),
-        label: "Credited",
-      },
-
-      sub: {
-        figure: formatToNaira(metrics?.pendingPayments ?? 0),
-        label: "Pending",
-      },
-    },
-  ];
-  console.log("Schdules", schedules);
-
+  const dashboardMetrics = processDashboardMetrics(metrics) ?? [];
   const tutorsClasses = processSchedules(schedules?.records ?? []);
+  const recentActivities = processActivities(activities?.records ?? []);
 
   return (
     <section className="flex flex-col gap-5">
@@ -126,18 +65,24 @@ export default function AdminPage() {
                 {tutorsClasses.length > 0 ? (
                   tutorsClasses.map((tutorsClass, index) => <TutorClass classDetail={tutorsClass} key={index} />)
                 ) : (
-                  <p className="text-sm">No classes.</p>
+                  <p className="text-sm">No Classes</p>
                 )}
               </ActivitiesCard>
             )}
           </div>
 
           <div className="w-full max-w-[240px]">
-            <ActivitiesCard icon={User} title={"Recent Activities"}>
-              {activities.map((activity, index) => (
-                <Activity activity={activity} key={index} />
-              ))}
-            </ActivitiesCard>
+            {activitiesLoading ? (
+              <Skeleton className="w-full h-full" />
+            ) : (
+              <ActivitiesCard icon={User} title={"Recent Activities"}>
+                {recentActivities.length > 0 ? (
+                  recentActivities.map((activity, index) => <Activity activity={activity} key={index} />)
+                ) : (
+                  <p className="text-sm">No Recent Activity</p>
+                )}
+              </ActivitiesCard>
+            )}
           </div>
         </div>
       </div>
