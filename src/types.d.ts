@@ -113,3 +113,38 @@ type PaymentsTableProps = {
 type EnrollmentTrendGraphProps = {
   users: User[];
 };
+
+type Course = {
+  id: string;
+  title: string;
+  description: string;
+  thumbnailId: null;
+  status: string;
+  language: null;
+  category: null;
+  difficultyLevel: null;
+  enableCertification: boolean;
+  trackProgress: boolean;
+  enableComments: boolean;
+  additionalNotes: null;
+  prerequisites: never[];
+  createdById: string;
+  deletedAt: null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+type Schedule = {
+  id: string;
+  day: string;
+  startTime: Date;
+  endTime: Date;
+  courseId: string;
+  status: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: null;
+  course: Course;
+  user: User;
+};

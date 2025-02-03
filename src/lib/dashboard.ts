@@ -6,3 +6,10 @@ export async function getMetrics(options?: { signal?: AbortSignal }) {
   });
   return response.data.data;
 }
+
+export async function getSchedules(options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get("/class", {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}

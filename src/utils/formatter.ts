@@ -16,3 +16,19 @@ export function formatToNaira(amount: number) {
 
   return formattedAmount;
 }
+
+export function formatDateAndTime(isoDateString: Date) {
+  const date = new Date(isoDateString);
+  const formattedDate = date.toISOString().split("T")[0];
+
+  const hours = date.getUTCHours();
+  const minutes = date.getUTCMinutes();
+  const ampm = hours >= 12 ? "PM" : "AM";
+  const formattedHours = hours % 12 || 12;
+  const formattedTime = `${formattedHours}:${minutes.toString().padStart(2, "0")} ${ampm}`;
+
+  return {
+    date: formattedDate,
+    time: formattedTime,
+  };
+}

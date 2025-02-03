@@ -11,18 +11,19 @@ import { TutorClass } from "@/components/admin/tutor-class";
 import { EnrollmentTrendGraph } from "@/components/admin/enrollment-trend-graph";
 import { PaymentsTable } from "@/components/admin/payments-table";
 
-import { useCurrentUser } from "@/hooks/useCurrentUser";
-import { useMetrics } from "@/hooks/useMetrics";
+import { useCurrentUser } from "@/hooks/useAccount";
+import { useMetrics, useSchedules } from "@/hooks/useDashboard";
 import { formatToNaira } from "@/utils/formatter";
 
-import { activities, payments, tutorsClasses } from "@/data/mockData";
+import { activities, payments } from "@/data/mockData";
+import { processSchedules } from "@/utils/process-schedules";
 
 export default function AdminPage() {
-  const { data: user, isLoading: topbarLoading } = useCurrentUser();
+  const { data: user, isLoading: currentUserLoading } = useCurrentUser();
+  const { data: metrics, isLoading: metricsLoading } = useMetrics();
+  const { data: schedules, isLoading: schedulesLoading } = useSchedules();
 
-  const { data: metrics, isLoading: statsLoading } = useMetrics();
-
-  const Stats = [
+  const dashboardMetrics = [
     {
       title: "Students",
       icon: Users,
@@ -83,11 +84,14 @@ export default function AdminPage() {
       },
     },
   ];
+  console.log("Schdules", schedules);
+
+  const tutorsClasses = processSchedules(schedules?.records ?? []);
 
   return (
     <section className="flex flex-col gap-5">
       <div className="top-bar">
-        {topbarLoading ? (
+        {currentUserLoading ? (
           <Skeleton className="w-full rounded-xl h-[80px] " />
         ) : (
           <TopBar subtext={`Welcome Back, ${user?.firstName}`} user={user as User}>
@@ -96,13 +100,13 @@ export default function AdminPage() {
         )}
       </div>
 
-      <div className="stats">
-        {statsLoading ? (
+      <div className="dashboardMetrics">
+        {metricsLoading ? (
           <Skeleton className="w-full rounded-xl h-[140px]" />
         ) : (
           <div className="h-[140px] flex gap-4">
-            {Stats.map((stat, index) => (
-              <StatCard key={index} stat={stat} />
+            {dashboardMetrics.map((dashboardMetric, index) => (
+              <StatCard key={index} stat={dashboardMetric} />
             ))}
           </div>
         )}
@@ -111,15 +115,21 @@ export default function AdminPage() {
       <div className="graphs-classes-activities">
         <div className="h-[280px] flex gap-4">
           <div className="w-full">
-            {statsLoading ? <Skeleton className="w-full h-full" /> : <EnrollmentTrendGraph users={metrics?.users} />}
+            {metricsLoading ? <Skeleton className="w-full h-full" /> : <EnrollmentTrendGraph users={metrics?.users} />}
           </div>
 
           <div className="w-full max-w-[280px]">
-            <ActivitiesCard icon={User} title={"Tutors Class"}>
-              {tutorsClasses.map((tutorsClass, index) => (
-                <TutorClass classDetail={tutorsClass} key={index} />
-              ))}
-            </ActivitiesCard>
+            {schedulesLoading ? (
+              <Skeleton className="w-full h-full" />
+            ) : (
+              <ActivitiesCard icon={User} title={"Tutors Class"}>
+                {tutorsClasses.length > 0 ? (
+                  tutorsClasses.map((tutorsClass, index) => <TutorClass classDetail={tutorsClass} key={index} />)
+                ) : (
+                  <p className="text-sm">No classes.</p>
+                )}
+              </ActivitiesCard>
+            )}
           </div>
 
           <div className="w-full max-w-[240px]">

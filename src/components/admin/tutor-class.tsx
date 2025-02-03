@@ -2,7 +2,7 @@ import { Calendar, Clock, MoreVertical } from "lucide-react";
 
 export function TutorClass({ classDetail }: { classDetail: TutorClassProps }) {
   return (
-    <div className="flex items-center justify-between w-[400px]">
+    <div className="flex items-center justify-between w-full">
       <div className="flex items-center gap-2">
         <div className="w-8 h-8 rounded-full bg-light flex items-center justify-center">
           <span className="uppercase font-medium text-xs text-burnt">
