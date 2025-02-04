@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { getActivities, getMetrics, getPayments, getSchedules } from "@/lib/dashboard";
+import { getActivities, getMetrics, getPayments, getSchedules, getStudents, getStudentsOverview } from "@/lib/admin";
 
 export function useMetrics() {
   const query = useQuery({
@@ -33,6 +33,24 @@ export function usePayments() {
   const query = useQuery({
     queryKey: ["all-payments"],
     queryFn: getPayments,
+  });
+
+  return query;
+}
+
+export function useStudentsOverview() {
+  const query = useQuery({
+    queryKey: ["all-students-overview"],
+    queryFn: getStudentsOverview,
+  });
+
+  return query;
+}
+
+export function useStudents(filters?: StudentFilters) {
+  const query = useQuery({
+    queryKey: ["all-students", filters],
+    queryFn: ({ signal }) => getStudents({ signal, filters }),
   });
 
   return query;

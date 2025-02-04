@@ -30,7 +30,7 @@ export function SelectComponent({ options }: SelectComponentProps) {
         )}
       >
         <div className="flex justify-start items-center gap-2">
-          <User className="h-4 w-4" /> <SelectValue placeholder="User" />
+          <User className="h-4 w-4" /> <SelectValue placeholder="Users" />
         </div>
       </SelectTrigger>
       <SelectContent>

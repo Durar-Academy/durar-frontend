@@ -103,3 +103,5 @@ export const ADMIN_SIDEBAR_LINKS: ComponentConfig[] = [
 ];
 
 export const PAYMENT_STATUSES = ["pending", "completed", "refunded", "failed"];
+
+export const STUDENT_STATUSES = ["active", "inactive", "suspended", "unverified"];

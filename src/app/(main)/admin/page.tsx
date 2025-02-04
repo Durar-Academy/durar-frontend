@@ -12,7 +12,7 @@ import { EnrollmentTrendGraph } from "@/components/admin/enrollment-trend-graph"
 import { PaymentsTable } from "@/components/admin/payments-table";
 
 import { useCurrentUser } from "@/hooks/useAccount";
-import { useActivities, useMetrics, usePayments, useSchedules } from "@/hooks/useDashboard";
+import { useActivities, useMetrics, usePayments, useSchedules } from "@/hooks/useAdmin";
 import { processActivities, processDashboardMetrics, processPayments, processSchedules } from "@/utils/processor";
 
 export default function AdminPage() {
@@ -33,7 +33,7 @@ export default function AdminPage() {
         {currentUserLoading ? (
           <Skeleton className="w-full rounded-xl h-[80px] " />
         ) : (
-          <TopBar subtext={`Welcome Back, ${user?.firstName}`} user={user as User}>
+          <TopBar subtext={`Welcome Back, ${user?.role === "admin" ? "Admin" : user?.firstName}`} user={user as User}>
             Dashboard
           </TopBar>
         )}

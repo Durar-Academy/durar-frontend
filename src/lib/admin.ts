@@ -27,3 +27,21 @@ export async function getPayments(options?: { signal?: AbortSignal }) {
   });
   return response.data.data;
 }
+
+export async function getStudentsOverview(options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get("/metrics/student", {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}
+
+export async function getStudents(options?: { signal?: AbortSignal; filters?: StudentFilters }) {
+  const params = new URLSearchParams();
+  if (options?.filters?.search) params.append("search", options.filters.search);
+  if (options?.filters?.status) params.append("status", options.filters.status);
+
+  const response = await axiosInstance.get(`/user/students?${params.toString()}`, {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}

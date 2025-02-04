@@ -32,3 +32,9 @@ export function formatDateAndTime(isoDateString: Date) {
     time: formattedTime,
   };
 }
+
+export function formatToReadableId(id: string, prefix: string): string {
+  const numbers = id.replace(/[^0-9]/g, "");
+  const lastFiveDigits = numbers.slice(-5).padStart(5, "0");
+  return `${prefix}-${lastFiveDigits}`;
+}

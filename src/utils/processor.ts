@@ -1,6 +1,7 @@
-import { CircleDollarSign, Glasses, Users } from "lucide-react";
+import React from "react";
+import { CheckCircle, CircleDollarSign, Glasses, GraduationCap, Info, List, Users } from "lucide-react";
 
-import { formatDateAndTime } from "@/utils/formatter";
+import { formatDateAndTime, formatToReadableId } from "@/utils/formatter";
 import { formatToNaira } from "@/utils/formatter";
 
 export function processSchedules(schedules: Schedule[]) {
@@ -115,7 +116,7 @@ export const processActivities = (activities: Activity[]) => {
 
 export const processPayments = (payments: Payment[]) => {
   const extractedPayments = payments.map((payment) => {
-    const id = payment.reference;
+    const id = formatToReadableId(payment.chargeId, "INV");
     const amount = payment.charge.amount;
     const { date: dateIssued } = formatDateAndTime(payment.charge.createdAt);
     const { date: dueDate } = formatDateAndTime(payment.charge.dueAt);
@@ -133,4 +134,52 @@ export const processPayments = (payments: Payment[]) => {
   });
 
   return extractedPayments;
+};
+
+export const processStudentsOverview = (studentsOverview: StudentsOverview): OverviewCardProps[] => {
+  return [
+    {
+      title: "Total Students",
+      figure: studentsOverview.students,
+      children: React.createElement(List, { key: "icon", className: "w-6 h-6 text-orange" }),
+    },
+
+    {
+      title: "Active Students",
+      figure: studentsOverview.activeStudents,
+      children: React.createElement(CheckCircle, { key: "icon", className: "w-6 h-6 text-success" }),
+    },
+
+    {
+      title: "Graduated",
+      figure: studentsOverview.graduatedStudents,
+      children: React.createElement(GraduationCap, { key: "icon", className: "w-6 h-6 text-orange" }),
+    },
+
+    {
+      title: "Inactive",
+      figure: studentsOverview.inactiveStudents,
+      children: React.createElement(Info, { key: "icon", className: "w-6 h-6 text-danger" }),
+    },
+  ];
+};
+
+export const processStudents = (students: User[]) => {
+  const extractedStudents = students.map((student) => {
+    const id = formatToReadableId(student.id, "STND");
+    const name = `${student.firstName} ${student.lastName}`;
+    const category = student?.gender ?? "Unspecified";
+    const email = student.email;
+    const status = student.status;
+
+    return {
+      id,
+      name,
+      category,
+      email,
+      status,
+    };
+  });
+
+  return extractedStudents;
 };

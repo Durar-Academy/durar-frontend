@@ -67,6 +67,8 @@ type User = {
   deletedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
+  paypalCustomerId: string | null;
+  paypalCardCustomerId: string | null;
 };
 
 type StatCardProps = {
@@ -209,4 +211,38 @@ type Charge = {
   createdAt: Date;
   updatedAt: Date;
   user: User;
+};
+
+type OverviewCardProps = {
+  title: string;
+  figure: number;
+  children: React.ReactNode;
+};
+
+type StudentsOverview = {
+  inactiveStudents: number;
+  activeStudents: number;
+  students: number;
+  graduatedStudents: number;
+
+  coursesCount: number;
+  coursesCompleted: number;
+  coursesIncomplete: number;
+  completion: number;
+  upcomingCharges: number;
+};
+
+type StudentsTableProps = {
+  id: string;
+  name: string;
+  category: string;
+  email: string;
+  status: StudentStatus;
+}[];
+
+type StudentStatus = "active" | "inactive" | "unverified" | "suspended";
+
+type StudentFilters = {
+  search?: string;
+  status?: StudentStatus;
 };
