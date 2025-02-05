@@ -1,5 +1,18 @@
 import React from "react";
-import { CheckCircle, CircleDollarSign, Glasses, GraduationCap, Info, List, Users } from "lucide-react";
+import {
+  CheckCircle,
+  CircleDollarSign,
+  Glasses,
+  GraduationCap,
+  Info,
+  Layers2,
+  List,
+  Logs,
+  MessageSquareText,
+  NotepadText,
+  PanelsTopLeft,
+  Users,
+} from "lucide-react";
 
 import { formatDateAndTime, formatToNaira } from "@/utils/formatter";
 
@@ -181,4 +194,20 @@ export const processStudents = (students: Student[]) => {
   });
 
   return extractedStudents;
+};
+
+export const processStudentManagementLinks = (studentId: string) => {
+  return [
+    { label: "Overview Section", icon: PanelsTopLeft, url: `/admin/students/${studentId}` },
+
+    { label: "Course Information", icon: Layers2, url: `/admin/students/${studentId}/course-information` },
+
+    { label: "Activity Log", icon: Logs, url: `/admin/students/${studentId}/activity-log` },
+
+    { label: "Payment Information", icon: CircleDollarSign, url: `/admin/students/${studentId}/payment-information` },
+
+    { label: "Assignment & Grades", icon: NotepadText, url: `/admin/students/${studentId}/assignment-grades` },
+
+    { label: "Comments & Notes", icon: MessageSquareText, url: `/admin/students/${studentId}/comments-notes` },
+  ];
 };

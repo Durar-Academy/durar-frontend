@@ -18,12 +18,12 @@ export function SelectComponent({ options }: SelectComponentProps) {
 
   let selectValue;
 
-  if (pathname.startsWith("/admin/students") || pathname.startsWith("/admin/tutors")) {
+  if (pathname.includes("/admin/students") || pathname.includes("/admin/tutors")) {
     selectValue = pathname.split("/").slice(0, 3).join("/");
   } else selectValue = undefined;
 
   return (
-    <Select onValueChange={handleChange} value={selectValue}>
+    <Select onValueChange={handleChange} value={selectValue} key={pathname}>
       <SelectTrigger
         className={cn(
           "shadow-none p-3 h-fit rounded-md  text-white text-base border-0 focus:border-0 focus:ring-0 hover:bg-white/20",

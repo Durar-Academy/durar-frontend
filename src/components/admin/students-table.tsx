@@ -86,7 +86,7 @@ export function StudentsTable({ students }: { students: StudentsTableProps }) {
                   </TableCell>
                   <TableCell>
                     <Link href={`/admin/students/${student.id}`}>
-                      <button className="font-bold text-orange">View</button>
+                      <button className="font-bold text-orange hover:underline">View</button>
                     </Link>
                   </TableCell>
                 </TableRow>

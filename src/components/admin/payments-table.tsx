@@ -67,7 +67,7 @@ export function PaymentsTable({ payments }: { payments: PaymentsTableProps }) {
                     {payment.status}
                   </TableCell>
                   <TableCell>
-                    <button className="font-bold text-orange">View</button>
+                    <button className="font-bold text-orange hover:underline">View</button>
                   </TableCell>
                 </TableRow>
               ))}
