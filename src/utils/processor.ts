@@ -164,7 +164,7 @@ export const processStudentsOverview = (studentsOverview: StudentsOverview): Ove
   ];
 };
 
-export const processStudents = (students: User[]) => {
+export const processStudents = (students: Student[]) => {
   const extractedStudents = students.map((student) => {
     const id = formatToReadableId(student.id, "STND");
     const name = `${student.firstName} ${student.lastName}`;

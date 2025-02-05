@@ -19,7 +19,7 @@ const config: Config = {
         green: "#173A01",
         "light-green": "#10A37F",
         success: "#4ACA67",
-        "lemon": "#056F2F",
+        "success-light": "#056F2F",
         teal: "#0954AC",
         danger: "#DD132B",
         high: "#263238",

@@ -102,6 +102,36 @@ export const ADMIN_SIDEBAR_LINKS: ComponentConfig[] = [
   },
 ];
 
-export const PAYMENT_STATUSES = ["pending", "completed", "refunded", "failed"];
+export const PAYMENT_STATUSES = [
+  { status: "pending", label: "Pending" },
+  { status: "failed", label: "Failed" },
+  { status: "refunded", label: "Refunded" },
+  { status: "completed", label: "Completed" },
+];
 
-export const STUDENT_STATUSES = ["active", "inactive", "suspended", "unverified"];
+export const STUDENT_STATUSES = [
+  {
+    status: "unverified",
+    label: "Unverified",
+  },
+
+  {
+    status: "active",
+    label: "Active",
+  },
+
+  {
+    status: "suspended",
+    label: "Suspended",
+  },
+
+  {
+    status: "deactivated",
+    label: "Deactivated",
+  },
+
+  {
+    status: "graduated",
+    label: "Graduated",
+  },
+];

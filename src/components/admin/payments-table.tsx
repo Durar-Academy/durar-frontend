@@ -20,8 +20,8 @@ export function PaymentsTable({ payments }: { payments: PaymentsTableProps }) {
 
             <SelectContent>
               {PAYMENT_STATUSES.map((paymentStatus, index) => (
-                <SelectItem value={paymentStatus} key={paymentStatus + index} className="capitalize">
-                  {paymentStatus}
+                <SelectItem value={paymentStatus.status} key={paymentStatus.status + index} className="capitalize">
+                  {paymentStatus.label}
                 </SelectItem>
               ))}
             </SelectContent>

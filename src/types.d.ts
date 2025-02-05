@@ -240,9 +240,30 @@ type StudentsTableProps = {
   status: StudentStatus;
 }[];
 
-type StudentStatus = "active" | "inactive" | "unverified" | "suspended";
+type StudentStatus = "unverified" | "active" | "suspended" | "deactivated" | "graduated";
 
 type StudentFilters = {
   search?: string;
   status?: StudentStatus;
+};
+
+type Student = {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  middleName?: string;
+  gender: "male" | "female";
+  phone: string;
+  country: string;
+  emailVerifiedAt: Date | null;
+  status: StudentStatus;
+  lastLoginAt: string | null;
+  role: "student";
+  profilePictureId: string | null;
+  deletedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+  paypalCustomerId: string | null;
+  paypalCardCustomerId: string | null;
 };

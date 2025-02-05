@@ -32,8 +32,8 @@ export function StudentsTable({ students }: { students: StudentsTableProps }) {
 
             <SelectContent>
               {STUDENT_STATUSES.map((studentStatus, index) => (
-                <SelectItem value={studentStatus} key={studentStatus + index} className="capitalize">
-                  {studentStatus}
+                <SelectItem value={studentStatus.status} key={studentStatus.status + index}>
+                  {studentStatus.label}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -74,8 +74,9 @@ export function StudentsTable({ students }: { students: StudentsTableProps }) {
                     className={cn(
                       "capitalize font-medium text-high",
                       student.status === "active" && "text-success",
-                      student.status === "inactive" && "text-orange",
-                      student.status === "suspended" && "text-danger"
+                      student.status === "unverified" && "text-orange",
+                      (student.status === "suspended" || student.status === "deactivated") && "text-danger",
+                      student.status === "graduated" && "text-success-light"
                     )}
                   >
                     {student.status}
