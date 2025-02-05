@@ -1,8 +1,7 @@
 import React from "react";
 import { CheckCircle, CircleDollarSign, Glasses, GraduationCap, Info, List, Users } from "lucide-react";
 
-import { formatDateAndTime, formatToReadableId } from "@/utils/formatter";
-import { formatToNaira } from "@/utils/formatter";
+import { formatDateAndTime, formatToNaira } from "@/utils/formatter";
 
 export function processSchedules(schedules: Schedule[]) {
   const extractedSchedulesDetails = schedules.map((schedule) => {
@@ -116,7 +115,7 @@ export const processActivities = (activities: Activity[]) => {
 
 export const processPayments = (payments: Payment[]) => {
   const extractedPayments = payments.map((payment) => {
-    const id = formatToReadableId(payment.chargeId, "INV");
+    const id = payment.charge.id;
     const amount = payment.charge.amount;
     const { date: dateIssued } = formatDateAndTime(payment.charge.createdAt);
     const { date: dueDate } = formatDateAndTime(payment.charge.dueAt);
@@ -166,7 +165,7 @@ export const processStudentsOverview = (studentsOverview: StudentsOverview): Ove
 
 export const processStudents = (students: Student[]) => {
   const extractedStudents = students.map((student) => {
-    const id = formatToReadableId(student.id, "STND");
+    const id = student.id;
     const name = `${student.firstName} ${student.lastName}`;
     const category = student?.gender ?? "Unspecified";
     const email = student.email;

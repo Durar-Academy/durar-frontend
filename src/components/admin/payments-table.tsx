@@ -3,7 +3,7 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 import { cn } from "@/lib/utils";
-import { formatToNaira } from "@/utils/formatter";
+import { formatToNaira, formatToReadableId } from "@/utils/formatter";
 import { PAYMENT_STATUSES } from "@/data/constants";
 
 export function PaymentsTable({ payments }: { payments: PaymentsTableProps }) {
@@ -50,7 +50,7 @@ export function PaymentsTable({ payments }: { payments: PaymentsTableProps }) {
             <TableBody className="space-y-3">
               {payments.map((payment) => (
                 <TableRow className="text-sm text-high bg-offwhite h-12" key={payment.id + payment.status}>
-                  <TableCell className="capitalize">{payment.id}</TableCell>
+                  <TableCell className="capitalize">{formatToReadableId(payment.id, "INV")}</TableCell>
                   <TableCell>{formatToNaira(payment.amount)}</TableCell>
                   <TableCell className="text-center">
                     {payment.dateIssued} - {payment.dueDate}

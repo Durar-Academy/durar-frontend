@@ -1,6 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { getActivities, getMetrics, getPayments, getSchedules, getStudents, getStudentsOverview } from "@/lib/admin";
+import {
+  getActivities,
+  getMetrics,
+  getPayments,
+  getSchedules,
+  getStudents,
+  getStudentsOverview,
+  getUser,
+} from "@/lib/admin";
 
 export function useMetrics() {
   const query = useQuery({
@@ -50,7 +58,16 @@ export function useStudentsOverview() {
 export function useStudents(filters?: StudentFilters) {
   const query = useQuery({
     queryKey: ["all-students", filters],
-    queryFn: ({ signal }) => getStudents({ signal, filters }),
+    queryFn: () => getStudents({ filters }),
+  });
+
+  return query;
+}
+
+export function useStudent(studentId: string) {
+  const query = useQuery({
+    queryKey: ["students", studentId],
+    queryFn: () => getUser(studentId),
   });
 
   return query;

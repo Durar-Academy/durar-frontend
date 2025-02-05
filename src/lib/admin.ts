@@ -45,3 +45,10 @@ export async function getStudents(options?: { signal?: AbortSignal; filters?: St
   });
   return response.data.data;
 }
+
+export async function getUser(userId: string, options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get(`/user/${userId}`, {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}

@@ -10,7 +10,7 @@ export function SelectComponent({ options }: SelectComponentProps) {
   const router = useRouter();
   const pathname = usePathname();
 
-  const isAnyOptionActive = options.some((option) => pathname === option.value);
+  const isAnyOptionActive = options.some((option) => pathname.startsWith(option.value));
 
   const handleChange = (value: string) => {
     router.push(value);
@@ -18,8 +18,9 @@ export function SelectComponent({ options }: SelectComponentProps) {
 
   let selectValue;
 
-  if (pathname === "/admin/students" || pathname === "/admin/tutors") selectValue = pathname;
-  else selectValue = undefined;
+  if (pathname.startsWith("/admin/students") || pathname.startsWith("/admin/tutors")) {
+    selectValue = pathname.split("/").slice(0, 3).join("/");
+  } else selectValue = undefined;
 
   return (
     <Select onValueChange={handleChange} value={selectValue}>

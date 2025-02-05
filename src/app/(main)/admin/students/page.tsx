@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronRight, Plus } from "lucide-react";
+import Link from "next/link";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
@@ -28,7 +29,10 @@ export default function StudentsManagementPage() {
         ) : (
           <TopBar subtext="View & manage all students" user={user as User}>
             <p className="flex items-center gap-1">
-              <span>Users</span> <ChevronRight className="h-4 w-4" /> <span>Students</span>
+              <Link href={"/admin"} className="hover:underline">
+                Users
+              </Link>
+              <ChevronRight className="h-4 w-4" /> <span>Students</span>
             </p>
           </TopBar>
         )}

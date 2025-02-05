@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { Download, Search } from "lucide-react";
+
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -6,6 +8,7 @@ import { Input } from "@/components/ui/input";
 
 import { cn } from "@/lib/utils";
 import { STUDENT_STATUSES } from "@/data/constants";
+import { formatToReadableId } from "@/utils/formatter";
 
 export function StudentsTable({ students }: { students: StudentsTableProps }) {
   return (
@@ -66,7 +69,7 @@ export function StudentsTable({ students }: { students: StudentsTableProps }) {
             <TableBody className="space-y-3">
               {students.map((student) => (
                 <TableRow className="text-sm text-high bg-offwhite h-12" key={student.id + student.status}>
-                  <TableCell className="capitalize">{student.id}</TableCell>
+                  <TableCell className="capitalize">{formatToReadableId(student.id, "STND")}</TableCell>
                   <TableCell className="capitalize">{student.name}</TableCell>
                   <TableCell className="capitalize">{student.category}</TableCell>
                   <TableCell>{student.email}</TableCell>
@@ -82,7 +85,9 @@ export function StudentsTable({ students }: { students: StudentsTableProps }) {
                     {student.status}
                   </TableCell>
                   <TableCell>
-                    <button className="font-bold text-orange">View</button>
+                    <Link href={`/admin/students/${student.id}`}>
+                      <button className="font-bold text-orange">View</button>
+                    </Link>
                   </TableCell>
                 </TableRow>
               ))}
