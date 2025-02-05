@@ -215,11 +215,11 @@ type Charge = {
 
 type OverviewCardProps = {
   title: string;
-  figure: number;
+  figure: string;
   children: React.ReactNode;
 };
 
-type StudentsOverview = {
+type StudentsMetrics = {
   inactiveStudents: number;
   activeStudents: number;
   students: number;

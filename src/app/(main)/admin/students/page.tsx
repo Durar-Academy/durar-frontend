@@ -10,15 +10,15 @@ import { OverviewCard } from "@/components/admin/overview-card";
 import { StudentsTable } from "@/components/admin/students-table";
 
 import { useCurrentUser } from "@/hooks/useAccount";
-import { useStudents, useStudentsOverview } from "@/hooks/useAdmin";
-import { processStudents, processStudentsOverview } from "@/utils/processor";
+import { useStudents, useStudentsMetrics } from "@/hooks/useAdmin";
+import { processStudents, processStudentsMetrics } from "@/utils/processor";
 
 export default function StudentsManagementPage() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
-  const { data: overview, isLoading: overviewLoading } = useStudentsOverview();
+  const { data: studentsMetrics, isLoading: studentsMetricsLoading } = useStudentsMetrics();
   const { data: students, isLoading: studentsLoading } = useStudents();
 
-  const studentsOverviews = processStudentsOverview(overview ?? []);
+  const allStudentsMetrics = processStudentsMetrics(studentsMetrics ?? []);
   const allStudents = processStudents(students?.records ?? []);
 
   return (
@@ -40,7 +40,7 @@ export default function StudentsManagementPage() {
 
       <div className="rounded-xl p-6 border border-shade-2 bg-white flex flex-col gap-4">
         <div className="flex justify-between items-center">
-          <h3 className="text-low font-medium text-xl ">Students Overview</h3>
+          <h3 className="text-low font-medium text-xl">Students Overview</h3>
 
           <div>
             <Button variant={"_default"} className="bg-orange hover:bg-burnt px-4 py-2">
@@ -52,12 +52,12 @@ export default function StudentsManagementPage() {
         </div>
 
         <div className="students-overview-cards">
-          {overviewLoading ? (
+          {studentsMetricsLoading ? (
             <Skeleton className="w-full rounded-xl h-24" />
           ) : (
             <div className="flex gap-6 h-24">
-              {studentsOverviews.map((studentOverview, index) => (
-                <OverviewCard overview={studentOverview} key={index} />
+              {allStudentsMetrics.map((studentMetrics, index) => (
+                <OverviewCard overview={studentMetrics} key={index} />
               ))}
             </div>
           )}

@@ -10,8 +10,6 @@ import { useStudent } from "@/hooks/useAdmin";
 export default function StudentManagementPage() {
   const { studentId } = useParams();
 
-  console.log(studentId);
-
   const { data: student, isLoading: studentLoading } = useStudent(studentId as string);
 
   return (

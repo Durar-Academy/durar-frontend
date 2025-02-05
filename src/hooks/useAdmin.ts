@@ -5,8 +5,9 @@ import {
   getMetrics,
   getPayments,
   getSchedules,
+  getStudentMetrics,
   getStudents,
-  getStudentsOverview,
+  getStudentsMetric,
   getUser,
 } from "@/lib/admin";
 
@@ -46,10 +47,10 @@ export function usePayments() {
   return query;
 }
 
-export function useStudentsOverview() {
+export function useStudentsMetrics() {
   const query = useQuery({
     queryKey: ["all-students-overview"],
-    queryFn: getStudentsOverview,
+    queryFn: getStudentsMetric,
   });
 
   return query;
@@ -66,8 +67,17 @@ export function useStudents(filters?: StudentFilters) {
 
 export function useStudent(studentId: string) {
   const query = useQuery({
-    queryKey: ["students", studentId],
+    queryKey: ["student", studentId],
     queryFn: () => getUser(studentId),
+  });
+
+  return query;
+}
+
+export function useStudentMetrics(studentId: string) {
+  const query = useQuery({
+    queryKey: ["student-metrics", studentId],
+    queryFn: () => getStudentMetrics(studentId),
   });
 
   return query;

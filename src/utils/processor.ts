@@ -148,29 +148,29 @@ export const processPayments = (payments: Payment[]) => {
   return extractedPayments;
 };
 
-export const processStudentsOverview = (studentsOverview: StudentsOverview): OverviewCardProps[] => {
+export const processStudentsMetrics = (studentsMetrics: StudentsMetrics): OverviewCardProps[] => {
   return [
     {
       title: "Total Students",
-      figure: studentsOverview.students,
+      figure: String(studentsMetrics.students),
       children: React.createElement(List, { key: "icon", className: "w-6 h-6 text-orange" }),
     },
 
     {
       title: "Active Students",
-      figure: studentsOverview.activeStudents,
+      figure: String(studentsMetrics.activeStudents),
       children: React.createElement(CheckCircle, { key: "icon", className: "w-6 h-6 text-success" }),
     },
 
     {
       title: "Graduated",
-      figure: studentsOverview.graduatedStudents,
+      figure: String(studentsMetrics.graduatedStudents),
       children: React.createElement(GraduationCap, { key: "icon", className: "w-6 h-6 text-orange" }),
     },
 
     {
       title: "Inactive",
-      figure: studentsOverview.inactiveStudents,
+      figure: String(studentsMetrics.inactiveStudents),
       children: React.createElement(Info, { key: "icon", className: "w-6 h-6 text-danger" }),
     },
   ];
@@ -209,5 +209,27 @@ export const processStudentManagementLinks = (studentId: string) => {
     { label: "Assignment & Grades", icon: NotepadText, url: `/admin/students/${studentId}/assignment-grades` },
 
     { label: "Comments & Notes", icon: MessageSquareText, url: `/admin/students/${studentId}/comments-notes` },
+  ];
+};
+
+export const processStudentMetrics = (studentMetrics: StudentsMetrics): OverviewCardProps[] => {
+  return [
+    {
+      title: "Total Courses",
+      figure: String(studentMetrics.coursesCount),
+      children: React.createElement(List, { key: "icon", className: "w-6 h-6 text-orange" }),
+    },
+
+    {
+      title: "Completion",
+      figure: `${studentMetrics.completion}%`,
+      children: React.createElement(CheckCircle, { key: "icon", className: "w-6 h-6 text-success" }),
+    },
+
+    {
+      title: "Courses Completed",
+      figure: String(studentMetrics.coursesCompleted),
+      children: React.createElement(GraduationCap, { key: "icon", className: "w-6 h-6 text-orange" }),
+    },
   ];
 };
