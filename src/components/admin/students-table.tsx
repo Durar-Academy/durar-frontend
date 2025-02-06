@@ -53,21 +53,21 @@ export function StudentsTable({ students }: { students: StudentsTableProps }) {
       </div>
 
       <div className="h-[388px] overflow-y-scroll hide-scrollbar">
-        {true ? (
-          <Table>
-            <TableHeader>
-              <TableRow className="text-low text-sm font-semibold">
-                <TableHead>Student ID</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead>Gender</TableHead>
-                <TableHead>Email</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Action</TableHead>
-              </TableRow>
-            </TableHeader>
+        <Table>
+          <TableHeader>
+            <TableRow className="text-low text-sm font-semibold">
+              <TableHead>Student ID</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Gender</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Status</TableHead>
+              <TableHead>Action</TableHead>
+            </TableRow>
+          </TableHeader>
 
-            <TableBody className="space-y-3">
-              {students.map((student) => (
+          <TableBody className="space-y-3">
+            {students.length > 0 ? (
+              students.map((student) => (
                 <TableRow className="text-sm text-high bg-offwhite h-12" key={student.id + student.status}>
                   <TableCell className="capitalize">{formatToReadableId(student.id, "STND")}</TableCell>
                   <TableCell className="capitalize">{student.name}</TableCell>
@@ -90,12 +90,12 @@ export function StudentsTable({ students }: { students: StudentsTableProps }) {
                     </Link>
                   </TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        ) : (
-          <p>No Students Found</p>
-        )}
+              ))
+            ) : (
+              <p className="text-sm mt-4 text-low">No Students Found</p>
+            )}
+          </TableBody>
+        </Table>
       </div>
     </div>
   );

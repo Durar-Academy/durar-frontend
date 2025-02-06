@@ -267,3 +267,23 @@ type Student = {
   paypalCustomerId: string | null;
   paypalCardCustomerId: string | null;
 };
+
+type StudentCoursesTableProps = {
+  id: string;
+  courseTitle: string;
+  progress: string;
+  startDate: string;
+  dueDate: string;
+  completionDate: string;
+}[];
+
+type Courses = {
+  id: string;
+  courseId: string;
+  userId: string;
+  deletedAt: Date | null;
+  createdAt: Date | null;
+  updatedAt: Date | null;
+  course: Course;
+  user: User;
+};

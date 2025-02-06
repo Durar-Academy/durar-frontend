@@ -222,7 +222,7 @@ export const processStudentMetrics = (studentMetrics: StudentsMetrics): Overview
 
     {
       title: "Completion",
-      figure: `${studentMetrics.completion}%`,
+      figure: `${studentMetrics.completion ?? 0}%`,
       children: React.createElement(CheckCircle, { key: "icon", className: "w-6 h-6 text-success" }),
     },
 
@@ -232,4 +232,26 @@ export const processStudentMetrics = (studentMetrics: StudentsMetrics): Overview
       children: React.createElement(GraduationCap, { key: "icon", className: "w-6 h-6 text-orange" }),
     },
   ];
+};
+
+export const processStudentCourses = (courses: Courses[]) => {
+  const extractedCourses = courses.map(({ course }) => {
+    const id = course.id;
+    const courseTitle = course.title;
+    const progress = "-";
+    const startDate = "-";
+    const dueDate = "-";
+    const completionDate = "-";
+
+    return {
+      id,
+      courseTitle,
+      progress,
+      startDate,
+      dueDate,
+      completionDate,
+    };
+  });
+
+  return extractedCourses;
 };

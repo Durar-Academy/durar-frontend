@@ -42,7 +42,7 @@ export default function StudentManagementTemplate({ children }: { children: Reac
       </div>
 
       <div className="flex gap-3 h-[720px]">
-        <div className="rounded-xl p-6 bg-white border border-shade-2 h-full flex flex-col gap-4 w-full max-w-[280px] text-sm">
+        <div className="rounded-xl p-6 bg-white border border-shade-2 h-full flex flex-col gap-4 w-full max-w-[280px] text-sm shrink-0">
           {studentProfileLinks.map((studentProfileLink, index) => (
             <Link
               key={index}

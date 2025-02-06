@@ -59,3 +59,10 @@ export async function getStudentMetrics(studentId: string, options?: { signal?: 
   });
   return response.data.data;
 }
+
+export async function getStudentCourses(studentId: string, options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get(`user-course?role=student&userId=${studentId}`, {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}
