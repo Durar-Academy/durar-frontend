@@ -5,6 +5,7 @@ import {
   getMetrics,
   getPayments,
   getSchedules,
+  getStudentActivities,
   getStudentCourses,
   getStudentMetrics,
   getStudents,
@@ -88,6 +89,15 @@ export function useStudentCourses(studentId: string) {
   const query = useQuery({
     queryKey: ["student-courses", studentId],
     queryFn: () => getStudentCourses(studentId),
+  });
+
+  return query;
+}
+
+export function useStudentActivities(studentId: string) {
+  const query = useQuery({
+    queryKey: ["student-activities", studentId],
+    queryFn: () => getStudentActivities(studentId),
   });
 
   return query;
