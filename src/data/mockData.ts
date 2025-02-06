@@ -168,3 +168,22 @@ export const payments = [
     status: "pending",
   },
 ];
+
+export const notes = [
+  {
+    text: "Your pronunciation is getting better, but keep practicing.",
+    date: "2025-02-01T10:15:45.123Z",
+  },
+  {
+    text: "Great progress! Focus a bit more on the vowel sounds.",
+    date: "2025-02-02T14:48:30.456Z",
+  },
+  {
+    text: "Remember to emphasize the correct syllables for clarity.",
+    date: "2025-02-04T11:05:22.789Z",
+  },
+  {
+    text: "You're almost there! Try slowing down your speech for better pronunciation.",
+    date: "2025-02-05T17:20:55.987Z",
+  },
+];
