@@ -8,20 +8,20 @@ export function StudentCoursesTable({ courses }: { courses: StudentCoursesTableP
       </div>
 
       <div className="h-[480px] overflow-y-scroll hide-scrollbar">
-        <Table>
-          <TableHeader>
-            <TableRow className="text-low text-sm font-semibold">
-              <TableHead>Course Name</TableHead>
-              <TableHead>Progress</TableHead>
-              <TableHead>Start Date</TableHead>
-              <TableHead>Date Completed</TableHead>
-              <TableHead>Due Date</TableHead>
-            </TableRow>
-          </TableHeader>
+        {courses.length > 0 ? (
+          <Table>
+            <TableHeader>
+              <TableRow className="text-low text-sm font-semibold">
+                <TableHead>Course Name</TableHead>
+                <TableHead>Progress</TableHead>
+                <TableHead>Start Date</TableHead>
+                <TableHead>Date Completed</TableHead>
+                <TableHead>Due Date</TableHead>
+              </TableRow>
+            </TableHeader>
 
-          <TableBody className="space-y-3">
-            {courses.length > 0 ? (
-              courses.map((course) => (
+            <TableBody className="space-y-3">
+              {courses.map((course) => (
                 <TableRow className="text-sm text-high bg-offwhite h-12" key={course.id + course.courseTitle}>
                   <TableCell className="capitalize">{course.courseTitle}</TableCell>
                   <TableCell>{course.progress}</TableCell>
@@ -29,12 +29,12 @@ export function StudentCoursesTable({ courses }: { courses: StudentCoursesTableP
                   <TableCell>{course.completionDate}</TableCell>
                   <TableCell>{course.dueDate}</TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <p className="text-sm mt-4 text-low">No Courses Found</p>
-            )}
-          </TableBody>
-        </Table>
+              ))}
+            </TableBody>
+          </Table>
+        ) : (
+          <p className="text-sm mt-4 text-low">No Courses Found</p>
+        )}
       </div>
     </div>
   );

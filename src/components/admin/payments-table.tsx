@@ -34,21 +34,21 @@ export function PaymentsTable({ payments }: { payments: PaymentsTableProps }) {
       </div>
 
       <div className="h-[280px] overflow-y-scroll hide-scrollbar">
-        <Table>
-          <TableHeader>
-            <TableRow className="text-low text-sm font-semibold">
-              <TableHead>Invoice ID</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead className="text-center">Date Issued - Due Date </TableHead>
-              <TableHead className="text-center">Payment Method</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Action</TableHead>
-            </TableRow>
-          </TableHeader>
+        {payments.length > 0 ? (
+          <Table>
+            <TableHeader>
+              <TableRow className="text-low text-sm font-semibold">
+                <TableHead>Invoice ID</TableHead>
+                <TableHead>Amount</TableHead>
+                <TableHead className="text-center">Date Issued - Due Date </TableHead>
+                <TableHead className="text-center">Payment Method</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Action</TableHead>
+              </TableRow>
+            </TableHeader>
 
-          <TableBody className="space-y-3">
-            {payments.length > 0 ? (
-              payments.map((payment) => (
+            <TableBody className="space-y-3">
+              {payments.map((payment) => (
                 <TableRow className="text-sm text-high bg-offwhite h-12" key={payment.id + payment.status}>
                   <TableCell className="capitalize">{formatToReadableId(payment.id, "INV")}</TableCell>
                   <TableCell>{formatToNaira(payment.amount)}</TableCell>
@@ -70,12 +70,12 @@ export function PaymentsTable({ payments }: { payments: PaymentsTableProps }) {
                     <button className="font-bold text-orange hover:underline">View</button>
                   </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <p className="text-sm mt-4 text-low">No Payments found</p>
-            )}
-          </TableBody>
-        </Table>
+              ))}
+            </TableBody>
+          </Table>
+        ) : (
+          <p className="text-sm mt-4 text-low">No Payments found</p>
+        )}
       </div>
     </div>
   );
