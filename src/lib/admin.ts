@@ -54,14 +54,14 @@ export async function getUser(userId: string, options?: { signal?: AbortSignal }
 }
 
 export async function getStudentMetrics(studentId: string, options?: { signal?: AbortSignal }) {
-  const response = await axiosInstance.get(`metrics/student?id=${studentId}`, {
+  const response = await axiosInstance.get(`/metrics/student?id=${studentId}`, {
     signal: options?.signal,
   });
   return response.data.data;
 }
 
 export async function getStudentCourses(studentId: string, options?: { signal?: AbortSignal }) {
-  const response = await axiosInstance.get(`user-course?role=student&userId=${studentId}`, {
+  const response = await axiosInstance.get(`/user-course?role=student&userId=${studentId}`, {
     signal: options?.signal,
   });
   return response.data.data;
@@ -69,6 +69,13 @@ export async function getStudentCourses(studentId: string, options?: { signal?: 
 
 export async function getStudentActivities(studentId: string, options?: { signal?: AbortSignal }) {
   const response = await axiosInstance.get(`/activity?userId=${studentId}`, {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}
+
+export async function getStudentSubscription(studentId: string, options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get(`/subscription?userId=${studentId}`, {
     signal: options?.signal,
   });
   return response.data.data;

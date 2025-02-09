@@ -27,8 +27,12 @@ export default function StudentManagementActivityLogPage() {
             <Skeleton className="h-12 rounded-xl" />
           </>
         ) : allStudentActivities.length > 0 ? (
-          allStudentActivities.map((studentActivity) => (
-            <DisplayList text={studentActivity.context} date={studentActivity.createdAt as unknown as Date} />
+          allStudentActivities.map((studentActivity, index) => (
+            <DisplayList
+              text={studentActivity.context}
+              date={studentActivity.createdAt as unknown as Date}
+              key={index}
+            />
           ))
         ) : (
           <p className="text-low text-sm">No Activities Found</p>
