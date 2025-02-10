@@ -229,7 +229,11 @@ type StudentsMetrics = {
   coursesCompleted: number;
   coursesIncomplete: number;
   completion: number;
+
+  currentBillingPlan: CurrentBillingPlan;
+  lastPayment: Payment;
   upcomingCharges: number;
+  upcomingChargeDate: Date | null;
 };
 
 type StudentsTableProps = {
@@ -286,4 +290,53 @@ type Courses = {
   updatedAt: Date | null;
   course: Course;
   user: User;
+};
+
+type BillingPlan = {
+  id: string;
+  name: string;
+  interval: string | null;
+  currency: string;
+  amount: number;
+  description: string;
+  active: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
+};
+
+interface CurrentBillingPlan {
+  id: string;
+  userId: string;
+  billingPlanId: string;
+  startAt: Date;
+  endAt: Date | null;
+  chargeAt: Date | null;
+  metadata: Record<string, never> | null;
+  renewalCount: number;
+  currency: string;
+  createdAt: Date;
+  updatedAt: Date;
+  status: string;
+  cancelledAt: Date | null;
+  deletedAt: Date | null;
+  billingPlan: BillingPlan;
+}
+
+type Subscription = {
+  id: string;
+  userId: string;
+  billingPlanId: string;
+  startAt: string;
+  endAt: string | null;
+  chargeAt: string;
+  metadata: Record<string, never> | null;
+  renewalCount: number;
+  currency: string;
+  createdAt: string;
+  updatedAt: string;
+  status: "active" | string;
+  cancelledAt: string | null;
+  deletedAt: string | null;
+  billingPlan: BillingPlan;
 };

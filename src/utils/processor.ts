@@ -14,7 +14,8 @@ import {
   Users,
 } from "lucide-react";
 
-import { formatDateAndTime, formatToNaira } from "@/utils/formatter";
+import { formatDateAndTime, formatAmount } from "@/utils/formatter";
+import { format } from "date-fns";
 
 export function processSchedules(schedules: Schedule[]) {
   const extractedSchedulesDetails = schedules.map((schedule) => {
@@ -37,7 +38,20 @@ export function processSchedules(schedules: Schedule[]) {
 
 export const processEnrollmentData = (users: User[]): EnrollmentData => {
   const enrollmentData: EnrollmentData = {};
-  const months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+  const months = [
+    "JAN",
+    "FEB",
+    "MAR",
+    "APR",
+    "MAY",
+    "JUN",
+    "JUL",
+    "AUG",
+    "SEP",
+    "OCT",
+    "NOV",
+    "DEC",
+  ];
 
   users.forEach((user) => {
     const createdAt = new Date(user.createdAt);
@@ -108,12 +122,12 @@ export const processDashboardMetrics = (metrics: Metrics): StatCardProps[] => {
       icon: CircleDollarSign,
 
       main: {
-        figure: formatToNaira(metrics?.creditedPayments ?? 0),
+        figure: formatAmount(metrics?.creditedPayments ?? 0),
         label: "Credited",
       },
 
       sub: {
-        figure: formatToNaira(metrics?.pendingPayments ?? 0),
+        figure: formatAmount(metrics?.pendingPayments ?? 0),
         label: "Pending",
       },
     },
@@ -159,13 +173,19 @@ export const processStudentsMetrics = (studentsMetrics: StudentsMetrics): Overvi
     {
       title: "Active Students",
       figure: String(studentsMetrics.activeStudents),
-      children: React.createElement(CheckCircle, { key: "icon", className: "w-6 h-6 text-success" }),
+      children: React.createElement(CheckCircle, {
+        key: "icon",
+        className: "w-6 h-6 text-success",
+      }),
     },
 
     {
       title: "Graduated",
       figure: String(studentsMetrics.graduatedStudents),
-      children: React.createElement(GraduationCap, { key: "icon", className: "w-6 h-6 text-orange" }),
+      children: React.createElement(GraduationCap, {
+        key: "icon",
+        className: "w-6 h-6 text-orange",
+      }),
     },
 
     {
@@ -200,15 +220,31 @@ export const processStudentManagementLinks = (studentId: string) => {
   return [
     { label: "Overview Section", icon: PanelsTopLeft, url: `/admin/students/${studentId}` },
 
-    { label: "Course Information", icon: Layers2, url: `/admin/students/${studentId}/course-information` },
+    {
+      label: "Course Information",
+      icon: Layers2,
+      url: `/admin/students/${studentId}/course-information`,
+    },
 
     { label: "Activity Log", icon: Logs, url: `/admin/students/${studentId}/activity-log` },
 
-    { label: "Payment Information", icon: CircleDollarSign, url: `/admin/students/${studentId}/payment-information` },
+    {
+      label: "Payment Information",
+      icon: CircleDollarSign,
+      url: `/admin/students/${studentId}/payment-information`,
+    },
 
-    { label: "Assignment & Grades", icon: NotepadText, url: `/admin/students/${studentId}/assignment-grades` },
+    {
+      label: "Assignment & Grades",
+      icon: NotepadText,
+      url: `/admin/students/${studentId}/assignment-grades`,
+    },
 
-    { label: "Comments & Notes", icon: MessageSquareText, url: `/admin/students/${studentId}/comments-notes` },
+    {
+      label: "Comments & Notes",
+      icon: MessageSquareText,
+      url: `/admin/students/${studentId}/comments-notes`,
+    },
   ];
 };
 
@@ -223,13 +259,19 @@ export const processStudentMetrics = (studentMetrics: StudentsMetrics): Overview
     {
       title: "Completion",
       figure: `${studentMetrics.completion ?? 0}%`,
-      children: React.createElement(CheckCircle, { key: "icon", className: "w-6 h-6 text-success" }),
+      children: React.createElement(CheckCircle, {
+        key: "icon",
+        className: "w-6 h-6 text-success",
+      }),
     },
 
     {
       title: "Courses Completed",
       figure: String(studentMetrics.coursesCompleted),
-      children: React.createElement(GraduationCap, { key: "icon", className: "w-6 h-6 text-orange" }),
+      children: React.createElement(GraduationCap, {
+        key: "icon",
+        className: "w-6 h-6 text-orange",
+      }),
     },
   ];
 };
@@ -254,4 +296,49 @@ export const processStudentCourses = (courses: Courses[]) => {
   });
 
   return extractedCourses;
+};
+
+export const processStudentPaymentOverview = (
+  studentPaymentOverview: StudentsMetrics
+): OverviewCardProps[] => {
+  const planFigure = studentPaymentOverview.currentBillingPlan
+    ? `${formatAmount(
+        studentPaymentOverview.currentBillingPlan.billingPlan.amount,
+        studentPaymentOverview.currentBillingPlan.currency
+      )} ${studentPaymentOverview.currentBillingPlan.billingPlan.interval ?? ""}`
+    : "-";
+
+  const planStartDate = studentPaymentOverview.lastPayment
+    ? format(new Date(studentPaymentOverview.lastPayment.createdAt), "PP")
+    : "-";
+
+  const planEndDate = studentPaymentOverview.upcomingChargeDate
+    ? format(new Date(studentPaymentOverview.upcomingChargeDate), "PP")
+    : "-";
+
+  return [
+    {
+      title: "Plan",
+      figure: planFigure,
+      children: React.createElement(List, { key: "icon", className: "w-6 h-6 text-orange" }),
+    },
+
+    {
+      title: "Last Payment",
+      figure: planStartDate,
+      children: React.createElement(CheckCircle, {
+        key: "icon",
+        className: "w-6 h-6 text-success",
+      }),
+    },
+
+    {
+      title: "Upcoming Payment",
+      figure: planEndDate,
+      children: React.createElement(GraduationCap, {
+        key: "icon",
+        className: "w-6 h-6 text-orange",
+      }),
+    },
+  ];
 };

@@ -1,4 +1,4 @@
-export function formatToNaira(amount: number) {
+export function formatAmount(amount: number, currency?: string) {
   let formattedAmount: string;
 
   if (amount >= 1_000_000) {
@@ -8,7 +8,7 @@ export function formatToNaira(amount: number) {
   } else {
     formattedAmount = amount.toLocaleString("en-NG", {
       style: "currency",
-      currency: "NGN",
+      currency: currency ? currency.toUpperCase() : "NGN",
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     });

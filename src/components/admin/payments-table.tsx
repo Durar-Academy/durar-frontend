@@ -3,7 +3,7 @@ import { DatePicker } from "@/components/ui/date-picker";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 
 import { cn } from "@/lib/utils";
-import { formatToNaira, formatToReadableId } from "@/utils/formatter";
+import { formatAmount, formatToReadableId } from "@/utils/formatter";
 import { PAYMENT_STATUSES } from "@/data/constants";
 
 export function PaymentsTable({ payments }: { payments: PaymentsTableProps }) {
@@ -20,7 +20,11 @@ export function PaymentsTable({ payments }: { payments: PaymentsTableProps }) {
 
             <SelectContent>
               {PAYMENT_STATUSES.map((paymentStatus, index) => (
-                <SelectItem value={paymentStatus.status} key={paymentStatus.status + index} className="capitalize">
+                <SelectItem
+                  value={paymentStatus.status}
+                  key={paymentStatus.status + index}
+                  className="capitalize"
+                >
                   {paymentStatus.label}
                 </SelectItem>
               ))}
@@ -49,9 +53,14 @@ export function PaymentsTable({ payments }: { payments: PaymentsTableProps }) {
 
             <TableBody className="space-y-3">
               {payments.map((payment) => (
-                <TableRow className="text-sm text-high bg-offwhite h-12" key={payment.id + payment.status}>
-                  <TableCell className="capitalize">{formatToReadableId(payment.id, "INV")}</TableCell>
-                  <TableCell>{formatToNaira(payment.amount)}</TableCell>
+                <TableRow
+                  className="text-sm text-high bg-offwhite h-12"
+                  key={payment.id + payment.status}
+                >
+                  <TableCell className="capitalize">
+                    {formatToReadableId(payment.id, "INV")}
+                  </TableCell>
+                  <TableCell>{formatAmount(payment.amount)}</TableCell>
                   <TableCell className="text-center">
                     {payment.dateIssued} - {payment.dueDate}
                   </TableCell>

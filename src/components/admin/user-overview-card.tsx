@@ -1,14 +1,11 @@
+import { format } from "date-fns";
 import { UserRound } from "lucide-react";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import { cn } from "@/lib/utils";
-import { formatDateAndTime } from "@/utils/formatter";
-import { format } from "date-fns";
 
 export function UserOverviewCard({ user }: { user: Student }) {
-  const { date } = formatDateAndTime(user.createdAt);
-  const userEnrollmentDate = format(new Date(date), "PPP");
-
   return (
     <div className="w-full rounded-xl p-6 bg-white border border-shade-2 flex gap-4">
       <Avatar className="h-[154px] w-[188px] rounded-xl">
@@ -45,7 +42,9 @@ export function UserOverviewCard({ user }: { user: Student }) {
 
         <p>
           <span>Enrollment Date: </span>
-          <span className="font-medium text-high capitalize">{userEnrollmentDate}</span>
+          <span className="font-medium text-high capitalize">
+            {user.createdAt ? format(new Date(user.createdAt), "PP") : ""}
+          </span>
         </p>
 
         <p>
