@@ -4,9 +4,10 @@ import { useParams } from "next/navigation";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { OverviewCard } from "@/components/admin/overview-card";
+import { StudentPaymentsTable } from "@/components/admin/student-payments-table";
 
-import { processStudentPaymentOverview } from "@/utils/processor";
-import { useStudentPaymentOverview } from "@/hooks/useAdmin";
+import { processStudentPaymentOverview, processStudentPayments } from "@/utils/processor";
+import { useStudentPaymentOverview, useStudentPayments } from "@/hooks/useAdmin";
 
 export default function StudentManagementPaymentPage() {
   const { studentId } = useParams();
@@ -14,8 +15,10 @@ export default function StudentManagementPaymentPage() {
   const { data: paymentOverview, isLoading: paymentOverviewLoading } = useStudentPaymentOverview(
     studentId as string
   );
+  const { data: payments, isLoading: paymentsLoading } = useStudentPayments(studentId as string);
 
   const studentPaymentOverview = processStudentPaymentOverview(paymentOverview ?? []);
+  const studentPayments = processStudentPayments(payments?.records ?? []);
 
   return (
     <section className="flex flex-col gap-3">
@@ -35,6 +38,14 @@ export default function StudentManagementPaymentPage() {
             </div>
           )}
         </div>
+      </div>
+
+      <div className="h-[516px]">
+        {paymentsLoading ? (
+          <Skeleton className="h-full rounded-xl" />
+        ) : (
+          <StudentPaymentsTable payments={studentPayments} />
+        )}
       </div>
     </section>
   );

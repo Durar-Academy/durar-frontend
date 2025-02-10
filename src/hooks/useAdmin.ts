@@ -9,6 +9,7 @@ import {
   getStudentCourses,
   getStudentMetrics,
   getStudentPaymentOverview,
+  getStudentPayments,
   getStudents,
   getStudentsMetric,
   getUser,
@@ -108,6 +109,15 @@ export function useStudentPaymentOverview(studentId: string) {
   const query = useQuery({
     queryKey: ["student-payment-overview", studentId],
     queryFn: () => getStudentPaymentOverview(studentId),
+  });
+
+  return query;
+}
+
+export function useStudentPayments(studentId: string) {
+  const query = useQuery({
+    queryKey: ["student-payments", studentId],
+    queryFn: () => getStudentPayments(studentId),
   });
 
   return query;

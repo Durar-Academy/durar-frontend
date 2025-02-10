@@ -342,3 +342,23 @@ export const processStudentPaymentOverview = (
     },
   ];
 };
+
+export const processStudentPayments = (payments: Payment[]) => {
+  const extractedPayments = payments.map((payment) => {
+    const id = payment.charge.id;
+    const date = format(new Date(payment.charge.createdAt), "PP");
+
+    const amount = payment.charge.amount;
+    const status = payment.status;
+
+    return {
+      id,
+      date,
+
+      amount,
+      status,
+    };
+  });
+
+  return extractedPayments;
+};

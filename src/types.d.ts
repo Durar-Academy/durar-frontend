@@ -176,7 +176,13 @@ type Activity = {
   user: User;
 };
 
-type PaymentStatus = "pending" | "completed" | "pending_refund" | "refund_failed" | "refunded" | "failed";
+type PaymentStatus =
+  | "pending"
+  | "completed"
+  | "pending_refund"
+  | "refund_failed"
+  | "refunded"
+  | "failed";
 
 type Payment = {
   id: string;
@@ -340,3 +346,10 @@ type Subscription = {
   deletedAt: string | null;
   billingPlan: BillingPlan;
 };
+
+type StudentsPaymentsTableProps = {
+  id: string;
+  amount: number;
+  date: string;
+  status: PaymentStatus;
+}[];
