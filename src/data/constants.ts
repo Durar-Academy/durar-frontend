@@ -12,7 +12,10 @@ export const TITLES = ["Mr", "Mrs", "Ms", "Dr"] as const;
 
 export const GENDERS = ["Male", "Female"] as const;
 
-export const COUNTRIES = COUNTRY_DATA.map((country) => country.name) as unknown as readonly [string, ...string[]];
+export const COUNTRIES = COUNTRY_DATA.map((country) => country.name) as unknown as readonly [
+  string,
+  ...string[]
+];
 
 export const DAILING_CODES = Array.from(
   new Set(COUNTRY_DATA.map((country) => `${country.name} (${country.dialingCode})`))
@@ -107,6 +110,12 @@ export const PAYMENT_STATUSES = [
   { status: "failed", label: "Failed" },
   { status: "refunded", label: "Refunded" },
   { status: "completed", label: "Completed" },
+];
+
+export const ASSIGNMENT_STATUSES = [
+  { status: "pending", label: "Pending" },
+  { status: "submitted", label: "Submitted" },
+  { status: "graded", label: "Graded" },
 ];
 
 export const STUDENT_STATUSES = [

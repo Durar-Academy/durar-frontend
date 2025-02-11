@@ -1,10 +1,9 @@
 "use client";
 
-import { ChevronRight, Plus } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 import { Skeleton } from "@/components/ui/skeleton";
-import { Button } from "@/components/ui/button";
 import { TopBar } from "@/components/shared/top-bar";
 import { OverviewCard } from "@/components/admin/overview-card";
 import { StudentsTable } from "@/components/admin/students-table";
@@ -41,14 +40,6 @@ export default function StudentsManagementPage() {
       <div className="rounded-xl p-6 border border-shade-2 bg-white flex flex-col gap-4">
         <div className="flex justify-between items-center">
           <h3 className="text-low font-medium text-xl">Students Overview</h3>
-
-          <div>
-            <Button variant={"_default"} className="bg-orange hover:bg-burnt px-4 py-2">
-              <Plus className="w-6 h-6" strokeWidth={3} />
-
-              <span>Add new student</span>
-            </Button>
-          </div>
         </div>
 
         <div className="students-overview-cards">

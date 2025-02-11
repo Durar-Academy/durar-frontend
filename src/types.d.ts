@@ -353,3 +353,77 @@ type StudentsPaymentsTableProps = {
   date: string;
   status: PaymentStatus;
 }[];
+
+type StudentAssignmentsTableProps = {
+  id: string;
+  course: string;
+  date: string;
+  score: number;
+  status: string;
+}[];
+
+type Assignment = {
+  id: string;
+  title: string;
+  courseId: string;
+  dueAt: Date;
+  duration: number | null;
+  type: "assignment";
+  description: string | null;
+  allowLate: boolean;
+  mediaId: string | null;
+  totalScore: number;
+  createdById: string;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: Date | null;
+  AssignmentSubmission: AssignmentSubmission[];
+  QuizSubmission: QuizSubmission[];
+  course: Course;
+  status: AssignmentStatus;
+};
+
+type AssignmentSubmission = {
+  id: string;
+  assignmentId: string;
+  content: string;
+  submissionLink: string | null;
+  mediaId: string | null;
+  grade: number | null;
+  gradedById: string | null;
+  gradedAt: Date | null;
+  deletedAt: Date | null;
+  userId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  status: AssignmentStatus;
+};
+
+type QuizSubmission = {
+  id: string;
+  userId: string;
+  assignmentId: string;
+  totalQuestions: number;
+  grade: number | null;
+  gradedAt: Date | null;
+  timeStarted: Date;
+  timeSubmitted: Date | null;
+  answers: QuizAnswer[];
+  deletedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+type SingleChoiceAnswer = {
+  questionId: string;
+  singleChoiceAnswer: string;
+};
+
+type MultipleChoiceAnswer = {
+  questionId: string;
+  multipleChoiceAnswer: string[];
+};
+
+type QuizAnswer = SingleChoiceAnswer | MultipleChoiceAnswer;
+
+type AssignmentStatus = "pending" | "submitted" | "graded";

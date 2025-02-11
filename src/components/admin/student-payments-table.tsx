@@ -50,8 +50,8 @@ export function StudentPaymentsTable({ payments }: { payments: StudentsPaymentsT
                     {payment.status}
                   </TableCell>
                   <TableCell>
-                    <button className="font-bold text-orange hover:underline">
-                      <Download className="w-4 h-4 text-orange" />
+                    <button className="font-bold text-orange">
+                      <Download className="w-4 h-4 text-inherit" />
                     </button>
                   </TableCell>
                 </TableRow>

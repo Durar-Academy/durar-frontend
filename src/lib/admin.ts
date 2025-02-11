@@ -90,3 +90,10 @@ export async function getStudentPayments(studentId: string, options?: { signal?:
   });
   return response.data.data;
 }
+
+export async function getStudentAssignments(studentId: string, options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get(`/assignment?userId=${studentId}`, {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}

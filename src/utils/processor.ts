@@ -280,10 +280,10 @@ export const processStudentCourses = (courses: Courses[]) => {
   const extractedCourses = courses.map(({ course }) => {
     const id = course.id;
     const courseTitle = course.title;
-    const progress = "-";
-    const startDate = "-";
-    const dueDate = "-";
-    const completionDate = "-";
+    const progress = "---";
+    const startDate = "---";
+    const dueDate = "---";
+    const completionDate = "---";
 
     return {
       id,
@@ -361,4 +361,31 @@ export const processStudentPayments = (payments: Payment[]) => {
   });
 
   return extractedPayments;
+};
+
+export const processStudentAssignments = (
+  assignments: Assignment[]
+): StudentAssignmentsTableProps => {
+  const extractedAssignments = assignments.map((assignment) => {
+    const id = assignment.id;
+    const course = assignment.title;
+    const date = format(new Date(assignment.createdAt), "PP");
+    const status = assignment.status;
+
+    const score = assignment.AssignmentSubmission?.[0]?.grade
+      ? (assignment.AssignmentSubmission[0].grade / assignment.totalScore) * 100
+      : assignment.QuizSubmission?.[0]?.grade
+      ? (assignment.QuizSubmission[0].grade / assignment.totalScore) * 100
+      : 0;
+
+    return {
+      id,
+      course,
+      date,
+      score,
+      status,
+    };
+  });
+
+  return extractedAssignments;
 };
