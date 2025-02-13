@@ -12,9 +12,11 @@ import {
   getStudentPaymentOverview,
   getStudentPayments,
   getStudents,
-  getStudentsMetric,
+  getStudentsMetrics,
+  getTutorCourses,
+  getTutorMetrics,
   getTutors,
-  getTutorsMetric,
+  getTutorsMetrics,
   getUser,
 } from "@/lib/admin";
 
@@ -39,7 +41,7 @@ export function usePayments() {
 }
 
 export function useStudentsMetrics() {
-  const query = useQuery({ queryKey: ["all-students-metrics"], queryFn: getStudentsMetric });
+  const query = useQuery({ queryKey: ["all-students-metrics"], queryFn: getStudentsMetrics });
   return query;
 }
 
@@ -105,7 +107,7 @@ export function useStudentAssignments(studentId: string) {
 }
 
 export function useTutorsMetrics() {
-  const query = useQuery({ queryKey: ["all-tutors-metrics"], queryFn: getTutorsMetric });
+  const query = useQuery({ queryKey: ["all-tutors-metrics"], queryFn: getTutorsMetrics });
   return query;
 }
 
@@ -119,5 +121,21 @@ export function useTutors(filters?: SearchFilters) {
 
 export function useTutor(tutorId: string) {
   const query = useQuery({ queryKey: ["tutor", tutorId], queryFn: () => getUser(tutorId) });
+  return query;
+}
+
+export function useTutorMetrics(tutorId: string) {
+  const query = useQuery({
+    queryKey: ["tutor-metrics", tutorId],
+    queryFn: () => getTutorMetrics(tutorId),
+  });
+  return query;
+}
+
+export function useTutorCourses(tutorId: string) {
+  const query = useQuery({
+    queryKey: ["tutor-courses", tutorId],
+    queryFn: () => getTutorCourses(tutorId),
+  });
   return query;
 }

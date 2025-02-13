@@ -28,7 +28,7 @@ export async function getPayments(options?: { signal?: AbortSignal }) {
   return response.data.data;
 }
 
-export async function getStudentsMetric(options?: { signal?: AbortSignal }) {
+export async function getStudentsMetrics(options?: { signal?: AbortSignal }) {
   const response = await axiosInstance.get("/metrics/student", {
     signal: options?.signal,
   });
@@ -98,7 +98,7 @@ export async function getStudentAssignments(studentId: string, options?: { signa
   return response.data.data;
 }
 
-export async function getTutorsMetric(options?: { signal?: AbortSignal }) {
+export async function getTutorsMetrics(options?: { signal?: AbortSignal }) {
   const response = await axiosInstance.get("/metrics/tutor", {
     signal: options?.signal,
   });
@@ -111,6 +111,20 @@ export async function getTutors(options?: { signal?: AbortSignal; filters?: Sear
   if (options?.filters?.status) params.append("status", options.filters.status);
 
   const response = await axiosInstance.get(`/user/tutors?${params.toString()}`, {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}
+
+export async function getTutorMetrics(tutorId: string, options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get(`/metrics/tutor?id=${tutorId}`, {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}
+
+export async function getTutorCourses(tutorId: string, options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get(`/user-course?role=tutor&userId=${tutorId}`, {
     signal: options?.signal,
   });
   return response.data.data;

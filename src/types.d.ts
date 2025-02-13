@@ -432,9 +432,11 @@ type TutorsMetrics = {
   tutorsCount: number;
   activeTutorsCount: number;
   inActiveTutorsCount: number;
+
   coursesCount: number;
   totalClasses: number;
   totalCompletedClasses: number;
+
   totalStudentsTaught: number;
   totalStudents: number;
   avgCourseRating: number;
@@ -470,3 +472,12 @@ type Tutor = {
   paypalCustomerId: string | null;
   paypalCardCustomerId: string | null;
 };
+
+type TutorCoursesTableProps = {
+  id: string;
+  courseTitle: string;
+  noOfStudents: number;
+  progress: string;
+  startDate: string;
+  endDate: string;
+}[];

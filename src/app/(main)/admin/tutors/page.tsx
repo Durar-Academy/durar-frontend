@@ -17,8 +17,6 @@ export default function TutorsManagementPage() {
   const { data: tutorsMetrics, isLoading: tutorsMetricsLoading } = useTutorsMetrics();
   const { data: tutors, isLoading: tutorsLoading } = useTutors();
 
-  console.log(tutors);
-
   const allTutorsMetrics = processTutorsMetrics(tutorsMetrics ?? []);
   const allTutors = processTutors(tutors?.records ?? []);
 

@@ -473,3 +473,53 @@ export const processTutorManagementLinks = (tutorId: string) => {
     },
   ];
 };
+
+export const processTutorMetrics = (tutorMetrics: TutorsMetrics): OverviewCardProps[] => {
+  return [
+    {
+      title: "Total Courses",
+      figure: String(tutorMetrics.coursesCount),
+      children: React.createElement(List, { key: "icon", className: "w-6 h-6 text-orange" }),
+    },
+
+    {
+      title: "Total Students",
+      figure: String(tutorMetrics.totalStudents),
+      children: React.createElement(CheckCircle, {
+        key: "icon",
+        className: "w-6 h-6 text-success",
+      }),
+    },
+
+    {
+      title: "Courses Completed",
+      figure: String(tutorMetrics.totalCompletedClasses),
+      children: React.createElement(GraduationCap, {
+        key: "icon",
+        className: "w-6 h-6 text-orange",
+      }),
+    },
+  ];
+};
+
+export const processTutorCourses = (courses: Courses[]) => {
+  const extractedCourses = courses.map(({ course }) => {
+    const id = course.id;
+    const courseTitle = course.title;
+    const progress = "---";
+    const startDate = "---";
+    const endDate = "---";
+    const noOfStudents = 0;
+
+    return {
+      id,
+      courseTitle,
+      progress,
+      startDate,
+      endDate,
+      noOfStudents,
+    };
+  });
+
+  return extractedCourses;
+};
