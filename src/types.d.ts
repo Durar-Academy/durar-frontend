@@ -281,9 +281,8 @@ type Student = {
 type StudentCoursesTableProps = {
   id: string;
   courseTitle: string;
-  progress: string;
+  progress: number;
   startDate: string;
-  dueDate: string;
   completionDate: string;
 }[];
 
@@ -294,6 +293,10 @@ type Courses = {
   deletedAt: Date | null;
   createdAt: Date | null;
   updatedAt: Date | null;
+  lastAccessAt: Date | null;
+  completeAt: Date | null;
+  progress: number;
+  startAt: Date | null;
   course: Course;
   user: User;
 };
@@ -477,7 +480,7 @@ type TutorCoursesTableProps = {
   id: string;
   courseTitle: string;
   noOfStudents: number;
-  progress: string;
+  progress: number;
   startDate: string;
-  endDate: string;
+  completionDate: string;
 }[];

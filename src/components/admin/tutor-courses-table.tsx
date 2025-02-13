@@ -6,6 +6,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 import { Eye, PenLine } from "lucide-react";
 
 export function TutorCoursesTable({ courses }: { courses: TutorCoursesTableProps }) {
@@ -21,10 +22,10 @@ export function TutorCoursesTable({ courses }: { courses: TutorCoursesTableProps
             <TableHeader>
               <TableRow className="text-low text-sm font-semibold">
                 <TableHead>Course Name</TableHead>
-                <TableHead>No of Students</TableHead>
-                <TableHead>Progress</TableHead>
-                <TableHead>Start Date</TableHead>
-                <TableHead>End Date</TableHead>
+                <TableHead className="text-center">No of Students</TableHead>
+                <TableHead className="text-center">Progress</TableHead>
+                <TableHead className="text-center">Start Date</TableHead>
+                <TableHead className="text-center">Completion Date</TableHead>
                 <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
@@ -36,10 +37,18 @@ export function TutorCoursesTable({ courses }: { courses: TutorCoursesTableProps
                   key={course.id + course.courseTitle}
                 >
                   <TableCell className="capitalize">{course.courseTitle}</TableCell>
-                  <TableCell>{course.noOfStudents}</TableCell>
-                  <TableCell>{course.progress}</TableCell>
-                  <TableCell>{course.startDate}</TableCell>
-                  <TableCell>{course.endDate}</TableCell>
+                  <TableCell className="text-center">{course.noOfStudents}</TableCell>
+                  <TableCell
+                    className={cn(
+                      "text-high text-center",
+                      course.progress === 100 && "text-success",
+                      course.progress === 50 && "text-orange",
+                    )}
+                  >
+                    {course.progress === 100 ? "Completed" : `${course.progress}%`}
+                  </TableCell>
+                  <TableCell className="text-center">{course.startDate}</TableCell>
+                  <TableCell className="text-center">{course.completionDate}</TableCell>
 
                   <TableCell className="flex gap-2 item-center">
                     <button className="font-bold text-orange hover:underline">

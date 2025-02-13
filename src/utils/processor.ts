@@ -279,20 +279,18 @@ export const processStudentMetrics = (studentMetrics: StudentsMetrics): Overview
 };
 
 export const processStudentCourses = (courses: Courses[]) => {
-  const extractedCourses = courses.map(({ course }) => {
-    const id = course.id;
-    const courseTitle = course.title;
-    const progress = "---";
-    const startDate = "---";
-    const dueDate = "---";
-    const completionDate = "---";
+  const extractedCourses = courses.map((course) => {
+    const id = course.course.id;
+    const courseTitle = course.course.title;
+    const progress = course.progress;
+    const startDate = format(new Date(course.startAt as Date), "PP");
+    const completionDate = format(new Date(course.completeAt as Date), "PP");
 
     return {
       id,
       courseTitle,
       progress,
       startDate,
-      dueDate,
       completionDate,
     };
   });
@@ -503,12 +501,12 @@ export const processTutorMetrics = (tutorMetrics: TutorsMetrics): OverviewCardPr
 };
 
 export const processTutorCourses = (courses: Courses[]) => {
-  const extractedCourses = courses.map(({ course }) => {
-    const id = course.id;
-    const courseTitle = course.title;
-    const progress = "---";
-    const startDate = "---";
-    const endDate = "---";
+  const extractedCourses = courses.map((course) => {
+    const id = course.course.id;
+    const courseTitle = course.course.title;
+    const progress = course.progress;
+    const startDate = format(new Date(course.startAt as Date), "PP");
+    const completionDate = format(new Date(course.completeAt as Date), "PP");
     const noOfStudents = 0;
 
     return {
@@ -516,7 +514,7 @@ export const processTutorCourses = (courses: Courses[]) => {
       courseTitle,
       progress,
       startDate,
-      endDate,
+      completionDate,
       noOfStudents,
     };
   });

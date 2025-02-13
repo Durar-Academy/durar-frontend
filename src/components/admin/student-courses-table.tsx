@@ -1,4 +1,12 @@
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 
 export function StudentCoursesTable({ courses }: { courses: StudentCoursesTableProps }) {
   return (
@@ -13,21 +21,30 @@ export function StudentCoursesTable({ courses }: { courses: StudentCoursesTableP
             <TableHeader>
               <TableRow className="text-low text-sm font-semibold">
                 <TableHead>Course Name</TableHead>
-                <TableHead>Progress</TableHead>
-                <TableHead>Start Date</TableHead>
-                <TableHead>Date Completed</TableHead>
-                <TableHead>Due Date</TableHead>
+                <TableHead className="text-center">Progress</TableHead>
+                <TableHead className="text-center">Start Date</TableHead>
+                <TableHead className="text-center">Completion Date</TableHead>
               </TableRow>
             </TableHeader>
 
             <TableBody className="space-y-3">
               {courses.map((course) => (
-                <TableRow className="text-sm text-high bg-offwhite h-12" key={course.id + course.courseTitle}>
+                <TableRow
+                  className="text-sm text-high bg-offwhite h-12"
+                  key={course.id + course.courseTitle}
+                >
                   <TableCell className="capitalize">{course.courseTitle}</TableCell>
-                  <TableCell>{course.progress}</TableCell>
-                  <TableCell>{course.startDate}</TableCell>
-                  <TableCell>{course.completionDate}</TableCell>
-                  <TableCell>{course.dueDate}</TableCell>
+                  <TableCell
+                    className={cn(
+                      "text-high text-center",
+                      course.progress === 100 && "text-success",
+                      course.progress === 50 && "text-orange",
+                    )}
+                  >
+                    {course.progress === 100 ? "Completed" : `${course.progress}%`}
+                  </TableCell>
+                  <TableCell className="text-center">{course.startDate}</TableCell>
+                  <TableCell className="text-center">{course.completionDate}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
