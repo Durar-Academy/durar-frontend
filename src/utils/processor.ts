@@ -6,11 +6,13 @@ import {
   GraduationCap,
   Info,
   Layers2,
+  LineChart,
   List,
   Logs,
   MessageSquareText,
   NotepadText,
   PanelsTopLeft,
+  ScanFace,
   Users,
 } from "lucide-react";
 
@@ -432,4 +434,42 @@ export const processTutors = (tutors: Tutor[]) => {
   });
 
   return extractedTutors;
+};
+
+export const processTutorManagementLinks = (tutorId: string) => {
+  return [
+    { label: "Overview Section", icon: PanelsTopLeft, url: `/admin/tutors/${tutorId}` },
+
+    {
+      label: "Courses Managed",
+      icon: Layers2,
+      url: `/admin/tutors/${tutorId}/courses-managed`,
+    },
+
+    {
+      label: "Performance Metrics",
+      icon: LineChart,
+      url: `/admin/tutors/${tutorId}/performance-metrics`,
+    },
+
+    {
+      label: "Payment & Earnings",
+      icon: CircleDollarSign,
+      url: `/admin/tutors/${tutorId}/payment-earnings`,
+    },
+
+    { label: "Activity Log", icon: Logs, url: `/admin/tutors/${tutorId}/activity-log` },
+
+    {
+      label: "Verification Docs",
+      icon: ScanFace,
+      url: `/admin/tutors/${tutorId}/verification-docs`,
+    },
+
+    {
+      label: "Notes",
+      icon: MessageSquareText,
+      url: `/admin/tutors/${tutorId}/notes`,
+    },
+  ];
 };

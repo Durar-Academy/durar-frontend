@@ -116,3 +116,8 @@ export function useTutors(filters?: SearchFilters) {
   });
   return query;
 }
+
+export function useTutor(tutorId: string) {
+  const query = useQuery({ queryKey: ["tutor", tutorId], queryFn: () => getUser(tutorId) });
+  return query;
+}
