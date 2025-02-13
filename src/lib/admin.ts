@@ -35,7 +35,7 @@ export async function getStudentsMetric(options?: { signal?: AbortSignal }) {
   return response.data.data;
 }
 
-export async function getStudents(options?: { signal?: AbortSignal; filters?: StudentFilters }) {
+export async function getStudents(options?: { signal?: AbortSignal; filters?: SearchFilters }) {
   const params = new URLSearchParams();
   if (options?.filters?.search) params.append("search", options.filters.search);
   if (options?.filters?.status) params.append("status", options.filters.status);
@@ -76,7 +76,7 @@ export async function getStudentActivities(studentId: string, options?: { signal
 
 export async function getStudentPaymentOverview(
   studentId: string,
-  options?: { signal?: AbortSignal }
+  options?: { signal?: AbortSignal },
 ) {
   const response = await axiosInstance.get(`/metrics/student?id=${studentId}`, {
     signal: options?.signal,
@@ -93,6 +93,24 @@ export async function getStudentPayments(studentId: string, options?: { signal?:
 
 export async function getStudentAssignments(studentId: string, options?: { signal?: AbortSignal }) {
   const response = await axiosInstance.get(`/assignment?userId=${studentId}`, {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}
+
+export async function getTutorsMetric(options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get("/metrics/tutor", {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}
+
+export async function getTutors(options?: { signal?: AbortSignal; filters?: SearchFilters }) {
+  const params = new URLSearchParams();
+  if (options?.filters?.search) params.append("search", options.filters.search);
+  if (options?.filters?.status) params.append("status", options.filters.status);
+
+  const response = await axiosInstance.get(`/user/tutors?${params.toString()}`, {
     signal: options?.signal,
   });
   return response.data.data;

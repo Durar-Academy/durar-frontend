@@ -38,3 +38,5 @@ next-env.d.ts
 # setup files
 durar-app-structure.md
 *.txt
+.prettierrc.json
+.vscode

@@ -252,9 +252,9 @@ type StudentsTableProps = {
 
 type StudentStatus = "unverified" | "active" | "suspended" | "deactivated" | "graduated";
 
-type StudentFilters = {
+type SearchFilters = {
   search?: string;
-  status?: StudentStatus;
+  status?: StudentStatus | TutorStatus;
 };
 
 type Student = {
@@ -427,3 +427,46 @@ type MultipleChoiceAnswer = {
 type QuizAnswer = SingleChoiceAnswer | MultipleChoiceAnswer;
 
 type AssignmentStatus = "pending" | "submitted" | "graded";
+
+type TutorsMetrics = {
+  tutorsCount: number;
+  activeTutorsCount: number;
+  inActiveTutorsCount: number;
+  coursesCount: number;
+  totalClasses: number;
+  totalCompletedClasses: number;
+  totalStudentsTaught: number;
+  totalStudents: number;
+  avgCourseRating: number;
+};
+
+type TutorStatus = "invited" | "active" | "suspended" | "deactivated" | "unverified";
+
+type TutorsTableProps = {
+  id: string;
+  name: string;
+
+  email: string;
+  status: TutorStatus;
+}[];
+
+type Tutor = {
+  id: string;
+  email: string;
+  firstName: string;
+  lastName: string;
+  middleName?: string;
+  gender: "male" | "female";
+  phone: string;
+  country: string;
+  emailVerifiedAt: Date | null;
+  status: TutorStatus;
+  lastLoginAt: string | null;
+  role: "tutor";
+  profilePictureId: string | null;
+  deletedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+  paypalCustomerId: string | null;
+  paypalCardCustomerId: string | null;
+};

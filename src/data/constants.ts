@@ -14,11 +14,11 @@ export const GENDERS = ["Male", "Female"] as const;
 
 export const COUNTRIES = COUNTRY_DATA.map((country) => country.name) as unknown as readonly [
   string,
-  ...string[]
+  ...string[],
 ];
 
 export const DAILING_CODES = Array.from(
-  new Set(COUNTRY_DATA.map((country) => `${country.name} (${country.dialingCode})`))
+  new Set(COUNTRY_DATA.map((country) => `${country.name} (${country.dialingCode})`)),
 ) as unknown as readonly [string, ...string[]];
 
 export const STORE_KEY = "durar-academy";
@@ -142,5 +142,32 @@ export const STUDENT_STATUSES = [
   {
     status: "graduated",
     label: "Graduated",
+  },
+];
+
+export const TUTOR_STATUSES = [
+  {
+    status: "unverified",
+    label: "Unverified",
+  },
+
+  {
+    status: "active",
+    label: "Active",
+  },
+
+  {
+    status: "suspended",
+    label: "Suspended",
+  },
+
+  {
+    status: "deactivated",
+    label: "Deactivated",
+  },
+
+  {
+    status: "invited",
+    label: "Invited",
   },
 ];

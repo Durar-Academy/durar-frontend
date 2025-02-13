@@ -65,7 +65,7 @@ export default function AdminPage() {
                 {tutorsClasses.length > 0 ? (
                   tutorsClasses.map((tutorsClass, index) => <TutorClass classDetail={tutorsClass} key={index} />)
                 ) : (
-                  <p>No Classes</p>
+                  <p className="text-sm mt-4 text-low">No Classes</p>
                 )}
               </ActivitiesCard>
             )}
@@ -79,7 +79,7 @@ export default function AdminPage() {
                 {recentActivities.length > 0 ? (
                   recentActivities.map((activity, index) => <Activity activity={activity} key={index} />)
                 ) : (
-                  <p>No Recent Activity</p>
+                  <p className="text-sm mt-4 text-low">No Recent Activity</p>
                 )}
               </ActivitiesCard>
             )}

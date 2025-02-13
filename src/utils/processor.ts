@@ -180,7 +180,7 @@ export const processStudentsMetrics = (studentsMetrics: StudentsMetrics): Overvi
     },
 
     {
-      title: "Graduated",
+      title: "Graduated Students",
       figure: String(studentsMetrics.graduatedStudents),
       children: React.createElement(GraduationCap, {
         key: "icon",
@@ -189,7 +189,7 @@ export const processStudentsMetrics = (studentsMetrics: StudentsMetrics): Overvi
     },
 
     {
-      title: "Inactive",
+      title: "Inactive Students",
       figure: String(studentsMetrics.inactiveStudents),
       children: React.createElement(Info, { key: "icon", className: "w-6 h-6 text-danger" }),
     },
@@ -299,12 +299,12 @@ export const processStudentCourses = (courses: Courses[]) => {
 };
 
 export const processStudentPaymentOverview = (
-  studentPaymentOverview: StudentsMetrics
+  studentPaymentOverview: StudentsMetrics,
 ): OverviewCardProps[] => {
   const planFigure = studentPaymentOverview.currentBillingPlan
     ? `${formatAmount(
         studentPaymentOverview.currentBillingPlan.billingPlan.amount,
-        studentPaymentOverview.currentBillingPlan.currency
+        studentPaymentOverview.currentBillingPlan.currency,
       )} ${studentPaymentOverview.currentBillingPlan.billingPlan.interval ?? ""}`
     : "-";
 
@@ -364,7 +364,7 @@ export const processStudentPayments = (payments: Payment[]) => {
 };
 
 export const processStudentAssignments = (
-  assignments: Assignment[]
+  assignments: Assignment[],
 ): StudentAssignmentsTableProps => {
   const extractedAssignments = assignments.map((assignment) => {
     const id = assignment.id;
@@ -388,4 +388,48 @@ export const processStudentAssignments = (
   });
 
   return extractedAssignments;
+};
+
+export const processTutorsMetrics = (tutorsMetrics: TutorsMetrics): OverviewCardProps[] => {
+  return [
+    {
+      title: "Total Tutors",
+      figure: String(tutorsMetrics.tutorsCount),
+      children: React.createElement(List, { key: "icon", className: "w-6 h-6 text-orange" }),
+    },
+
+    {
+      title: "Active Tutors",
+      figure: String(tutorsMetrics.activeTutorsCount),
+      children: React.createElement(CheckCircle, {
+        key: "icon",
+        className: "w-6 h-6 text-success",
+      }),
+    },
+
+    {
+      title: "Inactive Tutors",
+      figure: String(tutorsMetrics.inActiveTutorsCount),
+      children: React.createElement(Info, { key: "icon", className: "w-6 h-6 text-danger" }),
+    },
+  ];
+};
+
+export const processTutors = (tutors: Tutor[]) => {
+  const extractedTutors = tutors.map((tutor) => {
+    const id = tutor.id;
+    const name = `${tutor.firstName} ${tutor.lastName}`;
+
+    const email = tutor.email;
+    const status = tutor.status;
+
+    return {
+      id,
+      name,
+      email,
+      status,
+    };
+  });
+
+  return extractedTutors;
 };

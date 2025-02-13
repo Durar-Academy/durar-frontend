@@ -13,6 +13,8 @@ import {
   getStudentPayments,
   getStudents,
   getStudentsMetric,
+  getTutors,
+  getTutorsMetric,
   getUser,
 } from "@/lib/admin";
 
@@ -37,11 +39,11 @@ export function usePayments() {
 }
 
 export function useStudentsMetrics() {
-  const query = useQuery({ queryKey: ["all-students-overview"], queryFn: getStudentsMetric });
+  const query = useQuery({ queryKey: ["all-students-metrics"], queryFn: getStudentsMetric });
   return query;
 }
 
-export function useStudents(filters?: StudentFilters) {
+export function useStudents(filters?: SearchFilters) {
   const query = useQuery({
     queryKey: ["all-students", filters],
     queryFn: () => getStudents({ filters }),
@@ -98,6 +100,19 @@ export function useStudentAssignments(studentId: string) {
   const query = useQuery({
     queryKey: ["student-assignment", studentId],
     queryFn: () => getStudentAssignments(studentId),
+  });
+  return query;
+}
+
+export function useTutorsMetrics() {
+  const query = useQuery({ queryKey: ["all-tutors-metrics"], queryFn: getTutorsMetric });
+  return query;
+}
+
+export function useTutors(filters?: SearchFilters) {
+  const query = useQuery({
+    queryKey: ["all-tutors", filters],
+    queryFn: () => getTutors({ filters }),
   });
   return query;
 }

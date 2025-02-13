@@ -21,14 +21,14 @@ import {
 import { Input } from "@/components/ui/input";
 
 import { cn } from "@/lib/utils";
-import { STUDENT_STATUSES } from "@/data/constants";
+import { TUTOR_STATUSES } from "@/data/constants";
 import { formatToReadableId } from "@/utils/formatter";
 
-export function StudentsTable({ students }: { students: StudentsTableProps }) {
+export function TutorsTable({ tutors }: { tutors: TutorsTableProps }) {
   return (
     <div className="p-6 rounded-xl bg-white h-full border border-shade-2">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-base text-high font-semibold">Students List</h3>
+        <h3 className="text-base text-high font-semibold">Tutors List</h3>
         <div className="flex gap-3 items-center">
           <div className="relative w-[200px]">
             <Input
@@ -42,14 +42,14 @@ export function StudentsTable({ students }: { students: StudentsTableProps }) {
           </div>
 
           <Select>
-            <SelectTrigger className="w-fit h-10 text-high bg-white border border-shade-3 rounded-lg px-4 py-3 focus:ring-0 shadow-none">
+            <SelectTrigger className="w-fit h-10 text-high bg-white border border-shade-3 rounded-lg px-4 py-3 focus:ring-0 shadow-none text-sm">
               <SelectValue placeholder="Status" className="capitalize" />
             </SelectTrigger>
 
             <SelectContent>
-              {STUDENT_STATUSES.map((studentStatus, index) => (
-                <SelectItem value={studentStatus.status} key={studentStatus.status + index}>
-                  {studentStatus.label}
+              {TUTOR_STATUSES.map((tutorStatus, index) => (
+                <SelectItem value={tutorStatus.status} key={tutorStatus.status + index}>
+                  {tutorStatus.label}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -66,13 +66,13 @@ export function StudentsTable({ students }: { students: StudentsTableProps }) {
       </div>
 
       <div className="h-[388px] overflow-y-scroll hide-scrollbar">
-        {students.length > 0 ? (
+        {tutors.length > 0 ? (
           <Table>
             <TableHeader>
               <TableRow className="text-low text-sm font-semibold">
-                <TableHead>Student ID</TableHead>
+                <TableHead>Tutor ID</TableHead>
                 <TableHead>Name</TableHead>
-                <TableHead>Gender</TableHead>
+
                 <TableHead>Email</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Action</TableHead>
@@ -80,31 +80,31 @@ export function StudentsTable({ students }: { students: StudentsTableProps }) {
             </TableHeader>
 
             <TableBody className="space-y-3">
-              {students.map((student) => (
+              {tutors.map((tutor) => (
                 <TableRow
                   className="text-sm text-high bg-offwhite h-12"
-                  key={student.id + student.status}
+                  key={tutor.id + tutor.status}
                 >
                   <TableCell className="capitalize">
-                    {formatToReadableId(student.id, "STND")}
+                    {formatToReadableId(tutor.id, "TUTR")}
                   </TableCell>
-                  <TableCell className="capitalize">{student.name}</TableCell>
-                  <TableCell className="capitalize">{student.category}</TableCell>
-                  <TableCell>{student.email}</TableCell>
+                  <TableCell className="capitalize">{tutor.name}</TableCell>
+
+                  <TableCell>{tutor.email}</TableCell>
                   <TableCell
                     className={cn(
                       "capitalize font-medium text-high",
-                      student.status === "active" && "text-success",
-                      student.status === "unverified" && "text-orange",
-                      (student.status === "suspended" || student.status === "deactivated") &&
+                      tutor.status === "active" && "text-success",
+                      tutor.status === "unverified" && "text-orange",
+                      (tutor.status === "suspended" || tutor.status === "deactivated") &&
                         "text-danger",
-                      student.status === "graduated" && "text-success-light",
+                      tutor.status === "invited" && "text-success-light",
                     )}
                   >
-                    {student.status}
+                    {tutor.status}
                   </TableCell>
                   <TableCell>
-                    <Link href={`/admin/students/${student.id}`}>
+                    <Link href={`/admin/tutors/${tutor.id}`}>
                       <button className="font-bold text-orange hover:underline">View</button>
                     </Link>
                   </TableCell>
@@ -113,7 +113,7 @@ export function StudentsTable({ students }: { students: StudentsTableProps }) {
             </TableBody>
           </Table>
         ) : (
-          <p className="text-sm mt-4 text-low">No Students Found</p>
+          <p className="text-sm mt-4 text-low">No Tutors Found</p>
         )}
       </div>
     </div>
