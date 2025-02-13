@@ -74,18 +74,8 @@ export async function getStudentActivities(studentId: string, options?: { signal
   return response.data.data;
 }
 
-export async function getStudentPaymentOverview(
-  studentId: string,
-  options?: { signal?: AbortSignal },
-) {
-  const response = await axiosInstance.get(`/metrics/student?id=${studentId}`, {
-    signal: options?.signal,
-  });
-  return response.data.data;
-}
-
-export async function getStudentPayments(studentId: string, options?: { signal?: AbortSignal }) {
-  const response = await axiosInstance.get(`/payment?userId=${studentId}`, {
+export async function getUserPayments(userId: string, options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get(`/payment?userId=${userId}`, {
     signal: options?.signal,
   });
   return response.data.data;

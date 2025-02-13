@@ -350,7 +350,7 @@ type Subscription = {
   billingPlan: BillingPlan;
 };
 
-type StudentsPaymentsTableProps = {
+type UsersPaymentsTableProps = {
   id: string;
   amount: number;
   date: string;
@@ -432,6 +432,9 @@ type QuizAnswer = SingleChoiceAnswer | MultipleChoiceAnswer;
 type AssignmentStatus = "pending" | "submitted" | "graded";
 
 type TutorsMetrics = {
+  pendingEarnings: number;
+  totalEarnings: number;
+
   tutorsCount: number;
   activeTutorsCount: number;
   inActiveTutorsCount: number;

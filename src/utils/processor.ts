@@ -343,7 +343,7 @@ export const processStudentPaymentOverview = (
   ];
 };
 
-export const processStudentPayments = (payments: Payment[]) => {
+export const processUserPayments = (payments: Payment[]) => {
   const extractedPayments = payments.map((payment) => {
     const id = payment.charge.id;
     const date = format(new Date(payment.charge.createdAt), "PP");
@@ -520,4 +520,33 @@ export const processTutorCourses = (courses: Courses[]) => {
   });
 
   return extractedCourses;
+};
+
+export const processTutorPaymentOverview = (
+  tutorPaymentOverview: TutorsMetrics,
+): OverviewCardProps[] => {
+  const totalEarnings = tutorPaymentOverview.totalEarnings
+    ? `${formatAmount(tutorPaymentOverview.totalEarnings)}`
+    : "-";
+
+  const pendingEarnings = tutorPaymentOverview.pendingEarnings
+    ? `${formatAmount(tutorPaymentOverview.pendingEarnings)}`
+    : "-";
+
+  return [
+    {
+      title: "Total Earnings",
+      figure: totalEarnings,
+      children: React.createElement(List, { key: "icon", className: "w-6 h-6 text-orange" }),
+    },
+
+    {
+      title: "Pending Payments",
+      figure: pendingEarnings,
+      children: React.createElement(CheckCircle, {
+        key: "icon",
+        className: "w-6 h-6 text-success",
+      }),
+    },
+  ];
 };

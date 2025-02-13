@@ -1,4 +1,4 @@
-import { Download } from "lucide-react";
+// import { Download } from "lucide-react";
 
 import {
   Table,
@@ -12,10 +12,10 @@ import {
 import { cn } from "@/lib/utils";
 import { formatAmount, formatToReadableId } from "@/utils/formatter";
 
-export function StudentPaymentsTable({ payments }: { payments: StudentsPaymentsTableProps }) {
+export function UserPaymentsTable({ payments }: { payments: UsersPaymentsTableProps }) {
   return (
-    <div className="rounded-xl p-6 border border-shade-2 bg-white h-full">
-      <div className="h-[470px] overflow-y-scroll hide-scrollbar">
+    <div className="h-full">
+      <div className="min-h-[406px] max-h-[470px] overflow-y-scroll hide-scrollbar">
         {payments.length > 0 ? (
           <Table>
             <TableHeader>
@@ -24,7 +24,7 @@ export function StudentPaymentsTable({ payments }: { payments: StudentsPaymentsT
                 <TableHead>Date</TableHead>
                 <TableHead>Amount</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Action</TableHead>
+                {/* <TableHead>Action</TableHead> */}
               </TableRow>
             </TableHeader>
 
@@ -44,16 +44,16 @@ export function StudentPaymentsTable({ payments }: { payments: StudentsPaymentsT
                       "capitalize font-medium text-high",
                       payment.status === "completed" && "text-success",
                       payment.status === "pending" && "text-orange",
-                      payment.status === "failed" && "text-danger"
+                      payment.status === "failed" && "text-danger",
                     )}
                   >
                     {payment.status}
                   </TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <button className="font-bold text-orange">
                       <Download className="w-4 h-4 text-inherit" />
                     </button>
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               ))}
             </TableBody>

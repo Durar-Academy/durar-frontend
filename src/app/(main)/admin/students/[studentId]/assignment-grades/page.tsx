@@ -36,8 +36,8 @@ export default function StudentManangementAssignmentGradePage() {
           <div className="relative w-[200px]">
             <Input
               className="w-full text-sm h-10 px-4 pr-10 rounded-lg border border-shade-3 bg-white shadow-none placeholder:text-low
-            
-            
+
+
             focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-2 focus-visible:border-orange"
               placeholder="Search..."
             />
