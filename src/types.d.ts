@@ -116,25 +116,25 @@ type EnrollmentTrendGraphProps = {
   users: User[];
 };
 
-type Course = {
-  id: string;
-  title: string;
-  description: string;
-  thumbnailId: null;
-  status: string;
-  language: null;
-  category: null;
-  difficultyLevel: null;
-  enableCertification: boolean;
-  trackProgress: boolean;
-  enableComments: boolean;
-  additionalNotes: null;
-  prerequisites: never[];
-  createdById: string;
-  deletedAt: null;
-  createdAt: string;
-  updatedAt: string;
-};
+// type Course = {
+//   id: string;
+//   title: string;
+//   description: string;
+//   thumbnailId: null;
+//   status: string;
+//   language: null;
+//   category: null;
+//   difficultyLevel: null;
+//   enableCertification: boolean;
+//   trackProgress: boolean;
+//   enableComments: boolean;
+//   additionalNotes: null;
+//   prerequisites: never[];
+//   createdById: string;
+//   deletedAt: null;
+//   createdAt: string;
+//   updatedAt: string;
+// };
 
 type Schedule = {
   id: string;
@@ -299,6 +299,70 @@ type Courses = {
   startAt: Date | null;
   course: Course;
   user: User;
+};
+
+type Course = {
+  id: string;
+  title: string;
+  description: string;
+  thumbnailId: null;
+  status: string;
+  language: null;
+  category: null;
+  difficultyLevel: null;
+  enableCertification: boolean;
+  trackProgress: boolean;
+  enableComments: boolean;
+  additionalNotes: null;
+  prerequisites: never[];
+  createdById: string;
+  deletedAt: null;
+  createdAt: string;
+  updatedAt: string;
+  Lesson: Lesson[];
+  UserCourse: UserCourse[];
+};
+
+type Courses = {
+  id: string;
+  courseId: string;
+  userId: string;
+  deletedAt: Date | null;
+  createdAt: Date | null;
+  updatedAt: Date | null;
+  lastAccessAt: Date | null;
+  completeAt: Date | null;
+  progress: number;
+  startAt: Date | null;
+  course: Course;
+  user: User;
+};
+
+type UserCourse = {
+  id: string;
+  courseId: string;
+  userId: string;
+  deletedAt: Date | null;
+  createdAt: Date | null;
+  updatedAt: Date | null;
+  lastAccessAt: Date | null;
+  completeAt: Date | null;
+  progress: number;
+  startAt: Date | null;
+};
+
+type Lesson = {
+  id: string;
+  title: string;
+  duration: number;
+  isLocked: boolean;
+  isCompleted: boolean;
+  type: string;
+  mediaId: string | null;
+  courseId: string;
+  deletedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 type BillingPlan = {

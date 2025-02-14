@@ -12,7 +12,7 @@ import { useCurrentUser } from "@/hooks/useAccount";
 import { cn } from "@/lib/utils";
 import { processTutorManagementLinks } from "@/utils/processor";
 
-export default function TutorManagementTemplate({ children }: { children: React.ReactNode }) {
+export default function TutorManagementLayout({ children }: { children: React.ReactNode }) {
   const { tutorId } = useParams<{ tutorId: string }>();
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const pathname = usePathname();

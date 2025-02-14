@@ -64,9 +64,8 @@ export default function TutorManangementPerformaceMetricsPage() {
 
         <div className="h-full overflow-y-scroll hide-scrollbar grid grid-cols-2 gap-3">
           {tutorReviews.map((review, index) => (
-            <div>
+            <div key={index}>
               <ReviewList
-                key={index}
                 studentName={review.student}
                 course={review.course}
                 date={format(new Date(review.createdAt), "PP")}

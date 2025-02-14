@@ -507,7 +507,7 @@ export const processTutorCourses = (courses: Courses[]) => {
     const progress = course.progress;
     const startDate = format(new Date(course.startAt as Date), "PP");
     const completionDate = format(new Date(course.completeAt as Date), "PP");
-    const noOfStudents = 0;
+    const noOfStudents = course.course.UserCourse.length;
 
     return {
       id,

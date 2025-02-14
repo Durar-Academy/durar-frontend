@@ -12,7 +12,7 @@ import { useCurrentUser } from "@/hooks/useAccount";
 import { cn } from "@/lib/utils";
 import { processStudentManagementLinks } from "@/utils/processor";
 
-export default function StudentManagementTemplate({ children }: { children: React.ReactNode }) {
+export default function StudentManagementLayout({ children }: { children: React.ReactNode }) {
   const { studentId } = useParams<{ studentId: string }>();
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const pathname = usePathname();

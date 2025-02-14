@@ -13,8 +13,8 @@ export default function TutorManagementDocumentPage() {
 
       <div className="grid grid-cols-2 gap-3">
         {tutorDocuments.map((tutorDocument, index) => (
-          <div className="">
-            <FileList key={index} filename={tutorDocument.name} />
+          <div key={index}>
+            <FileList filename={tutorDocument.name} />
           </div>
         ))}
       </div>
