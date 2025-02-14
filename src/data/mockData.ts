@@ -204,5 +204,17 @@ export const tutorNotes = [
   {
     text: "You're doing well with error correction. Consider implementing more group activities for varied practice.",
     date: "2025-02-05T16:15:00.000Z",
-  }
+  },
+];
+
+export const tutorDocuments = [
+  {
+    name: "Resume/CV",
+  },
+  {
+    name: "Identification (e.g., Passport, National ID)",
+  },
+  {
+    name: "Certificate of Qualification",
+  },
 ];
