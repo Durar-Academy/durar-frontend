@@ -550,3 +550,31 @@ export const processTutorPaymentOverview = (
     },
   ];
 };
+
+export const processTutorPeformance = (tutorMetrics: TutorsMetrics): OverviewCardProps[] => {
+  return [
+    {
+      title: "Avg Course Ratings",
+      figure: String(tutorMetrics.avgCourseRating),
+      children: React.createElement(List, { key: "icon", className: "w-6 h-6 text-orange" }),
+    },
+
+    {
+      title: "Total Students Taught",
+      figure: String(tutorMetrics.totalStudentsTaught),
+      children: React.createElement(CheckCircle, {
+        key: "icon",
+        className: "w-6 h-6 text-success",
+      }),
+    },
+
+    {
+      title: "Total Classess",
+      figure: String(tutorMetrics.totalClasses),
+      children: React.createElement(GraduationCap, {
+        key: "icon",
+        className: "w-6 h-6 text-orange",
+      }),
+    },
+  ];
+};

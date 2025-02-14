@@ -1,6 +1,6 @@
 "use client";
 
-import { FilelistItem } from "@/components/admin/filelist-item";
+import { FileList } from "@/components/admin/file-list";
 
 import { tutorDocuments } from "@/data/mockData";
 
@@ -14,7 +14,7 @@ export default function TutorManagementDocumentPage() {
       <div className="grid grid-cols-2 gap-3">
         {tutorDocuments.map((tutorDocument, index) => (
           <div className="">
-            <FilelistItem key={index} filename={tutorDocument.name} />
+            <FileList key={index} filename={tutorDocument.name} />
           </div>
         ))}
       </div>

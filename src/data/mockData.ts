@@ -218,3 +218,62 @@ export const tutorDocuments = [
     name: "Certificate of Qualification",
   },
 ];
+
+export const tutorReviews = [
+  {
+    student: "Ahmad Ibrahim",
+    course: "Quranic Arabic Level 2",
+    createdAt: "2025-02-14T09:30:00+03:00",
+    review:
+      "Ustaz Toyib is a good and diligent tutor, he pays attention to all my recitations and recommends better learning methods.",
+  },
+  {
+    student: "Sarah Hassan",
+    course: "Modern Standard Arabic",
+    createdAt: "2025-02-13T15:45:00+01:00",
+    review:
+      "Ustaz Khalid explains grammar concepts clearly and patiently. His exercises for practicing Arabic writing have helped improve my handwriting significantly.",
+  },
+  {
+    student: "Mohammed Ali",
+    course: "Tajweed Fundamentals",
+    createdAt: "2025-02-14T10:15:00+04:00",
+    review:
+      "Ustazah Fatima is very thorough in teaching tajweed rules. She listens carefully to my recitation and provides detailed corrections when needed.",
+  },
+  {
+    student: "Aisha Rahman",
+    course: "Conversational Arabic",
+    createdAt: "2025-02-13T14:20:00+02:00",
+    review:
+      "Ustaz Yusuf makes learning Arabic enjoyable. He incorporates daily life situations into lessons and ensures I understand the cultural context of expressions.",
+  },
+  {
+    student: "Omar Faruq",
+    course: "Arabic Grammar Advanced",
+    createdAt: "2025-02-14T17:00:00+03:00",
+    review:
+      "Ustaz Abdul Rahman explains complex grammar rules with simple examples. His teaching method makes even difficult concepts easy to grasp.",
+  },
+  {
+    student: "Maryam Idris",
+    course: "Quranic Memorization",
+    createdAt: "2025-02-13T19:30:00+05:00",
+    review:
+      "Ustazah Aminah's systematic approach to memorization is excellent. She emphasizes proper pronunciation and helps me understand the meaning of verses.",
+  },
+  {
+    student: "Hamza Abdullah",
+    course: "Business Arabic",
+    createdAt: "2025-02-14T11:45:00+02:00",
+    review:
+      "Ustaz Mahmoud connects lessons to real business situations. His focus on professional vocabulary and formal writing is exactly what I needed.",
+  },
+  {
+    student: "Khadijah Omar",
+    course: "Arabic for Beginners",
+    createdAt: "2025-02-13T16:15:00+04:00",
+    review:
+      "Ustazah Zainab is very patient with beginners. Her step-by-step approach to teaching the alphabet and basic words builds confidence.",
+  },
+];

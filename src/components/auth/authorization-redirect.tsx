@@ -79,8 +79,6 @@ export function AuthorizationRedirect({
   useEffect(() => {
     checkRole();
 
-    console.log("CHECK ROLER");
-
     return () => {
       if (abortControllerRef.current) abortControllerRef.current.abort();
     };
