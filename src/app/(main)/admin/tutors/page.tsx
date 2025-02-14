@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { TopBar } from "@/components/shared/top-bar";
 import { OverviewCard } from "@/components/admin/overview-card";
 import { TutorsTable } from "@/components/admin/tutors-table";
+import { AddTutorDialog } from "@/components/admin/add-tutor-dialog";
 
 import { useCurrentUser } from "@/hooks/useAccount";
 import { useTutors, useTutorsMetrics } from "@/hooks/useAdmin";
@@ -40,6 +41,10 @@ export default function TutorsManagementPage() {
       <div className="rounded-xl p-6 border border-shade-2 bg-white flex flex-col gap-4">
         <div className="flex justify-between items-center">
           <h3 className="text-low font-medium text-xl">Tutors Overview</h3>
+
+          <div>
+            <AddTutorDialog />
+          </div>
         </div>
 
         <div className="tutors-overview-cards">

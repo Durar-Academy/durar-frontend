@@ -16,7 +16,7 @@ export function AddNoteDialog() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant={"_default"} className="bg-orange hover:bg-burnt px-4 py-2">
+        <Button variant={"_default"} className="bg-orange hover:bg-burnt px-4 py-2 h-10">
           <Plus className="w-6 h-6" strokeWidth={3} />
 
           <span>Add new note</span>

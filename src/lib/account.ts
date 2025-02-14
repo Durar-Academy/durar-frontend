@@ -11,3 +11,8 @@ export async function changePassword(payload: { password: string }) {
   const response = await axiosInstance.post("/auth/change-password", payload);
   return response.data;
 }
+
+export async function inviteTutor(payload: { email: string }) {
+  const response = await axiosInstance.post(`/user/invite-tutor`, payload);
+  return response.data;
+}

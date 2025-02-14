@@ -35,9 +35,7 @@ export default function ForgotPassword() {
       const response = await initiatePasswordReset({ email });
       console.log("Initiate Password Reset Response Data", response);
 
-      {
-        toast.success("We've sent a password reset link to your email.\nPlease check your inbox.");
-      }
+      toast.success("We've sent a password reset link to your email.\nPlease check your inbox.");
 
       setVerifiedReset(true);
     } catch (error) {
@@ -78,7 +76,10 @@ export default function ForgotPassword() {
 
           <div className="mt-8 text-center">
             <Link href={"https://mail.google.com/mail/u/0/#inbox"} target="_blank">
-              <Button className="w-full text-base font-medium leading-5 text-center py-3" variant={"_default"}>
+              <Button
+                className="w-full text-base font-medium leading-5 text-center py-3"
+                variant={"_default"}
+              >
                 {" "}
                 Open Gmail
               </Button>
@@ -86,7 +87,10 @@ export default function ForgotPassword() {
 
             <p className="mt-4">
               Didn&apos;t receive the email?{" "}
-              <button className="text-orange underline underline-offset-2" onClick={handleResendEmail}>
+              <button
+                className="text-orange underline underline-offset-2"
+                onClick={handleResendEmail}
+              >
                 Resend
               </button>
             </p>
@@ -106,13 +110,17 @@ export default function ForgotPassword() {
           <h1 className="font-semibold text-high text-xl">Forgot Password</h1>
 
           <p className="text-low font-normal text-sm mt-3">
-            Please enter your email address below and we&apos;ll send you a link to reset your password
+            Please enter your email address below and we&apos;ll send you a link to reset your
+            password
           </p>
         </div>
 
         <form onSubmit={handleSubmit}>
           <div>
-            <Label className="mb-2 text-medium text-sm leading-4 w-full inline-block text-low" htmlFor="email">
+            <Label
+              className="mb-2 text-medium text-sm leading-4 w-full inline-block text-low"
+              htmlFor="email"
+            >
               Email
             </Label>
 
@@ -123,14 +131,16 @@ export default function ForgotPassword() {
               className={cn(
                 "shadow-none px-4 py-2 rounded-[10px] h-12 placeholder:text-low text-high text-sm focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-2 focus-visible:border-orange",
 
-                !!inputError && "border-2 border-destructive"
+                !!inputError && "border-2 border-destructive",
               )}
               value={email}
               onChange={(event) => setEmail(event.target.value)}
               required
             />
 
-            {!!inputError && <p className="text-sm font-medium text-destructive mt-2">{inputError}</p>}
+            {!!inputError && (
+              <p className="text-sm font-medium text-destructive mt-2">{inputError}</p>
+            )}
           </div>
 
           <div className="mt-8">
