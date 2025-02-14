@@ -1,12 +1,15 @@
-import { Plus, Search } from "lucide-react";
+"use client";
+
+import { Search } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
-import { studentNotes } from "@/data/mockData";
+import { tutorNotes } from "@/data/mockData";
 import { DisplayList } from "@/components/admin/display-list";
+import { AddNoteDialog } from "@/components/admin/add-note-dialog";
 
-export default function StudentManagementCommentPage() {
+export default function TutorManagementCommentPage() {
   return (
     <div className="p-6 rounded-xl bg-white border border-shade-2">
       <div className="flex justify-between items-center mb-6">
@@ -29,17 +32,13 @@ export default function StudentManagementCommentPage() {
           </div>
 
           <div>
-            <Button variant={"_default"} className="bg-orange hover:bg-burnt px-4 py-2">
-              <Plus className="w-6 h-6" strokeWidth={3} />
-
-              <span>Add new note</span>
-            </Button>
+            <AddNoteDialog />
           </div>
         </div>
       </div>
 
       <div className="flex flex-col gap-3">
-        {studentNotes.map((note, index) => (
+        {tutorNotes.map((note, index) => (
           <DisplayList key={index} text={note.text} date={note.date as unknown as Date} />
         ))}
       </div>

@@ -5,7 +5,6 @@ import {
   getMetrics,
   getPayments,
   getSchedules,
-  getStudentActivities,
   getStudentAssignments,
   getStudentCourses,
   getStudentMetrics,
@@ -16,6 +15,7 @@ import {
   getTutors,
   getTutorsMetrics,
   getUser,
+  getUserActivities,
   getUserPayments,
 } from "@/lib/admin";
 
@@ -76,7 +76,7 @@ export function useStudentCourses(studentId: string) {
 export function useStudentActivities(studentId: string) {
   const query = useQuery({
     queryKey: ["student-activities", studentId],
-    queryFn: () => getStudentActivities(studentId),
+    queryFn: () => getUserActivities(studentId),
   });
   return query;
 }
@@ -151,6 +151,14 @@ export function useTutorPayments(tutorId: string) {
   const query = useQuery({
     queryKey: ["tutor-payments", tutorId],
     queryFn: () => getUserPayments(tutorId),
+  });
+  return query;
+}
+
+export function useTutorActivities(tutorId: string) {
+  const query = useQuery({
+    queryKey: ["tutor-activities", tutorId],
+    queryFn: () => getUserActivities(tutorId),
   });
   return query;
 }

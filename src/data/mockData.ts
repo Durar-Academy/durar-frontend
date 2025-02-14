@@ -169,7 +169,7 @@ export const payments = [
   },
 ];
 
-export const notes = [
+export const studentNotes = [
   {
     text: "Your pronunciation is getting better, but keep practicing.",
     date: "2025-02-01T10:15:45.123Z",
@@ -186,4 +186,23 @@ export const notes = [
     text: "You're almost there! Try slowing down your speech for better pronunciation.",
     date: "2025-02-05T17:20:55.987Z",
   },
+];
+
+export const tutorNotes = [
+  {
+    text: "Excellent work helping students with pronunciation. Consider incorporating more interactive exercises.",
+    date: "2025-02-01T09:30:00.000Z",
+  },
+  {
+    text: "Your patience with struggling students is commendable. Try using more visual aids to reinforce concepts.",
+    date: "2025-02-02T15:20:00.000Z",
+  },
+  {
+    text: "Great energy in your sessions! Remember to document student progress more consistently.",
+    date: "2025-02-04T11:45:00.000Z",
+  },
+  {
+    text: "You're doing well with error correction. Consider implementing more group activities for varied practice.",
+    date: "2025-02-05T16:15:00.000Z",
+  }
 ];

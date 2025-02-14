@@ -67,8 +67,8 @@ export async function getStudentCourses(studentId: string, options?: { signal?: 
   return response.data.data;
 }
 
-export async function getStudentActivities(studentId: string, options?: { signal?: AbortSignal }) {
-  const response = await axiosInstance.get(`/activity?userId=${studentId}`, {
+export async function getUserActivities(userId: string, options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get(`/activity?userId=${userId}`, {
     signal: options?.signal,
   });
   return response.data.data;
