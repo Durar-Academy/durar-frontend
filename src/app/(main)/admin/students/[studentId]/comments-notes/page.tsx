@@ -1,10 +1,11 @@
-import { Plus, Search } from "lucide-react";
+import { Search } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
-import { studentNotes } from "@/data/mockData";
 import { DisplayList } from "@/components/admin/display-list";
+import { AddNoteDialog } from "@/components/admin/add-note-dialog";
+
+import { studentNotes } from "@/data/mockData";
 
 export default function StudentManagementCommentPage() {
   return (
@@ -29,11 +30,9 @@ export default function StudentManagementCommentPage() {
           </div>
 
           <div>
-            <Button variant={"_default"} className="bg-orange hover:bg-burnt px-4 py-2">
-              <Plus className="w-6 h-6" strokeWidth={3} />
-
-              <span>Add new note</span>
-            </Button>
+            <div>
+              <AddNoteDialog />
+            </div>
           </div>
         </div>
       </div>

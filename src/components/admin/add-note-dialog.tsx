@@ -1,9 +1,11 @@
-import { Plus } from "lucide-react";
+import { Plus, SendHorizonal } from "lucide-react";
 
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -38,6 +40,27 @@ export function AddNoteDialog() {
             placeholder="New note here..."
           />
         </>
+
+        <DialogFooter>
+          <DialogClose asChild>
+            <Button
+              type="button"
+              variant="_outline"
+              className="text-orange px-6 py-2 h-10 bg-white border border-shade-3 hover:bg-offwhite"
+            >
+              Cancel
+            </Button>
+          </DialogClose>
+
+          <Button
+            variant={"_default"}
+            className="bg-orange hover:bg-burnt px-4 py-2 h-10"
+            type="submit"
+          >
+            <span>Send Note</span>
+            <SendHorizonal className="w-6 h-6" strokeWidth={3} />
+          </Button>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
