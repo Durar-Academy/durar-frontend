@@ -306,10 +306,10 @@ type Course = {
   title: string;
   description: string;
   thumbnailId: null;
-  status: string;
+  status: "draft" | "published";
   language: null;
   category: null;
-  difficultyLevel: null;
+  difficultyLevel: string | null;
   enableCertification: boolean;
   trackProgress: boolean;
   enableComments: boolean;
@@ -551,3 +551,10 @@ type TutorCoursesTableProps = {
   startDate: string;
   completionDate: string;
 }[];
+
+type CoursesMetrics = {
+  totalCourses: number;
+  activeCourses: number;
+  inActiveCourses: number;
+  completedCourses: number;
+};

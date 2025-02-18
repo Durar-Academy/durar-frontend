@@ -578,3 +578,37 @@ export const processTutorPeformance = (tutorMetrics: TutorsMetrics): OverviewCar
     },
   ];
 };
+
+export const processCoursesMetrics = (coursesMetrics: CoursesMetrics): OverviewCardProps[] => {
+  return [
+    {
+      title: "Total Courses",
+      figure: `${coursesMetrics.totalCourses ?? 0}`,
+      children: React.createElement(List, { key: "icon", className: "w-6 h-6 text-orange" }),
+    },
+
+    {
+      title: "Active Courses",
+      figure: `${coursesMetrics.activeCourses ?? 0}`,
+      children: React.createElement(CheckCircle, {
+        key: "icon",
+        className: "w-6 h-6 text-success",
+      }),
+    },
+
+    {
+      title: "Inactive Courses",
+      figure: `${coursesMetrics.inActiveCourses ?? 0}`,
+      children: React.createElement(Info, { key: "icon", className: "w-6 h-6 text-danger" }),
+    },
+
+    {
+      title: "Completed Courses",
+      figure: `${coursesMetrics.completedCourses ?? 0}`,
+      children: React.createElement(CheckCircle, {
+        key: "icon",
+        className: "w-6 h-6 text-success",
+      }),
+    },
+  ];
+};

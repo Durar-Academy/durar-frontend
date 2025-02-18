@@ -119,3 +119,10 @@ export async function getTutorCourses(tutorId: string, options?: { signal?: Abor
   });
   return response.data.data;
 }
+
+export async function getCoursesMetrics(options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get("/metrics/course", {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}
