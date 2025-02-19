@@ -34,7 +34,7 @@ import { useCoursesMetrics } from "@/hooks/useAdmin";
 import { processCoursesMetrics } from "@/utils/processor";
 import { sampleCourses } from "@/data/mockData";
 
-export function CourseList({
+function CourseList({
   courses,
   courseId,
   setCourseId,
@@ -102,7 +102,7 @@ export function CourseList({
   );
 }
 
-export function CourseDetails({ course }: { course: Course }) {
+function CourseDetails({ course }: { course: Course }) {
   return (
     <div className="flex flex-col gap-3">
       <div className="flex justify-between items-center">
