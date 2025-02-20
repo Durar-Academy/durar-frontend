@@ -126,3 +126,10 @@ export async function getCoursesMetrics(options?: { signal?: AbortSignal }) {
   });
   return response.data.data;
 }
+
+export async function getCourses(options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get("/course", {
+    signal: options?.signal,
+  });
+  return response.data.data.records;
+}

@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 
 import {
   getActivities,
+  getCourses,
   getCoursesMetrics,
   getMetrics,
   getPayments,
@@ -166,5 +167,10 @@ export function useTutorActivities(tutorId: string) {
 
 export function useCoursesMetrics() {
   const query = useQuery({ queryKey: ["all-courses-metrics"], queryFn: getCoursesMetrics });
+  return query;
+}
+
+export function useCourses() {
+  const query = useQuery<Course[]>({ queryKey: ["all-courses"], queryFn: getCourses });
   return query;
 }

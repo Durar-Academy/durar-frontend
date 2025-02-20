@@ -321,6 +321,52 @@ type Course = {
   updatedAt: string;
   Lesson: Lesson[];
   UserCourse: UserCourse[];
+  averageRating: number;
+  CourseRating: CourseRating[];
+  completionRate: number;
+};
+
+type CourseRating = {
+  id: string;
+  courseId: string;
+  userId: string;
+  rating: number;
+  comment: string;
+  deletedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+  firstName: string;
+  lastName: string;
+};
+
+type UserCourse = {
+  id: string;
+  courseId: string;
+  userId: string;
+  deletedAt: Date | null;
+  createdAt: Date | null;
+  updatedAt: Date | null;
+  lastAccessAt: Date | null;
+  completeAt: Date | null;
+  progress: number;
+  startAt: Date | null;
+  lastName: string;
+  firstName: string;
+  role: "student" | "tutor";
+};
+
+type Lesson = {
+  id: string;
+  title: string;
+  duration: number;
+  isLocked: boolean;
+  isCompleted: boolean;
+  type: string;
+  mediaId: string | null;
+  courseId: string;
+  deletedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
 };
 
 type Courses = {
@@ -336,33 +382,6 @@ type Courses = {
   startAt: Date | null;
   course: Course;
   user: User;
-};
-
-type UserCourse = {
-  id: string;
-  courseId: string;
-  userId: string;
-  deletedAt: Date | null;
-  createdAt: Date | null;
-  updatedAt: Date | null;
-  lastAccessAt: Date | null;
-  completeAt: Date | null;
-  progress: number;
-  startAt: Date | null;
-};
-
-type Lesson = {
-  id: string;
-  title: string;
-  duration: number;
-  isLocked: boolean;
-  isCompleted: boolean;
-  type: string;
-  mediaId: string | null;
-  courseId: string;
-  deletedAt: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
 };
 
 type BillingPlan = {
