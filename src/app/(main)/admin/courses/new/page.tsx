@@ -37,7 +37,7 @@ export default function CreateCoursePage() {
         <CreateCourseTabs />
 
         <div className="w-full dashboard-shadow p-6 rounded-xl bg-white">
-          <div className="flex flex-col gap-4">FORM 3</div>
+          <div>FORMS HERE</div>
 
           <CreateCourseButtons />
         </div>
