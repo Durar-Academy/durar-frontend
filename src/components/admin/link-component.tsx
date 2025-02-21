@@ -3,9 +3,10 @@ import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 
-export function LinkComponent({ href, children }: LinkComponentProps) {
+export function LinkComponent({ href, children, exact = false }: LinkComponentProps) {
   const pathname = usePathname();
-  const isActive = pathname === href;
+
+  const isActive = exact ? pathname === href : pathname.startsWith(href);
 
   return (
     <Link

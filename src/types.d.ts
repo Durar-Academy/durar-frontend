@@ -27,6 +27,7 @@ type AuthenticationContextProps = {
 type LinkComponentProps = {
   href: string;
   children: React.ReactNode;
+  exact?: boolean;
 };
 
 type ButtonComponentProps = {
@@ -47,6 +48,7 @@ type ComponentConfig = {
     onClick?: () => void;
     children?: React.ReactNode;
     options?: { value: string; label: string }[];
+    exact?: boolean;
   };
 };
 
@@ -397,7 +399,7 @@ type BillingPlan = {
   deletedAt: Date | null;
 };
 
-interface CurrentBillingPlan {
+type CurrentBillingPlan = {
   id: string;
   userId: string;
   billingPlanId: string;
@@ -413,7 +415,7 @@ interface CurrentBillingPlan {
   cancelledAt: Date | null;
   deletedAt: Date | null;
   billingPlan: BillingPlan;
-}
+};
 
 type Subscription = {
   id: string;

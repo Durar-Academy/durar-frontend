@@ -30,6 +30,7 @@ export const ADMIN_SIDEBAR_LINKS: ComponentConfig[] = [
     props: {
       href: "/admin",
       children: [React.createElement(Grid2X2, { key: "icon", className: "h-4 w-4" }), "Dashboard"],
+      exact: true,
     },
   },
   {
