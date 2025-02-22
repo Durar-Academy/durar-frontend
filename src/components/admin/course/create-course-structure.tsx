@@ -11,7 +11,6 @@ export function CreateCourseStructure() {
   const [lessons, setLessons] = useState<{ name: string; video: File | null; id: number }[]>([
     { name: "", video: null, id: 1 },
   ]);
-  console.log("LESSONS", lessons);
 
   const addLesson = () => {
     const maxId = lessons.reduce((max, lesson) => (lesson.id > max ? lesson.id : max), 0);

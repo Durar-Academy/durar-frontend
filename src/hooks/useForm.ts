@@ -1,8 +1,10 @@
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import { useContext } from "react";
 
 import { loginFormSchema, registerFormSchema, setPasswordFormSchema } from "@/lib/schemas";
+import { CreateCourseFormContext } from "@/contexts/create-course-form-context";
 
 export const useLoginForm = () =>
   useForm<z.infer<typeof loginFormSchema>>({
@@ -38,3 +40,11 @@ export const useSetPasswordForm = () =>
       confirmPassword: "",
     },
   });
+
+export function useCreateCourseFormProvider() {
+  const createCourseContext = useContext(CreateCourseFormContext);
+
+  if (createCourseContext === null)
+    throw new Error("Create Course Context Used Outside of its scope.");
+  return createCourseContext;
+}

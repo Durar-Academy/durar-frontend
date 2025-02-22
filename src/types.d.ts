@@ -579,3 +579,43 @@ type CoursesMetrics = {
   inActiveCourses: number;
   completedCourses: number;
 };
+
+type CourseStatus = "draft" | "published";
+
+type CreateLesson = {
+  title: string;
+  duration: number;
+  isLocked: boolean;
+  type: string;
+};
+
+type CreateCourse = {
+  title: string;
+  description: string;
+  thumbnailId: null;
+  category: string;
+  Lesson: CreateLesson[];
+  language: string;
+  difficultyLevel: string;
+  enableCertification: boolean;
+  trackProgress: boolean;
+  enableComments: boolean;
+  additionalNotes: string;
+  status: CourseStatus;
+};
+
+type CreateCourseFormContextProps = {
+  formData: CreateCourse;
+
+  updateFormData: (newData: Partial<CreateCourse>) => void;
+  cancelForm: () => void;
+
+  currentFormStep: number;
+  totalFormSteps: number;
+
+  prevStep: () => void;
+  nextStep: () => void;
+
+  saveAsDraft: () => void;
+  publishCourse: () => void;
+};

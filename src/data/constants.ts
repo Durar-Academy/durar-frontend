@@ -172,3 +172,19 @@ export const TUTOR_STATUSES = [
     label: "Invited",
   },
 ];
+
+
+export const defaultCreateFormValues = {
+  title: "",
+  description: "",
+  thumbnailId: null,
+  category: "",
+  Lesson: [],
+  language: "",
+  difficultyLevel: "",
+  enableCertification: false,
+  trackProgress: false,
+  enableComments: false,
+  additionalNotes: "",
+  status: "published" as CourseStatus,
+};

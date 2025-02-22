@@ -9,9 +9,29 @@ import { TopBar } from "@/components/shared/top-bar";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { useCurrentUser } from "@/hooks/useAccount";
+import { useCreateCourseFormProvider } from "@/hooks/useForm";
+
+import { CreateCourseStructure } from "@/components/admin/course/create-course-structure";
+import { CreateCourseAdditionalInfoForm } from "@/components/admin/course/create-course-additional-form";
+import { CreateCourseBasicInfoForm } from "@/components/admin/course/create-course-basic-info-form";
 
 export default function CreateCoursePage() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
+
+  const { currentFormStep } = useCreateCourseFormProvider();
+
+  const RenderFormStepContent = () => {
+    switch (currentFormStep) {
+      case 1:
+        return <CreateCourseBasicInfoForm />;
+      case 2:
+        return <CreateCourseStructure />;
+      case 3:
+        return <CreateCourseAdditionalInfoForm />;
+      default:
+        <CreateCourseBasicInfoForm />;
+    }
+  };
 
   return (
     <section className="flex flex-col gap-3">
@@ -37,7 +57,7 @@ export default function CreateCoursePage() {
         <CreateCourseTabs />
 
         <div className="w-full dashboard-shadow p-6 rounded-xl bg-white">
-          <div>FORMS HERE</div>
+          <>{RenderFormStepContent()}</>
 
           <CreateCourseButtons />
         </div>
