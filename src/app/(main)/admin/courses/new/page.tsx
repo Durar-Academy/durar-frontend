@@ -37,7 +37,7 @@ export default function CreateCoursePage() {
 
   return (
     <section className="flex flex-col gap-3">
-      {/* <div className="top-bar">
+      <div className="top-bar">
         {currentUserLoading ? (
           <Skeleton className="w-full rounded-xl h-[80px]" />
         ) : (
@@ -53,7 +53,7 @@ export default function CreateCoursePage() {
             </p>
           </TopBar>
         )}
-      </div> */}
+      </div>
 
       <div className="max-w-[900px] mx-auto w-full">
         <CreateCourseTabs />
