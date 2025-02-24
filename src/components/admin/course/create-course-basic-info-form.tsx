@@ -5,7 +5,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ThumbnailDropzone } from "./thumbnail-dropzone";
 
+import { useCreateCourseFormProvider } from "@/hooks/useForm";
+
 export function CreateCourseBasicInfoForm() {
+  const { formData, updateFormData } = useCreateCourseFormProvider();
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex item-center justify-between gap-4">
@@ -17,6 +21,8 @@ export function CreateCourseBasicInfoForm() {
             type="text"
             className="shadow-none px-3 py-2 rounded-[10px] h-12 placeholder:text-low text-high text-sm focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-2 focus-visible:border-orange border border-shade-3"
             placeholder="Qur'an Memorization"
+            value={formData.title}
+            onChange={(event) => updateFormData({ ...formData, title: event.target.value })}
           />
         </div>
 
@@ -28,6 +34,8 @@ export function CreateCourseBasicInfoForm() {
             type="text"
             className="shadow-none px-3 py-2 rounded-[10px] h-12 placeholder:text-low text-high text-sm focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-2 focus-visible:border-orange border border-shade-3"
             placeholder="Idaadiyah"
+            value={formData.category}
+            onChange={(event) => updateFormData({ ...formData, category: event.target.value })}
           />
         </div>
       </div>
@@ -39,6 +47,8 @@ export function CreateCourseBasicInfoForm() {
           id="description"
           className="shadow-none px-3 py-2 rounded-[10px] placeholder:text-low text-high text-sm focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-2 focus-visible:border-orange h-24 resize-none border border-shade-3"
           placeholder="This course is about..."
+          value={formData.description}
+          onChange={(event) => updateFormData({ ...formData, description: event.target.value })}
         />
       </div>
 
@@ -46,7 +56,12 @@ export function CreateCourseBasicInfoForm() {
         <Label htmlFor="thumbnail">Thumbnail (1920 x 1080)</Label>
 
         <div className="" id="thumbnail">
-          <ThumbnailDropzone />
+          <ThumbnailDropzone
+            onFileDrop={({ file, preview }) =>
+              updateFormData({ ...formData, thumbnail: { file, preview } })
+            }
+            value={formData.thumbnail}
+          />
         </div>
       </div>
     </div>

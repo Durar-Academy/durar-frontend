@@ -3,8 +3,8 @@ import { ReactQueryProvider } from "@/contexts/react-query-provider";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
-    <AuthenticationProvider>
-      <ReactQueryProvider>{children}</ReactQueryProvider>
-    </AuthenticationProvider>
+    // <AuthenticationProvider>
+    <ReactQueryProvider>{children}</ReactQueryProvider>
+    // </AuthenticationProvider>
   );
 }

@@ -5,7 +5,11 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 
+import { useCreateCourseFormProvider } from "@/hooks/useForm";
+
 export function CreateCourseAdditionalInfoForm() {
+  const { formData, updateFormData } = useCreateCourseFormProvider();
+
   return (
     <div className="flex flex-col gap-4">
       <div className="flex item-center justify-between gap-4">
@@ -17,6 +21,8 @@ export function CreateCourseAdditionalInfoForm() {
             type="text"
             className="shadow-none px-3 py-2 rounded-[10px] h-12 placeholder:text-low text-high text-sm focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-2 focus-visible:border-orange border border-shade-3"
             placeholder="Arabic"
+            value={formData.language}
+            onChange={(event) => updateFormData({ ...formData, language: event.target.value })}
           />
         </div>
 
@@ -28,6 +34,10 @@ export function CreateCourseAdditionalInfoForm() {
             type="text"
             className="shadow-none px-3 py-2 rounded-[10px] h-12 placeholder:text-low text-high text-sm focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-2 focus-visible:border-orange border border-shade-3"
             placeholder="Beginner"
+            value={formData.difficultyLevel}
+            onChange={(event) =>
+              updateFormData({ ...formData, difficultyLevel: event.target.value })
+            }
           />
         </div>
       </div>
@@ -40,7 +50,15 @@ export function CreateCourseAdditionalInfoForm() {
         </Label>
 
         <div>
-          <Switch aria-readonly className="disabled:opacity-100" id="courseCertification" />
+          <Switch
+            aria-readonly
+            className="disabled:opacity-100"
+            id="courseCertification"
+            checked={formData.enableCertification}
+            onCheckedChange={(checked) =>
+              updateFormData({ ...formData, enableCertification: checked })
+            }
+          />
         </div>
       </div>
 
@@ -52,7 +70,13 @@ export function CreateCourseAdditionalInfoForm() {
         </Label>
 
         <div>
-          <Switch aria-readonly className="disabled:opacity-100" id="progressTracking" />
+          <Switch
+            aria-readonly
+            className="disabled:opacity-100"
+            id="progressTracking"
+            checked={formData.trackProgress}
+            onCheckedChange={(checked) => updateFormData({ ...formData, trackProgress: checked })}
+          />
         </div>
       </div>
 
@@ -67,8 +91,8 @@ export function CreateCourseAdditionalInfoForm() {
         />
       </div> */}
 
-      <div className="flex item-center justify-between gap-4">
-        <div className="py-4 px-6 rounded-xl border border-shade-3 bg-white flex justify-between items-center w-full">
+      {/* <div className="flex item-center justify-between gap-4"> */}
+      {/* <div className="py-4 px-6 rounded-xl border border-shade-3 bg-white flex justify-between items-center w-full">
           <Label className="text-sm space-y-2" htmlFor="courseVisibility">
             <p className="text-high font-medium ">Course Visibility</p>
 
@@ -78,20 +102,26 @@ export function CreateCourseAdditionalInfoForm() {
           <div>
             <Switch aria-readonly className="disabled:opacity-100" id="courseVisibility" />
           </div>
-        </div>
+        </div> */}
 
-        <div className="py-4 px-6 rounded-xl border border-shade-3 bg-white flex justify-between items-center w-full">
-          <Label className="text-sm space-y-2" htmlFor="enableComments">
-            <p className="text-high font-medium">Enable Comments</p>
+      <div className="py-4 px-6 rounded-xl border border-shade-3 bg-white flex justify-between items-center w-full">
+        <Label className="text-sm space-y-2" htmlFor="enableComments">
+          <p className="text-high font-medium">Enable Comments</p>
 
-            <p className="text-low font-normal">Allow students to comment on Lessons</p>
-          </Label>
+          <p className="text-low font-normal">Allow students to comment on Lessons</p>
+        </Label>
 
-          <div>
-            <Switch aria-readonly className="disabled:opacity-100" id="enableComments" />
-          </div>
+        <div>
+          <Switch
+            aria-readonly
+            className="disabled:opacity-100"
+            id="enableComments"
+            checked={formData.enableComments}
+            onCheckedChange={(checked) => updateFormData({ ...formData, enableComments: checked })}
+          />
         </div>
       </div>
+      {/* </div> */}
 
       <div className="space-y-2 w-full">
         <Label htmlFor="additionalNotes">Additional Notes</Label>
@@ -100,6 +130,8 @@ export function CreateCourseAdditionalInfoForm() {
           id="additionalNotes"
           className="h-40 resize-none shadow-none px-3 py-2 rounded-[10px] placeholder:text-low text-high text-sm focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-2 focus-visible:border-orange border border-shade-3"
           placeholder="Any Additional notes about the course"
+          value={formData.additionalNotes}
+          onChange={(event) => updateFormData({ ...formData, additionalNotes: event.target.value })}
         />
       </div>
     </div>

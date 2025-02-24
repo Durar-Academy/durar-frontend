@@ -15,7 +15,7 @@ export function CreateCourseFormProvider({ children }: { children: React.ReactNo
   const [formData, setFormData] = useState<CreateCourse>(defaultCreateFormValues);
 
   const updateFormData = (newData: Partial<CreateCourse>) => {
-    setFormData((prevData) => ({ ...prevData, newData }));
+    setFormData((prevData) => ({ ...prevData, ...newData }));
   };
 
   const nextStep = () => {

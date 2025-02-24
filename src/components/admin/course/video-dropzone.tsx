@@ -2,18 +2,14 @@
 
 import { AlertCircle, CloudUpload, X } from "lucide-react";
 import Dropzone, { FileError } from "react-dropzone";
-import { useEffect, useState, MouseEvent } from "react";
+import { useState, MouseEvent } from "react";
 
 import { cn } from "@/lib/utils";
 
 const MAX_FILE_SIZE = 1_000 * 1024 * 1024; // 1GB
 
-type VideoDropzoneProps = {
-  onFileUpload: (file: File) => void;
-};
-
-export function VideoDropzone({ onFileUpload }: VideoDropzoneProps) {
-  const [previews, setPreviews] = useState<{ file: File; preview: string }[]>([]);
+export function VideoDropzone({ onFileDrop, value }: DropzoneProps) {
+  const [previews, setPreviews] = useState<FileDropValue>(value);
   const [error, setError] = useState("");
   const [videoDuration, setVideoDuration] = useState<string>("");
 
@@ -31,6 +27,11 @@ export function VideoDropzone({ onFileUpload }: VideoDropzoneProps) {
     };
   };
 
+  const handleVideoRemove = (event: MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    setPreviews(null);
+  };
+
   const handleVideoDrop = (
     acceptedFiles: File[],
     fileRejections: {
@@ -39,7 +40,6 @@ export function VideoDropzone({ onFileUpload }: VideoDropzoneProps) {
     }[],
   ) => {
     setError("");
-    previews.forEach((preview) => URL.revokeObjectURL(preview.preview));
 
     // Check file size
     if (acceptedFiles[0]?.size > MAX_FILE_SIZE) {
@@ -52,30 +52,16 @@ export function VideoDropzone({ onFileUpload }: VideoDropzoneProps) {
       return;
     }
 
-    const newPreviews = acceptedFiles.map((file) => ({
-      file,
-      preview: URL.createObjectURL(file),
-    }));
+    const file = acceptedFiles[0];
+    if (!file) return;
+
+    const previewUrl = "";
+    const newPreviews = { file, preview: previewUrl };
+
+    getVideoDuration(file);
     setPreviews(newPreviews);
-
-    if (acceptedFiles[0]) {
-      getVideoDuration(acceptedFiles[0]);
-      onFileUpload(acceptedFiles[0]);
-    }
+    onFileDrop(newPreviews);
   };
-
-  const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
-    event.stopPropagation();
-    URL.revokeObjectURL(previews[0].preview);
-    setPreviews([]);
-    setVideoDuration("");
-  };
-
-  useEffect(() => {
-    return () => {
-      previews.forEach((preview) => URL.revokeObjectURL(preview.preview));
-    };
-  }, [previews]);
 
   return (
     <>
@@ -116,19 +102,20 @@ export function VideoDropzone({ onFileUpload }: VideoDropzoneProps) {
         </div>
       )}
 
-      {previews.length > 0 && (
+      {previews && (
         <div className="preview mt-4">
           <div className="relative p-4 h-40 w-72 border border-shade-2 rounded-xl">
             <div className="flex flex-col gap-2">
-              <p className="font-medium text-sm truncate">{previews[0].file.name}</p>
+              <p className="font-medium text-sm truncate">{previews.file.name}</p>
               <div className="flex gap-4 text-sm text-low">
-                <span>{(previews[0].file.size / (1024 * 1024)).toFixed(2)}MB</span>
+                <span>{(previews.file.size / (1024 * 1024)).toFixed(2)}MB</span>
+
                 {videoDuration && <span>{videoDuration}</span>}
               </div>
             </div>
 
             <button
-              onClick={handleClick}
+              onClick={handleVideoRemove}
               className="absolute -top-2 -right-2 bg-danger text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-danger/85"
             >
               <X className="w-4 h-4 text-inherit" />

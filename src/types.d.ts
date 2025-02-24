@@ -582,18 +582,15 @@ type CoursesMetrics = {
 
 type CourseStatus = "draft" | "published";
 
-type CreateLesson = {
-  title: string;
-  duration: number;
-  isLocked: boolean;
-  type: string;
-};
-
 type CreateCourse = {
   title: string;
-  description: string;
-  thumbnailId: null;
   category: string;
+  description: string;
+  thumbnail: {
+    file: File;
+    preview: string;
+  } | null;
+
   Lesson: CreateLesson[];
   language: string;
   difficultyLevel: string;
@@ -601,7 +598,13 @@ type CreateCourse = {
   trackProgress: boolean;
   enableComments: boolean;
   additionalNotes: string;
-  status: CourseStatus;
+  // status: CourseStatus;
+};
+
+type CreateLesson = {
+  name: string;
+  video: FileDropValue;
+  id: number;
 };
 
 type CreateCourseFormContextProps = {
@@ -619,3 +622,10 @@ type CreateCourseFormContextProps = {
   saveAsDraft: () => void;
   publishCourse: () => void;
 };
+
+type DropzoneProps = {
+  onFileDrop: ({ file: File, preview: string }) => void;
+  value: FileDropValue;
+};
+
+type FileDropValue = { file: File; preview: string } | null;

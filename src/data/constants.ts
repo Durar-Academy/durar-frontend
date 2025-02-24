@@ -1,10 +1,10 @@
-import React from "react";
-import { Bell, BookText, Columns2, Grid2X2, LogOut, Settings, Table2, Wallet } from "lucide-react";
 import { deleteCookie } from "cookies-next";
+import { Bell, BookText, Columns2, Grid2X2, LogOut, Settings, Table2, Wallet } from "lucide-react";
+import React from "react";
 
+import { ButtonComponent } from "@/components/admin/button-component";
 import { LinkComponent } from "@/components/admin/link-component";
 import { SelectComponent } from "@/components/admin/select-component";
-import { ButtonComponent } from "@/components/admin/button-component";
 
 import { COUNTRY_DATA } from "./data";
 
@@ -173,18 +173,18 @@ export const TUTOR_STATUSES = [
   },
 ];
 
-
 export const defaultCreateFormValues = {
   title: "",
   description: "",
-  thumbnailId: null,
+  thumbnail: null,
+
   category: "",
-  Lesson: [],
+  Lesson: [{ name: "", video: null, id: 1 }],
   language: "",
   difficultyLevel: "",
   enableCertification: false,
   trackProgress: false,
   enableComments: false,
   additionalNotes: "",
-  status: "published" as CourseStatus,
+  // status: "published" as CourseStatus,
 };

@@ -3,15 +3,22 @@
 import { AlertCircle, CloudUpload, X } from "lucide-react";
 import Image from "next/image";
 import Dropzone, { FileError } from "react-dropzone";
-import { useEffect, useState } from "react";
+import { useState, MouseEvent } from "react";
 
-import { cn } from "@/lib/utils";
+import { cn, fileToBase64 } from "@/lib/utils";
 
-export function ThumbnailDropzone() {
-  const [previews, setPreviews] = useState<{ file: File; preview: string }[]>([]);
+export function ThumbnailDropzone({ onFileDrop, value }: DropzoneProps) {
+  const [previews, setPreviews] = useState<FileDropValue>(value);
   const [error, setError] = useState("");
 
-  const handleThumbnailDrop = (
+  const handleThumbnailRemove = (event: MouseEvent<HTMLButtonElement>) => {
+    if (!previews) return;
+
+    event.stopPropagation();
+    setPreviews(null);
+  };
+
+  const handleThumbnailDrop = async (
     acceptedFiles: File[],
     fileRejections: {
       file: File;
@@ -19,25 +26,21 @@ export function ThumbnailDropzone() {
     }[],
   ) => {
     setError("");
-    previews.forEach((preview) => URL.revokeObjectURL(preview.preview));
 
     if (acceptedFiles.length > 1 || fileRejections.length > 0) {
       setError("Only one image can be used as thumbnail.");
       return;
     }
 
-    const newPreviews = acceptedFiles.map((file) => ({
-      file,
-      preview: URL.createObjectURL(file),
-    }));
-    setPreviews(newPreviews);
-  };
+    const file = acceptedFiles[0];
+    if (!file) return;
 
-  useEffect(() => {
-    return () => {
-      previews.forEach((preview) => URL.revokeObjectURL(preview.preview));
-    };
-  }, [previews]);
+    const previewUrl = await fileToBase64(file);
+    const newPreviews = { file, preview: previewUrl };
+
+    setPreviews(newPreviews);
+    onFileDrop(newPreviews);
+  };
 
   return (
     <>
@@ -78,22 +81,18 @@ export function ThumbnailDropzone() {
         </div>
       )}
 
-      {previews.length > 0 && (
+      {previews && (
         <div className="preview mt-4">
           <div className="relative h-40 w-40 border border-shade-2 rounded-xl">
             <Image
-              src={previews[0].preview}
+              src={previews.preview}
               alt="Thumbnail preview"
               className="object-center object-cover aspect-video"
               fill
             />
 
             <button
-              onClick={(event) => {
-                event.stopPropagation();
-                URL.revokeObjectURL(previews[0].preview);
-                setPreviews([]);
-              }}
+              onClick={handleThumbnailRemove}
               className="absolute -top-2 -right-2 bg-danger text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-danger/85"
             >
               <X className="w-4 h-4 text-inherit" />
