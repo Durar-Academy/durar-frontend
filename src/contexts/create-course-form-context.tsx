@@ -68,7 +68,8 @@ export function CreateCourseFormProvider({ children }: { children: React.ReactNo
       const payload = {
         ...formData,
         thumbnailId: thumbnailResponse.storageId,
-        Lesson: lessons,
+        storageId: thumbnailResponse.storageId,
+        lessons,
       };
 
       // console.log("Payload", payload);
