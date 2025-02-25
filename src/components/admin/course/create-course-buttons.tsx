@@ -14,6 +14,7 @@ export function CreateCourseButtons() {
     prevStep,
     saveAsDraft,
     publishCourse,
+    isSubmitting,
   } = useCreateCourseFormProvider();
 
   return (
@@ -45,6 +46,7 @@ export function CreateCourseButtons() {
           variant={"_outline"}
           onClick={saveAsDraft}
           className="text-orange bg-white rounded-xl py-2 px-4 h-10 hover:bg-offwhite"
+          disabled={true}
         >
           <Save className="w-5 h-5 text-inherit" />
           <span>Save Draft</span>
@@ -56,9 +58,16 @@ export function CreateCourseButtons() {
               variant={"_default"}
               onClick={publishCourse}
               className="text-white bg-success rounded-xl py-2 px-4 h-10 hover:bg-light-green"
+              disabled={isSubmitting}
             >
-              <span>Publish</span>
-              <SendHorizonal className="w-5 h-5 text-inherit" />
+              {isSubmitting ? (
+                <>Publishing...</>
+              ) : (
+                <>
+                  <span>Publish</span>
+                  <SendHorizonal className="w-5 h-5 text-inherit" />
+                </>
+              )}
             </Button>
           ) : (
             <Button

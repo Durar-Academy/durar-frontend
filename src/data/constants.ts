@@ -176,7 +176,7 @@ export const TUTOR_STATUSES = [
 export const defaultCreateFormValues = {
   title: "",
   description: "",
-  thumbnail: null,
+  thumbnailId: null,
 
   category: "",
   Lesson: [{ name: "", video: null, id: 1, type: "video", isLocked: false }],
@@ -186,5 +186,68 @@ export const defaultCreateFormValues = {
   trackProgress: false,
   enableComments: false,
   additionalNotes: "",
-  // status: "published" as CourseStatus,
+  status: "published" as CourseStatus,
 };
+
+export const COURSE_LANGUAGE = [
+  {
+    status: "english",
+    label: "English",
+  },
+  {
+    status: "arabic",
+    label: "Arabic",
+  },
+  {
+    status: "french",
+    label: "French",
+  },
+];
+
+export const COURSE_CATEGORY = [
+  {
+    status: "fiqh_hadith",
+    label: "Fiqh/Hadith",
+  },
+  {
+    status: "tajweed",
+    label: "Tajweed",
+  },
+  {
+    status: "tawheed",
+    label: "Tawheed",
+  },
+  {
+    status: "arabic",
+    label: "Arabiyyah",
+  },
+  {
+    status: "memorization",
+    label: "Memorization",
+  },
+  {
+    status: "nahwu",
+    label: "Nahwu",
+  },
+  {
+    status: "surf",
+    label: "Surf",
+  },
+];
+
+export const COURSE_DIFFICULTY = [
+  {
+    status: "beginner",
+    label: "Beginner",
+  },
+
+  {
+    status: "intermediate",
+    label: "Intermediate",
+  },
+
+  {
+    status: "advanced",
+    label: "Advanced",
+  },
+];

@@ -123,13 +123,13 @@ export function CourseDetails({ course }: { course: Course }) {
 
                 <p className="text-high text-xl font-semibold flex gap-1 items-center">
                   <StarFilledIcon className="text-[#FEDC66] h-6 w-6 shrink-0" />
-                  {course.averageRating.toFixed(1)}
+                  {Boolean(course.averageRating) ? course.averageRating.toFixed(1) : 0}
                 </p>
               </div>
 
               <div className="bg-offwhite border border-shade-3 rounded-xl p-4 min-h-[72px] w-full space-y-4">
                 <p className="text-low text-sm font-medium">Completion rate</p>
-                <p className="text-high text-xl font-semibold">{course.completionRate}%</p>
+                <p className="text-high text-xl font-semibold">{course.completionRate ?? 0}%</p>
               </div>
             </div>
           </div>
@@ -275,7 +275,7 @@ export function CourseDetails({ course }: { course: Course }) {
             <h3 className="text-high text-base font-normal">Students Reviews</h3>
 
             <div className="flex flex-col gap-3 overflow-y-scroll h-[400px] hide-scrollbar">
-              {course.CourseRating.length > 0 ? (
+              {course.CourseRating?.length > 0 ? (
                 course.CourseRating.map((rating) => (
                   <div
                     key={rating.id}

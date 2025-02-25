@@ -8,7 +8,7 @@ import { refreshAccessToken } from "./auth";
 export const axiosInstance = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
   withCredentials: true,
-  timeout: 10_000,
+  // timeout: 10_000_000,
 });
 
 axiosInstance.interceptors.request.use(

@@ -2,13 +2,19 @@
 import { setCookie, getCookie, deleteCookie } from "cookies-next";
 
 import { STORE_KEY } from "@/data/constants";
+import { axiosInstance } from "./axios";
 
 const STORE_CREDENTIAL_KEY = `${STORE_KEY}-credentials`;
 export const STORE_TOKEN_KEY = `${STORE_KEY}-token`;
 export const STORE_EMAIL_KEY = `${STORE_KEY}-email`;
 // const STORE_AUTH_KEY = `${STORE_KEY}-auth`;
 
-export function storeCredentials({ encryptedEmail, encryptedPassword, iv, key }: EncryptionPayload) {
+export function storeCredentials({
+  encryptedEmail,
+  encryptedPassword,
+  iv,
+  key,
+}: EncryptionPayload) {
   try {
     const dataToStore = {
       email: Array.from(encryptedEmail),
@@ -109,4 +115,19 @@ export function deleteAuthData() {
   deleteCookie("accessToken");
   deleteCookie("refreshToken");
   deleteCookie("userRole");
+}
+
+export async function uploadFile(file: File) {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const response = await axiosInstance.post("/file/upload", formData);
+
+    // console.log("Upload Response", response.data.data);
+    return response.data.data;
+  } catch (error) {
+    console.error("Error uploading file:", error);
+    throw new Error("Uploading Failed");
+  }
 }

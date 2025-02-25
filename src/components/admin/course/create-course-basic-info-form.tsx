@@ -4,8 +4,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { ThumbnailDropzone } from "./thumbnail-dropzone";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
 
 import { useCreateCourseFormProvider } from "@/hooks/useForm";
+import { COURSE_CATEGORY } from "@/data/constants";
 
 export function CreateCourseBasicInfoForm() {
   const { formData, updateFormData } = useCreateCourseFormProvider();
@@ -29,14 +37,35 @@ export function CreateCourseBasicInfoForm() {
         <div className="space-y-2 w-full">
           <Label htmlFor="category">Category</Label>
 
-          <Input
+          {/* <Input
             id="category"
             type="text"
             className="shadow-none px-3 py-2 rounded-[10px] h-12 placeholder:text-low text-high text-sm focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-2 focus-visible:border-orange border border-shade-3"
             placeholder="Idaadiyah"
             value={formData.category}
             onChange={(event) => updateFormData({ ...formData, category: event.target.value })}
-          />
+          /> */}
+
+          <Select
+            value={formData.category}
+            onValueChange={(value) => updateFormData({ ...formData, category: value })}
+          >
+            <SelectTrigger className="h-12 text-high bg-white border border-shade-3 rounded-lg text-base px-4 py-3 focus:ring-0">
+              <SelectValue placeholder="Select Course Category" />
+            </SelectTrigger>
+
+            <SelectContent>
+              {COURSE_CATEGORY.map((courseCategory, index) => (
+                <SelectItem
+                  value={courseCategory.status}
+                  key={courseCategory.status + index}
+                  className="capitalize"
+                >
+                  {courseCategory.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -58,9 +87,9 @@ export function CreateCourseBasicInfoForm() {
         <div className="" id="thumbnail">
           <ThumbnailDropzone
             onFileDrop={({ file, preview }) =>
-              updateFormData({ ...formData, thumbnail: { file, preview } })
+              updateFormData({ ...formData, thumbnailId: { file, preview } })
             }
-            value={formData.thumbnail}
+            value={formData.thumbnailId}
           />
         </div>
       </div>

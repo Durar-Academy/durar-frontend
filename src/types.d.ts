@@ -586,7 +586,7 @@ type CreateCourse = {
   title: string;
   category: string;
   description: string;
-  thumbnail: {
+  thumbnailId: {
     file: File;
     preview: string;
   } | null;
@@ -598,7 +598,7 @@ type CreateCourse = {
   trackProgress: boolean;
   enableComments: boolean;
   additionalNotes: string;
-  // status: CourseStatus;
+  status: CourseStatus;
 };
 
 type CreateLesson = {
@@ -623,6 +623,8 @@ type CreateCourseFormContextProps = {
 
   saveAsDraft: () => void;
   publishCourse: () => void;
+
+  isSubmitting: boolean;
 };
 
 type DropzoneProps = {
