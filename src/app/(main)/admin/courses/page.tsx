@@ -12,7 +12,7 @@ import { CourseList } from "@/components/admin/course/course-list";
 import { CourseDetails } from "@/components/admin/course/course-details";
 
 import { useCurrentUser } from "@/hooks/useAccount";
-import { useCourses, useCoursesMetrics } from "@/hooks/useAdmin";
+import { useCourse, useCourses, useCoursesMetrics } from "@/hooks/useAdmin";
 import { processCoursesMetrics } from "@/utils/processor";
 
 export default function CoursesManagementPage() {
@@ -21,12 +21,11 @@ export default function CoursesManagementPage() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: coursesMetrics, isLoading: coursesMetricsLoading } = useCoursesMetrics();
   const { data: courses, isLoading: coursesLoading } = useCourses();
+  const { data: course, isLoading: courseLoading } = useCourse(selectedCourseId);
 
   const allCoursesMetrics = processCoursesMetrics(coursesMetrics ?? []);
 
-  const selectedCourse = Array.isArray(courses)
-    ? courses.find((course) => course.id === selectedCourseId)
-    : undefined;
+  // console.log(selectedCourseId, course);
 
   return (
     <section className="flex flex-col gap-5">
@@ -77,8 +76,10 @@ export default function CoursesManagementPage() {
             />
 
             <div className="w-full rounded-xl p-6 border border-shade-2 bg-white">
-              {selectedCourse ? (
-                <CourseDetails course={selectedCourse} />
+              {courseLoading ? (
+                <Skeleton className="w-full rounded-xl h-full" />
+              ) : selectedCourseId ? (
+                <CourseDetails course={course!} />
               ) : (
                 <p className="text-low text-sm mt-3">No course selected.</p>
               )}

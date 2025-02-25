@@ -133,3 +133,10 @@ export async function getCourses(options?: { signal?: AbortSignal }) {
   });
   return response.data.data.records;
 }
+
+export async function getCourse(courseId: string, options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get(`/course/${courseId}`, {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}
