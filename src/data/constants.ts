@@ -179,7 +179,7 @@ export const defaultCreateFormValues = {
   thumbnail: null,
 
   category: "",
-  Lesson: [{ name: "", video: null, id: 1 }],
+  Lesson: [{ name: "", video: null, id: 1, type: "video", isLocked: false }],
   language: "",
   difficultyLevel: "",
   enableCertification: false,

@@ -11,9 +11,9 @@ const MAX_FILE_SIZE = 1_000 * 1024 * 1024; // 1GB
 export function VideoDropzone({ onFileDrop, value }: DropzoneProps) {
   const [previews, setPreviews] = useState<FileDropValue>(value);
   const [error, setError] = useState("");
-  const [videoDuration, setVideoDuration] = useState<string>("");
+  const [videoDuration, setVideoDuration] = useState<number>(0);
 
-  const getVideoDuration = (file: File) => {
+  const getVideoDuration = (file: File, callback: (duration: number) => void) => {
     const video = document.createElement("video");
     video.preload = "metadata";
     video.src = URL.createObjectURL(file);
@@ -21,10 +21,16 @@ export function VideoDropzone({ onFileDrop, value }: DropzoneProps) {
     video.onloadedmetadata = () => {
       URL.revokeObjectURL(video.src);
       const duration = Math.round(video.duration);
-      const minutes = Math.floor(duration / 60);
-      const seconds = duration % 60;
-      setVideoDuration(`${minutes}:${seconds.toString().padStart(2, "0")}`);
+      setVideoDuration(duration);
+      callback(duration);
     };
+  };
+
+  const formatDuration = (duration: number) => {
+    const minutes = Math.floor(duration / 60);
+    const seconds = duration % 60;
+
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   };
 
   const handleVideoRemove = (event: MouseEvent<HTMLButtonElement>) => {
@@ -55,12 +61,10 @@ export function VideoDropzone({ onFileDrop, value }: DropzoneProps) {
     const file = acceptedFiles[0];
     if (!file) return;
 
-    const previewUrl = "";
-    const newPreviews = { file, preview: previewUrl };
-
-    getVideoDuration(file);
-    setPreviews(newPreviews);
-    onFileDrop(newPreviews);
+    getVideoDuration(file, (duration) => {
+      setPreviews({ file, preview: String(duration) });
+      onFileDrop({ file, preview: String(duration) });
+    });
   };
 
   return (
@@ -110,7 +114,7 @@ export function VideoDropzone({ onFileDrop, value }: DropzoneProps) {
               <div className="flex gap-4 text-sm text-low">
                 <span>{(previews.file.size / (1024 * 1024)).toFixed(2)}MB</span>
 
-                {videoDuration && <span>{videoDuration}</span>}
+                {!!videoDuration && <span>{formatDuration(videoDuration)}</span>}
               </div>
             </div>
 

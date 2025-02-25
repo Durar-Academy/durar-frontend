@@ -602,9 +602,11 @@ type CreateCourse = {
 };
 
 type CreateLesson = {
+  id: number;
   name: string;
   video: FileDropValue;
-  id: number;
+  type: string;
+  isLocked: boolean;
 };
 
 type CreateCourseFormContextProps = {

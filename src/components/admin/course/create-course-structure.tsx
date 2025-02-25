@@ -1,13 +1,15 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { MoreVertical, Plus } from "lucide-react";
 import { ChangeEvent } from "react";
 
 import { VideoDropzone } from "@/components/admin/course/video-dropzone";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 import { useCreateCourseFormProvider } from "@/hooks/useForm";
+import { Switch } from "@/components/ui/switch";
 
 export function CreateCourseStructure() {
   const { formData, updateFormData } = useCreateCourseFormProvider();
@@ -17,7 +19,10 @@ export function CreateCourseStructure() {
     const newId = maxId + 1;
     updateFormData({
       ...formData,
-      Lesson: [...formData.Lesson, { name: "", video: null, id: newId }],
+      Lesson: [
+        ...formData.Lesson,
+        { name: "", video: null, id: newId, type: "video", isLocked: false },
+      ],
     });
   };
 
@@ -41,9 +46,18 @@ export function CreateCourseStructure() {
   const handleVideoUpload = (file: FileDropValue, index: number) => {
     const newLessons = [...formData.Lesson];
 
-    console.log(newLessons);
-
     newLessons[index].video = file;
+
+    updateFormData({
+      ...formData,
+      Lesson: newLessons,
+    });
+  };
+
+  const handleLessonStatus = (checked: boolean, index: number) => {
+    const newLessons = [...formData.Lesson];
+
+    newLessons[index].isLocked = checked;
 
     updateFormData({
       ...formData,
@@ -66,15 +80,47 @@ export function CreateCourseStructure() {
             <div className="space-y-2 w-full">
               <Label htmlFor={`lesson-name-${lesson.id}`}>Lesson Name</Label>
 
-              <Input
-                id={`lesson-name-${lesson.id}`}
-                type="text"
-                name="name"
-                className="shadow-none px-3 py-2 rounded-[10px] h-12 placeholder:text-low text-high text-sm focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-2 focus-visible:border-orange border border-shade-3"
-                placeholder="Lesson"
-                value={lesson.name}
-                onChange={(event) => handleInputChange(event, index)}
-              />
+              <div className="flex gap-4">
+                <Input
+                  id={`lesson-name-${lesson.id}`}
+                  type="text"
+                  name="name"
+                  className="shadow-none px-3 py-2 rounded-[10px] h-12 placeholder:text-low text-high text-sm focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-2 focus-visible:border-orange border border-shade-3"
+                  placeholder="Lesson"
+                  value={lesson.name}
+                  onChange={(event) => handleInputChange(event, index)}
+                />
+
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <div className="flex items-center justify-center cursor-pointer border rounded-xl px-2">
+                      <MoreVertical className="h-6 w-6 text-low" />
+                    </div>
+                  </PopoverTrigger>
+                  <PopoverContent className="flex flex-col gap-3">
+                    <h3 className="text-high font-medium text-sm">Options</h3>
+
+                    <div className="py-2 px-3 rounded-xl border border-shade-3 bg-white flex justify-between items-center">
+                      <Label className="text-sm space-y-2" htmlFor="lockLesson">
+                        <p className="text-high font-medium">Lock Lesson</p>
+                        <p className="text-low font-normal">
+                          Restrict access to this lesson until unlocked
+                        </p>
+                      </Label>
+
+                      <div>
+                        <Switch
+                          aria-readonly
+                          className="disabled:opacity-100"
+                          id="lockLesson"
+                          checked={lesson.isLocked}
+                          onCheckedChange={(checked) => handleLessonStatus(checked, index)}
+                        />
+                      </div>
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </div>
             </div>
 
             <div className="space-y-2 w-full mt-4">
