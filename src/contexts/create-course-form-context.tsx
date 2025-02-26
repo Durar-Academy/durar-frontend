@@ -67,12 +67,23 @@ export function CreateCourseFormProvider({ children }: { children: React.ReactNo
       // construct course payload
       const payload = {
         ...formData,
-        thumbnailId: thumbnailResponse.storageId,
+
+        title: formData.title,
+        category: formData.category,
+        description: formData.description,
         storageId: thumbnailResponse.storageId,
+
         lessons,
+        language: formData.language,
+        difficultyLevel: formData.difficultyLevel,
+        enableCertification: formData.enableCertification,
+        trackProgress: formData.trackProgress,
+        enableComments: formData.enableComments,
+        additionalNotes: formData.additionalNotes,
+        status: formData.status,
       };
 
-      // console.log("Payload", payload);
+      console.log("Payload", payload);
 
       await axiosInstance.post("/course", payload);
 
