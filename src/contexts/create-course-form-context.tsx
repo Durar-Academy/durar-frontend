@@ -66,8 +66,6 @@ export function CreateCourseFormProvider({ children }: { children: React.ReactNo
 
       // construct course payload
       const payload = {
-        ...formData,
-
         title: formData.title,
         category: formData.category,
         description: formData.description,
