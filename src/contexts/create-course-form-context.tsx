@@ -56,7 +56,7 @@ export function CreateCourseFormProvider({ children }: { children: React.ReactNo
 
           return {
             title: lesson.name,
-            duration: lesson.video?.preview,
+            duration: Number(lesson.video?.preview),
             isLocked: lesson.isLocked,
             type: lesson.type,
             storageId: lessonVideoResponse.storageId,
