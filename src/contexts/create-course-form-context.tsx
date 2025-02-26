@@ -1,12 +1,12 @@
 "use client";
 
-import { createContext, useState } from "react";
 import { useRouter } from "next/navigation";
+import { createContext, useState } from "react";
 import toast from "react-hot-toast";
 
 import { defaultCreateFormValues } from "@/data/constants";
-import { uploadFile } from "@/lib/storage";
 import { axiosInstance } from "@/lib/axios";
+import { uploadFile } from "@/lib/storage";
 
 export const CreateCourseFormContext = createContext<CreateCourseFormContextProps | null>(null);
 
@@ -93,6 +93,7 @@ export function CreateCourseFormProvider({ children }: { children: React.ReactNo
       // reset form
       setFormData(defaultCreateFormValues);
       setCurrentFormStep(1);
+      router.refresh();
     } catch (error) {
       console.error("CREATE COURSE ERROR:", error);
 
