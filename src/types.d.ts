@@ -138,21 +138,6 @@ type EnrollmentTrendGraphProps = {
 //   updatedAt: string;
 // };
 
-type Schedule = {
-  id: string;
-  day: string;
-  startTime: Date;
-  endTime: Date;
-  courseId: string;
-  status: string;
-  userId: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: null;
-  course: Course;
-  user: User;
-};
-
 type Metrics = {
   tutorsCount: number;
   activeTutorsCount: number;
@@ -633,3 +618,19 @@ type DropzoneProps = {
 };
 
 type FileDropValue = { file: File; preview: string } | null;
+
+type Schedule = {
+  id: string;
+  day: string;
+  startTime: Date;
+  endTime: Date;
+  courseId: string;
+  status: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: null;
+  course: Course;
+
+  user: Tutor;
+};

@@ -251,3 +251,26 @@ export const COURSE_DIFFICULTY = [
     label: "Advanced",
   },
 ];
+
+export const daysOfWeek = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+];
+
+// Create fixed time slots from 0:00 to 23:00 (12 to 12pm)
+export function timeSlots(): string[] {
+  const timeSlots: string[] = [];
+
+  for (let hour = 0; hour < 24; hour++) {
+    const startHour = hour.toString().padStart(2, "0");
+    const endHour = (hour + 1).toString().padStart(2, "0");
+    timeSlots.push(`${startHour}:00 - ${endHour}:00`);
+  }
+
+  return timeSlots;
+}
