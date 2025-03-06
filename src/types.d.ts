@@ -634,3 +634,14 @@ type Schedule = {
 
   user: Tutor;
 };
+
+type PaymentsPageTableProps = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  amount: number;
+  status: PaymentStatus;
+
+  date: string;
+  paymentMethod: string;
+}[];

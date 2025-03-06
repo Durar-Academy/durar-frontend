@@ -140,3 +140,18 @@ export async function getCourse(courseId: string, options?: { signal?: AbortSign
   });
   return response.data.data;
 }
+
+export async function getPaymentsMetrics(options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get("/metrics/payment", {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}
+
+export async function downloadTransactions(options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get("/payment/download-transactions", {
+    signal: options?.signal,
+    responseType: "blob",
+  });
+  return response.data.data;
+}

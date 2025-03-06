@@ -612,3 +612,63 @@ export const processCoursesMetrics = (coursesMetrics: CoursesMetrics): OverviewC
     },
   ];
 };
+
+export const processPaymentsMetrics = (): OverviewCardProps[] => {
+  return [
+    {
+      title: "Total Revenue",
+      figure: formatAmount(50_000, "ngn"),
+      children: React.createElement(List, { key: "icon", className: "w-6 h-6 text-orange" }),
+    },
+
+    {
+      title: "Total Transactions",
+      figure: "500",
+      children: React.createElement(CheckCircle, {
+        key: "icon",
+        className: "w-6 h-6 text-success",
+      }),
+    },
+
+    {
+      title: "Pending Payments",
+      figure: "10",
+      children: React.createElement(Info, { key: "icon", className: "w-6 h-6 text-danger" }),
+    },
+
+    {
+      title: "Refunded Payments",
+      figure: formatAmount(1_000, "ngn"),
+      children: React.createElement(CheckCircle, {
+        key: "icon",
+        className: "w-6 h-6 text-success",
+      }),
+    },
+  ];
+};
+
+export const processPaymentsPage = (payments: Payment[]) => {
+  const extractedPayments = payments.map((payment) => {
+    const id = payment.charge.id;
+    const firstName = payment.charge.user.firstName;
+    const lastName = payment.charge.user.lastName;
+    const amount = payment.charge.amount;
+    const status = payment.status;
+
+    const date = format(new Date(payment.charge.createdAt), "PP");
+    const paymentMethod = payment.provider;
+
+    return {
+      id,
+      firstName,
+      lastName,
+      amount,
+      status,
+      date,
+
+      paymentMethod,
+    };
+  });
+
+  return extractedPayments;
+};

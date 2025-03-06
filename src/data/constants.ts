@@ -71,8 +71,8 @@ export const ADMIN_SIDEBAR_LINKS: ComponentConfig[] = [
     type: "link",
     component: LinkComponent,
     props: {
-      href: "/admin/payment",
-      children: [React.createElement(Wallet, { key: "icon", className: "h-4 w-4" }), "Payment"],
+      href: "/admin/payments",
+      children: [React.createElement(Wallet, { key: "icon", className: "h-4 w-4" }), "Payments"],
     },
   },
   {

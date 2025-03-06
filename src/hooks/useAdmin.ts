@@ -1,12 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 
 import {
+  downloadTransactions,
   getActivities,
   getCourse,
   getCourses,
   getCoursesMetrics,
   getMetrics,
   getPayments,
+  getPaymentsMetrics,
   getSchedules,
   getStudentAssignments,
   getStudentCourses,
@@ -180,6 +182,20 @@ export function useCourse(courseId: string) {
   const query = useQuery<Course>({
     queryKey: ["course", courseId],
     queryFn: () => getCourse(courseId),
+  });
+  return query;
+}
+
+export function usePaymentsMetrics() {
+  const query = useQuery({ queryKey: ["all-payments-metrics"], queryFn: getPaymentsMetrics });
+  return query;
+}
+
+export function useDownloadTransactions() {
+  const query = useQuery({
+    queryKey: ["download-transactions"],
+    queryFn: downloadTransactions,
+    enabled: false,
   });
   return query;
 }
