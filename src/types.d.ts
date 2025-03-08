@@ -622,8 +622,8 @@ type FileDropValue = { file: File; preview: string } | null;
 type Schedule = {
   id: string;
   day: string;
-  startTime: Date;
-  endTime: Date;
+  start: string;
+  end: string;
   courseId: string;
   status: string;
   userId: string;

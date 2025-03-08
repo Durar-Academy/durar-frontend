@@ -17,7 +17,7 @@ export function TutorClass({ classDetail }: { classDetail: TutorClassProps }) {
           </p>
 
           <div className="text-xs flex gap-3">
-            <p className="flex gap-1 text-low items-center">
+            <p className="flex gap-1 text-low items-center capitalize">
               <Calendar className="w-3 h-3" />
 
               <span>{classDetail.date}</span>
