@@ -1,4 +1,5 @@
 import { Download, Search } from "lucide-react";
+import Link from "next/link";
 
 import {
   Select,
@@ -24,8 +25,6 @@ import { formatAmount, formatToReadableId } from "@/utils/formatter";
 import { PAYMENT_STATUSES } from "@/data/constants";
 
 export function PaymentsPageTable({ payments }: { payments: PaymentsPageTableProps }) {
-
-
   return (
     <div className="p-6 rounded-xl bg-white h-full">
       <div className="flex justify-between items-center mb-6">
@@ -65,7 +64,10 @@ export function PaymentsPageTable({ payments }: { payments: PaymentsPageTablePro
             <DatePicker />
           </div>
 
-          <Button variant={"_outline"} className="bg-white border-orange text-orange hover:bg-offwhite px-4 py-2 h-10">
+          <Button
+            variant={"_outline"}
+            className="bg-white border-orange text-orange hover:bg-offwhite px-4 py-2 h-10"
+          >
             <Download className="w-6 h-6" strokeWidth={3} />
             <span>Export List</span>
           </Button>
@@ -107,7 +109,7 @@ export function PaymentsPageTable({ payments }: { payments: PaymentsPageTablePro
                     {formatToReadableId(payment.id, "INV")}
                   </TableCell>
 
-                  <TableCell>{formatAmount(payment.amount)}</TableCell>
+                  <TableCell>{formatAmount(payment.amount, payment.currency)}</TableCell>
 
                   <TableCell
                     className={cn(
@@ -125,7 +127,9 @@ export function PaymentsPageTable({ payments }: { payments: PaymentsPageTablePro
                   <TableCell className="text-center capitalize">{payment.paymentMethod}</TableCell>
 
                   <TableCell>
-                    <button className="font-bold text-orange hover:underline">View</button>
+                    <Link href={`/admin/payments/${payment.id}`}>
+                      <button className="font-bold text-orange hover:underline">View</button>
+                    </Link>
                   </TableCell>
                 </TableRow>
               ))}

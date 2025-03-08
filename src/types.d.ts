@@ -641,7 +641,15 @@ type PaymentsPageTableProps = {
   lastName: string;
   amount: number;
   status: PaymentStatus;
+  currency: string;
 
   date: string;
   paymentMethod: string;
 }[];
+
+type PaymentsMetrics = {
+  pendingPayments: number;
+  refundedPayments: number;
+  totalRevenue: number;
+  totalTransactions: number;
+};

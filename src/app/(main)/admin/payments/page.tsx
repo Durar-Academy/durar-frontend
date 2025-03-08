@@ -4,20 +4,18 @@ import { OverviewCard } from "@/components/admin/overview-card";
 import { TopBar } from "@/components/shared/top-bar";
 import { Skeleton } from "@/components/ui/skeleton";
 
+import { PaymentsPageTable } from "@/components/admin/payments-page-table";
 import { useCurrentUser } from "@/hooks/useAccount";
 import { usePayments, usePaymentsMetrics } from "@/hooks/useAdmin";
 import { processPaymentsMetrics, processPaymentsPage } from "@/utils/processor";
-import { PaymentsPageTable } from "@/components/admin/payments-page-table";
 
 export default function PaymentsPage() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: paymentsMetrics, isLoading: paymentsMetricsLoading } = usePaymentsMetrics();
-  const { data: _payments, isLoading: paymentsLoading } = usePayments();
+  const { data: payments, isLoading: paymentsLoading } = usePayments();
 
-  console.log(paymentsMetrics);
-
-  const allPaymentsMetrics = processPaymentsMetrics();
-  const payments = processPaymentsPage(_payments?.records ?? []);
+  const allPaymentsMetrics = processPaymentsMetrics(paymentsMetrics ?? []);
+  const paymentsRecords = processPaymentsPage(payments?.records ?? []);
 
   return (
     <section className="flex flex-col gap-5">
@@ -52,7 +50,7 @@ export default function PaymentsPage() {
           {paymentsLoading ? (
             <Skeleton className="w-full h-full rounded-xl" />
           ) : (
-            <PaymentsPageTable payments={payments} />
+            <PaymentsPageTable payments={paymentsRecords} />
           )}
         </div>
       </div>

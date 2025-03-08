@@ -21,7 +21,6 @@ import { format, parse } from "date-fns";
 
 export function processSchedules(schedules: Schedule[]) {
   const extractedSchedulesDetails = schedules.map((schedule) => {
-    console.log(schedule, "SCHDEULE");
     const firstName = schedule.user?.firstName ?? "Tutor";
     const lastName = schedule.user?.lastName ?? "Tutor";
 
@@ -614,17 +613,17 @@ export const processCoursesMetrics = (coursesMetrics: CoursesMetrics): OverviewC
   ];
 };
 
-export const processPaymentsMetrics = (): OverviewCardProps[] => {
+export const processPaymentsMetrics = (paymentsMetrics: PaymentsMetrics): OverviewCardProps[] => {
   return [
     {
       title: "Total Revenue",
-      figure: formatAmount(50_000, "ngn"),
+      figure: formatAmount(paymentsMetrics.totalRevenue ?? 0, "ngn"),
       children: React.createElement(List, { key: "icon", className: "w-6 h-6 text-orange" }),
     },
 
     {
       title: "Total Transactions",
-      figure: "500",
+      figure: String(paymentsMetrics.totalTransactions),
       children: React.createElement(CheckCircle, {
         key: "icon",
         className: "w-6 h-6 text-success",
@@ -633,13 +632,13 @@ export const processPaymentsMetrics = (): OverviewCardProps[] => {
 
     {
       title: "Pending Payments",
-      figure: "10",
+      figure: String(paymentsMetrics.pendingPayments),
       children: React.createElement(Info, { key: "icon", className: "w-6 h-6 text-danger" }),
     },
 
     {
       title: "Refunded Payments",
-      figure: formatAmount(1_000, "ngn"),
+      figure: formatAmount(paymentsMetrics.refundedPayments ?? 0, "ngn"),
       children: React.createElement(CheckCircle, {
         key: "icon",
         className: "w-6 h-6 text-success",
@@ -658,6 +657,7 @@ export const processPaymentsPage = (payments: Payment[]) => {
 
     const date = format(new Date(payment.charge.createdAt), "PP");
     const paymentMethod = payment.provider;
+    const currency = payment.currency;
 
     return {
       id,
@@ -668,6 +668,7 @@ export const processPaymentsPage = (payments: Payment[]) => {
       date,
 
       paymentMethod,
+      currency,
     };
   });
 

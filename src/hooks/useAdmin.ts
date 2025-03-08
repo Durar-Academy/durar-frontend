@@ -7,6 +7,7 @@ import {
   getCourses,
   getCoursesMetrics,
   getMetrics,
+  getPayment,
   getPayments,
   getPaymentsMetrics,
   getSchedules,
@@ -196,6 +197,14 @@ export function useDownloadTransactions() {
     queryKey: ["download-transactions"],
     queryFn: downloadTransactions,
     enabled: false,
+  });
+  return query;
+}
+
+export function usePayment(paymentId: string) {
+  const query = useQuery<Payment>({
+    queryKey: ["payment", paymentId],
+    queryFn: () => getPayment(paymentId),
   });
   return query;
 }

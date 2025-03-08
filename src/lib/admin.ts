@@ -155,3 +155,10 @@ export async function downloadTransactions(options?: { signal?: AbortSignal }) {
   });
   return response.data.data;
 }
+
+export async function getPayment(paymentId: string, options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get(`/payment/${paymentId}`, {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}
