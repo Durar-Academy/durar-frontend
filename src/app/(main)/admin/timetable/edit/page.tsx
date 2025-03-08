@@ -11,15 +11,18 @@ import { EditTimeSchedule } from "@/components/admin/edit-quran-timetable";
 import { useCurrentUser } from "@/hooks/useAccount";
 import { useSchedules, useTutors } from "@/hooks/useAdmin";
 import { useEffect, useState } from "react";
+import { updateSchedules } from "@/lib/admin";
+import toast from "react-hot-toast";
+import { QURAN_ID } from "@/data/constants";
 
 export default function EditTimetable() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
-
   const { data: schedules, isLoading: schedulesLoading } = useSchedules();
   const { data: tutors, isLoading: tutorsLoading } = useTutors();
 
   // State to track edited schedules
   const [editedSchedules, setEditedSchedules] = useState<Schedule[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Initialize state when schedules are fetched
   useEffect(() => {
@@ -28,24 +31,42 @@ export default function EditTimetable() {
     }
   }, [schedules]);
 
-  // Handle Save button click
   const handleSave = async () => {
-    try {
-      // Replace with your actual API endpoint
-      const response = await fetch("/api/schedules", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(editedSchedules),
+    console.log("EDITED SCHEDULE", editedSchedules);
+
+    setIsSubmitting(true);
+
+    const payload_array = editedSchedules
+      .filter((schedule) => schedule.courseId === QURAN_ID)
+      .map((schedule) => {
+        return {
+          day: schedule.day,
+          start: schedule.start,
+          end: schedule.end,
+          status: "scheduled",
+          userId: schedule.userId,
+          courseId: schedule.courseId,
+        };
       });
 
-      if (!response.ok) throw new Error("Failed to save schedules");
+    console.log("PAYLOAD", {
+      classes: payload_array,
+    });
 
-      console.log("Schedules saved successfully!");
-      // Optional: Invalidate cache or refetch data here
+    try {
+      const response = await updateSchedules({
+        classes: [],
+      });
+
+      console.log("Update Schedules Response Data", response);
+
+      toast.success("Schedules saved successfully");
     } catch (error) {
       console.error("Error saving schedules:", error);
+
+      toast.error("Unable to save schedules. Please try again");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -78,9 +99,10 @@ export default function EditTimetable() {
               variant={"_outline"}
               className="text-orange hover:text-burnt px-4 py-2 h-10"
               onClick={() => handleSave()}
+              disabled={isSubmitting}
             >
               <Save className="w-6 h-6" strokeWidth={3} />
-              <span>Save</span>
+              <span>{isSubmitting ? "Saving..." : "Save"}</span>
             </Button>
 
             <Button variant={"_default"} className="bg-orange hover:bg-burnt px-4 py-2 h-10">

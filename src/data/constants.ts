@@ -274,3 +274,5 @@ export function timeSlots(): string[] {
 
   return timeSlots;
 }
+
+export const QURAN_ID = "cm80bspne0001f72obj1pt2vi";

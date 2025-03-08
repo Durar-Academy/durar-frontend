@@ -162,3 +162,13 @@ export async function getPayment(paymentId: string, options?: { signal?: AbortSi
   });
   return response.data.data;
 }
+
+export async function updateSchedules(
+  { classes: payload }: { classes: CreateSchedule | CreateSchedule[] },
+  options?: { signal?: AbortSignal },
+) {
+  const response = await axiosInstance.put("/class", payload, {
+    signal: options?.signal,
+  });
+  return response.data;
+}

@@ -1,7 +1,6 @@
-import { useState } from "react";
 import Select, { MultiValue } from "react-select";
 
-import { daysOfWeek, timeSlots } from "@/data/constants";
+import { daysOfWeek, QURAN_ID, timeSlots } from "@/data/constants";
 
 type ProcessedData = {
   [day: string]: {
@@ -23,9 +22,7 @@ export function EditTimeSchedule({
   tutors: Tutor[];
   onSave: (schedules: Schedule[]) => void;
 }) {
-  const [classSchedule, setClassSchedule] = useState<Schedule[]>(schedules);
-
-  console.log(classSchedule);
+  console.log("CLASS SCHEDULE", schedules);
 
   const processSchedules = (schedules: Schedule[]): ProcessedData => {
     const processedData: ProcessedData = {};
@@ -38,8 +35,10 @@ export function EditTimeSchedule({
     schedules.forEach((_class) => {
       const day = _class.day.charAt(0).toUpperCase() + _class.day.slice(1);
 
-      const startHour = new Date(_class.startTime).getHours();
-      const endHour = new Date(_class.endTime).getHours();
+      // const startHour = new Date(_class.startTime).getHours();
+      // const endHour = new Date(_class.endTime).getHours();
+      const startHour = _class.start.split(":")[0];
+      const endHour = _class.end.split(":")[0];
 
       const timeSlot = `${startHour.toString().padStart(2, "0")}:00 - ${endHour
         .toString()
@@ -53,7 +52,7 @@ export function EditTimeSchedule({
     return processedData;
   };
 
-  const classData = processSchedules(classSchedule);
+  const classData = processSchedules(schedules);
   console.log(classData);
 
   const tutorOptions: TutorOption[] = tutors.map((tutor) => ({
@@ -61,23 +60,20 @@ export function EditTimeSchedule({
     label: `${tutor.firstName} ${tutor.lastName}`,
   }));
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleSave = () => {
-    onSave(classSchedule);
-  };
-
   const handleTutorChange = (
     day: string,
     timeSlot: string,
     selectedOptions: MultiValue<TutorOption>,
   ) => {
     // Filter out all existing schedules for the current day and time slot
-    let updatedSchedules = classSchedule.filter((schedule) => {
+    let updatedSchedules = schedules.filter((schedule) => {
       const scheduleDay = schedule.day.charAt(0).toUpperCase() + schedule.day.slice(1);
       if (scheduleDay !== day) return true;
 
-      const startHour = new Date(schedule.startTime).getHours();
-      const endHour = new Date(schedule.endTime).getHours();
+      // const startHour = new Date(schedule.startTime).getHours();
+      // const endHour = new Date(schedule.endTime).getHours();
+      const startHour = schedule.start.split(":")[0];
+      const endHour = schedule.end.split(":")[0];
       const scheduleTimeSlot = `${startHour.toString().padStart(2, "0")}:00 - ${endHour
         .toString()
         .padStart(2, "0")}:00`;
@@ -91,31 +87,31 @@ export function EditTimeSchedule({
       if (!tutor) return;
 
       const [start, end] = timeSlot.split(" - ");
-      const startHour = parseInt(start.split(":")[0]);
-      const endHour = parseInt(end.split(":")[0]);
+      // const startHour = parseInt(start.split(":")[0]);
+      // const endHour = parseInt(end.split(":")[0]);
 
-      const now = new Date();
-      const currentYear = now.getFullYear();
-      const currentMonth = now.getMonth();
-      const currentDay = now.getDate();
+      // const now = new Date();
+      // const currentYear = now.getFullYear();
+      // const currentMonth = now.getMonth();
+      // const currentDay = now.getDate();
 
-      const startTime = new Date(
-        Date.UTC(currentYear, currentMonth, currentDay, startHour - 1, 0, 0),
-      ).toISOString();
-      const endTime = new Date(
-        Date.UTC(currentYear, currentMonth, currentDay, endHour - 1, 0, 0),
-      ).toISOString();
+      // const startTime = new Date(
+      //   Date.UTC(currentYear, currentMonth, currentDay, startHour - 1, 0, 0),
+      // ).toISOString();
+      // const endTime = new Date(
+      //   Date.UTC(currentYear, currentMonth, currentDay, endHour - 1, 0, 0),
+      // ).toISOString();
 
       const newSchedule: Schedule = {
-        id: tutor.id, // Ensure this is unique; consider using a different id if necessary
+        id: tutor.id,
         day: day.toLowerCase(),
-        startTime: startTime as unknown as Date,
-        endTime: endTime as unknown as Date,
+        start,
+        end,
+        userId: tutor.id,
         user: tutor,
         // Include other necessary Schedule properties with appropriate defaults or values
-        courseId: "",
+        courseId: QURAN_ID,
         status: "",
-        userId: tutor.id,
         createdAt: "",
         updatedAt: "",
         deletedAt: null,
@@ -148,7 +144,7 @@ export function EditTimeSchedule({
       updatedSchedules = [...updatedSchedules, newSchedule];
     });
 
-    setClassSchedule(updatedSchedules);
+    onSave(updatedSchedules);
   };
 
   return (

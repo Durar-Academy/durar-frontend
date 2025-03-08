@@ -653,3 +653,12 @@ type PaymentsMetrics = {
   totalRevenue: number;
   totalTransactions: number;
 };
+
+type CreateSchedule = {
+  day: string;
+  start: string;
+  end: string;
+  courseId: string;
+  status: string;
+  userId: string;
+};

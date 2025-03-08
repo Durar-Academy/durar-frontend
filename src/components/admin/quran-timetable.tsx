@@ -24,8 +24,10 @@ export function FixedTimeSchedule({ schedules }: { schedules: Schedule[] }) {
       const day = _class.day.charAt(0).toUpperCase() + _class.day.slice(1);
 
       // Extract hours from ISO time strings
-      const startHour = new Date(_class.startTime).getHours();
-      const endHour = new Date(_class.endTime).getHours();
+      // const startHour = new Date(_class.start).getHours();
+      // const endHour = new Date(_class.end).getHours();
+      const startHour = _class.start.split(":")[0];
+      const endHour = _class.end.split(":")[0];
 
       // Format for lookup
       const timeSlot = `${startHour.toString().padStart(2, "0")}:00 - ${endHour
