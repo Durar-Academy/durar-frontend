@@ -80,7 +80,7 @@ export function FixedTimeSchedule({ schedules }: { schedules: Schedule[] }) {
                             key={record.id + index}
                             className="text-center bg-offwhite rounded-lg text-high p-3 mb-2"
                           >
-                            {record.user.firstName} {record.user.lastName}
+                            {record.user?.firstName ?? "Tutor"} {record.user?.lastName ?? "Tutor"}
                             {/* <div className="text-sm text-gray-600">{record.course.title}</div> */}
                           </div>
                         ))

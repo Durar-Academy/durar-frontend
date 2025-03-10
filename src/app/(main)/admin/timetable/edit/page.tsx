@@ -45,7 +45,7 @@ export default function EditTimetable() {
     console.log("EDITED SCHEDULE: QURAN ONLY", editedSchedulesQuran);
 
     const classesToCreate = editedSchedulesQuran
-      .filter((schedule) => schedule.id === schedule.userId)
+      .filter((schedule) => !schedule.id)
       .map((schedule) => {
         return {
           day: schedule.day.toLowerCase(),
@@ -59,13 +59,13 @@ export default function EditTimetable() {
     console.log("EDITED SCHEDULE: TO CREATE", classesToCreate);
 
     const classesToUpdate = editedSchedulesQuran
-      .filter((schedule) => schedule.id !== schedule.userId)
+      .filter((schedule) => schedule.id)
       .map((schedule) => {
         return {
           id: schedule.id,
           day: schedule.day.toLowerCase(),
           start: schedule.start,
-          end: schedule.start,
+          end: schedule.end,
           courseId: schedule.courseId,
           userId: schedule.userId,
           status: "scheduled",
@@ -84,6 +84,9 @@ export default function EditTimetable() {
           createSchedules({
             classes: classesToCreate,
             courseId: QURAN_ID,
+          }).catch((error) => {
+            console.error("Create Schedules Error:", error);
+            throw error; // Re-throw to handle in the outer catch block
           }),
         );
       }
@@ -93,22 +96,37 @@ export default function EditTimetable() {
         apiCalls.push(
           updateSchedules({
             classes: classesToUpdate,
+          }).catch((error) => {
+            console.error("Update Schedules Error:", error);
+            throw error; // Re-throw to handle in the outer catch block
           }),
         );
       }
 
       // Execute all API calls in parallel
-      // if (apiCalls.length > 0) {
-      //   const responses = await Promise.all(apiCalls);
-      //   console.log("CREATE AND UPDATE RESPONSES:", responses);
-      // }
+      if (apiCalls.length > 0) {
+        const responses = await Promise.allSettled(apiCalls);
+        console.log("CREATE AND UPDATE RESPONSES:", responses);
 
-      toast.success("Schedules saved successfully");
+        // Check for failed requests
+        const failedRequests = responses.filter((response) => response.status === "rejected");
 
+        if (failedRequests.length > 0) {
+          console.error("Some API calls failed:", failedRequests);
+          toast.error(`Unable to save ${failedRequests.length} schedule(s). Please try again.`);
+        } else {
+          console.log("All API calls succeeded!");
+          toast.success("Schedules saved successfully");
+        }
+      } else {
+        console.log("No schedules to create or update.");
+        toast("No changes to save.");
+      }
+
+      // Navigate back after successful save
       router.back();
     } catch (error) {
       console.error("Error saving schedules:", error);
-
       toast.error("Unable to save schedules. Please try again");
     } finally {
       setIsSubmitting(false);

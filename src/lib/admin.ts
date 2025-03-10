@@ -174,9 +174,13 @@ export async function updateSchedules(
   { classes }: { classes: CreateSchedule | CreateSchedule[] },
   options?: { signal?: AbortSignal },
 ) {
-  const response = await axiosInstance.put("/class", classes, {
-    signal: options?.signal,
-  });
+  const response = await axiosInstance.put(
+    "/class",
+    { classes },
+    {
+      signal: options?.signal,
+    },
+  );
   return response.data;
 }
 
@@ -189,4 +193,9 @@ export async function getCourses(options?: { signal?: AbortSignal; filters?: Sea
     signal: options?.signal,
   });
   return response.data.data.records;
+}
+
+export async function deleteSchedule(scheduleId: string, options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.delete(`/class/${scheduleId}`, { signal: options?.signal });
+  return response.data;
 }
