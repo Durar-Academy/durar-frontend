@@ -174,11 +174,6 @@ export function useCoursesMetrics() {
   return query;
 }
 
-export function useCourses() {
-  const query = useQuery<Course[]>({ queryKey: ["all-courses"], queryFn: getCourses });
-  return query;
-}
-
 export function useCourse(courseId: string) {
   const query = useQuery<Course>({
     queryKey: ["course", courseId],
@@ -205,6 +200,14 @@ export function usePayment(paymentId: string) {
   const query = useQuery<Payment>({
     queryKey: ["payment", paymentId],
     queryFn: () => getPayment(paymentId),
+  });
+  return query;
+}
+
+export function useCourses(filters?: SearchFilters) {
+  const query = useQuery<Course[]>({
+    queryKey: ["all-courses", filters],
+    queryFn: () => getCourses({ filters }),
   });
   return query;
 }

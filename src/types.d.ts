@@ -241,7 +241,7 @@ type StudentStatus = "unverified" | "active" | "suspended" | "deactivated" | "gr
 
 type SearchFilters = {
   search?: string;
-  status?: StudentStatus | TutorStatus;
+  status?: StudentStatus | TutorStatus | CourseStatus;
 };
 
 type Student = {

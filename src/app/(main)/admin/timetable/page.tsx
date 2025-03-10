@@ -15,6 +15,8 @@ export default function ViewTimetable() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: schedules, isLoading: schedulesLoading } = useSchedules();
 
+  console.log("SCHDEULES", schedules);
+
   return (
     <section className="flex flex-col gap-5">
       <div className="top-bar">

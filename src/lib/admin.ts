@@ -127,13 +127,6 @@ export async function getCoursesMetrics(options?: { signal?: AbortSignal }) {
   return response.data.data;
 }
 
-export async function getCourses(options?: { signal?: AbortSignal }) {
-  const response = await axiosInstance.get("/course", {
-    signal: options?.signal,
-  });
-  return response.data.data.records;
-}
-
 export async function getCourse(courseId: string, options?: { signal?: AbortSignal }) {
   const response = await axiosInstance.get(`/course/${courseId}`, {
     signal: options?.signal,
@@ -185,4 +178,15 @@ export async function updateSchedules(
     signal: options?.signal,
   });
   return response.data;
+}
+
+export async function getCourses(options?: { signal?: AbortSignal; filters?: SearchFilters }) {
+  const params = new URLSearchParams();
+  if (options?.filters?.search) params.append("search", options.filters.search);
+  if (options?.filters?.status) params.append("status", options.filters.status);
+
+  const response = await axiosInstance.get(`/course?${params.toString()}`, {
+    signal: options?.signal,
+  });
+  return response.data.data.records;
 }

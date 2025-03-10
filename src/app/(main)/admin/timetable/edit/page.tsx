@@ -50,7 +50,7 @@ export default function EditTimetable() {
         return {
           day: schedule.day.toLowerCase(),
           start: schedule.start,
-          end: schedule.start,
+          end: schedule.end,
           userId: schedule.userId,
           status: "scheduled",
         };
@@ -98,10 +98,10 @@ export default function EditTimetable() {
       }
 
       // Execute all API calls in parallel
-      if (apiCalls.length > 0) {
-        const responses = await Promise.all(apiCalls);
-        console.log("CREATE AND UPDATE RESPONSES:", responses);
-      }
+      // if (apiCalls.length > 0) {
+      //   const responses = await Promise.all(apiCalls);
+      //   console.log("CREATE AND UPDATE RESPONSES:", responses);
+      // }
 
       toast.success("Schedules saved successfully");
 

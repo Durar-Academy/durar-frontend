@@ -22,11 +22,17 @@ export const registerFormSchema = z
       invalid_type_error: "Please select a valid title",
     }),
 
-    firstName: z.string().min(1, "First name is required").max(50, "First name cannot exceed 50 characters"),
+    firstName: z
+      .string()
+      .min(1, "First name is required")
+      .max(50, "First name cannot exceed 50 characters"),
 
     middleName: z.string().max(50, "Middle name cannot exceed 50 characters").optional(),
 
-    lastName: z.string().min(1, "Last name is required").max(50, "Last name cannot exceed 50 characters"),
+    lastName: z
+      .string()
+      .min(1, "Last name is required")
+      .max(50, "Last name cannot exceed 50 characters"),
 
     gender: z.enum(GENDERS, {
       required_error: "Please select a gender",
@@ -42,7 +48,10 @@ export const registerFormSchema = z
         message: "Please select a dialing code",
       }),
 
-    phoneNumber: z.string().min(1, "Phone number is required").regex(/^\d+$/, "Phone number must contain only digits"),
+    phoneNumber: z
+      .string()
+      .min(1, "Phone number is required")
+      .regex(/^\d+$/, "Phone number must contain only digits"),
 
     country: z
       .string({
@@ -75,6 +84,17 @@ export const resetPasswordFormSchema = z
     message: "Email is required.",
   })
   .email("Invalid Email!");
+
+export const inviteTutorFormSchema = z.object({
+  email: z
+    .string()
+    .min(1, {
+      message: "Email is required.",
+    })
+    .email("Invalid Email!"),
+
+  courseIds: z.array(z.string()).nonempty({ message: "Please assign atleast one course." }),
+});
 
 export const setPasswordFormSchema = z
   .object({
