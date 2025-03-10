@@ -5,6 +5,7 @@ import { z } from "zod";
 import Image from "next/image";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import { useSearchParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
@@ -18,6 +19,7 @@ import { deleteItem, retrieveItem, STORE_TOKEN_KEY } from "@/lib/storage";
 export default function SetPassword() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [resetCompleted, setResetCompleted] = useState(false);
+  const searchParams = useSearchParams();
 
   const setPasswordFormController = useSetPasswordForm();
 
@@ -25,7 +27,7 @@ export default function SetPassword() {
     setIsSubmitting(true);
     console.log("Set Password Form Values: ", values);
 
-    const token = retrieveItem(STORE_TOKEN_KEY);
+    const token = retrieveItem(STORE_TOKEN_KEY) || searchParams.get("token")!;
 
     const payload = { password: values.password, token };
     console.log("Set Password Form Payload: ", payload);
@@ -34,7 +36,7 @@ export default function SetPassword() {
       const response = await setNewPassword(payload);
       console.log("Set Password Form Response Data", response);
 
-      toast.success("Password reset successful!\nPlease login with your new password.");
+      toast.success("Password set successful!\nPlease login with your new password.");
 
       setPasswordFormController.reset();
       deleteItem(STORE_TOKEN_KEY);
@@ -59,14 +61,21 @@ export default function SetPassword() {
           <div className="text-center flex flex-col items-center">
             <Image src={"/success-icon.svg"} width={100} height={100} alt="Success Icon" />
 
-            <h1 className="mt-6 font-semibold text-high text-xl px-12">Your Password has been successfully reset</h1>
+            <h1 className="mt-6 font-semibold text-high text-xl px-12">
+              Your Password has been successfully reset
+            </h1>
 
-            <p className="text-low font-normal text-sm mt-3">You can now log in with your new password</p>
+            <p className="text-low font-normal text-sm mt-3">
+              You can now log in with your new password
+            </p>
           </div>
 
           <div className="mt-8 text-center">
             <Link href={"/auth"}>
-              <Button className="w-full text-base font-medium leading-5 text-center py-3" variant={"_default"}>
+              <Button
+                className="w-full text-base font-medium leading-5 text-center py-3"
+                variant={"_default"}
+              >
                 Back to Login
               </Button>
             </Link>
@@ -86,15 +95,23 @@ export default function SetPassword() {
           <h1 className="font-semibold text-high text-xl">Create a New Password</h1>
 
           <p className="text-low font-normal text-sm mt-3">
-            Please enter your new password below to complete the reset process. Make sure it is strong and secure.
+            Please enter your new password below to complete the reset process. Make sure it is
+            strong and secure.
           </p>
         </div>
 
         <Form {...setPasswordFormController}>
-          <form onSubmit={setPasswordFormController.handleSubmit(handleSubmit)} className="flex flex-col gap-6">
+          <form
+            onSubmit={setPasswordFormController.handleSubmit(handleSubmit)}
+            className="flex flex-col gap-6"
+          >
             {/* PASSWORD / CONFIRM PASSWORD */}
             <div className="flex gap-3 flex-col">
-              <PasswordField label={"New Password"} name={"password"} control={setPasswordFormController.control} />
+              <PasswordField
+                label={"New Password"}
+                name={"password"}
+                control={setPasswordFormController.control}
+              />
 
               <PasswordField
                 label={"Confirm New Password"}
