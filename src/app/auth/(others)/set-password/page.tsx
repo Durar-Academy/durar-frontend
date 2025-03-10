@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { z } from "zod";
 import Image from "next/image";
 import Link from "next/link";
@@ -10,13 +10,14 @@ import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Form } from "@/components/ui/form";
 import { PasswordField } from "@/components/auth/password-field";
+import { Loading } from "@/components/shared/loading";
 
 import { useSetPasswordForm } from "@/hooks/useForm";
 import { setPasswordFormSchema } from "@/lib/schemas";
 import { setNewPassword } from "@/lib/auth";
 import { deleteItem, retrieveItem, STORE_TOKEN_KEY } from "@/lib/storage";
 
-export default function SetPassword() {
+function SetPasswordForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [resetCompleted, setResetCompleted] = useState(false);
   const searchParams = useSearchParams();
@@ -132,5 +133,13 @@ export default function SetPassword() {
         </Form>
       </div>
     </div>
+  );
+}
+
+export default function SetPasswordPage() {
+  return (
+    <Suspense fallback={<Loading />}>
+      <SetPasswordForm />
+    </Suspense>
   );
 }
