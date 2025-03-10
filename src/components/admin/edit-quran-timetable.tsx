@@ -86,6 +86,8 @@ export function EditTimeSchedule({
       const tutor = tutors.find((t) => t.id === option.value);
       if (!tutor) return;
 
+      const currentSchedule = schedules.find((sch) => sch.userId === option.value);
+
       const [start, end] = timeSlot.split(" - ");
       // const startHour = parseInt(start.split(":")[0]);
       // const endHour = parseInt(end.split(":")[0]);
@@ -103,19 +105,19 @@ export function EditTimeSchedule({
       // ).toISOString();
 
       const newSchedule: Schedule = {
-        id: tutor.id,
+        id: currentSchedule?.id ?? tutor.id,
         day: day.toLowerCase(),
         start,
         end,
         userId: tutor.id,
         user: tutor,
+        courseId: currentSchedule?.courseId ?? QURAN_ID,
         // Include other necessary Schedule properties with appropriate defaults or values
-        courseId: QURAN_ID,
-        status: "",
-        createdAt: "",
-        updatedAt: "",
-        deletedAt: null,
-        course: {
+        status: currentSchedule?.status ?? "",
+        createdAt: currentSchedule?.createdAt ?? "",
+        updatedAt: currentSchedule?.updatedAt ?? "",
+        deletedAt: currentSchedule?.deletedAt ?? null,
+        course: currentSchedule?.course ?? {
           id: "",
           title: "",
           description: "",

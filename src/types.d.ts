@@ -658,7 +658,7 @@ type CreateSchedule = {
   day: string;
   start: string;
   end: string;
-  courseId: string;
+  courseId?: string;
   status: string;
   userId: string;
 };

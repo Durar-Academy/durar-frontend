@@ -163,11 +163,25 @@ export async function getPayment(paymentId: string, options?: { signal?: AbortSi
   return response.data.data;
 }
 
-export async function updateSchedules(
-  { classes: payload }: { classes: CreateSchedule | CreateSchedule[] },
+export async function createSchedules(
+  { classes, courseId }: { classes: CreateSchedule | CreateSchedule[]; courseId: string },
   options?: { signal?: AbortSignal },
 ) {
-  const response = await axiosInstance.put("/class", payload, {
+  const response = await axiosInstance.post(
+    "/class",
+    { classes, courseId },
+    {
+      signal: options?.signal,
+    },
+  );
+  return response.data;
+}
+
+export async function updateSchedules(
+  { classes }: { classes: CreateSchedule | CreateSchedule[] },
+  options?: { signal?: AbortSignal },
+) {
+  const response = await axiosInstance.put("/class", classes, {
     signal: options?.signal,
   });
   return response.data;

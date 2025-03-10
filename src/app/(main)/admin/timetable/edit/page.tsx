@@ -1,7 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import Link from "next/link";
 import { ChevronRight, Download, Save } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 import { TopBar } from "@/components/shared/top-bar";
 import { Button } from "@/components/ui/button";
@@ -10,9 +13,7 @@ import { EditTimeSchedule } from "@/components/admin/edit-quran-timetable";
 
 import { useCurrentUser } from "@/hooks/useAccount";
 import { useSchedules, useTutors } from "@/hooks/useAdmin";
-import { useEffect, useState } from "react";
-import { updateSchedules } from "@/lib/admin";
-import toast from "react-hot-toast";
+import { createSchedules, updateSchedules } from "@/lib/admin";
 import { QURAN_ID } from "@/data/constants";
 
 export default function EditTimetable() {
@@ -23,6 +24,7 @@ export default function EditTimetable() {
   // State to track edited schedules
   const [editedSchedules, setEditedSchedules] = useState<Schedule[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
 
   // Initialize state when schedules are fetched
   useEffect(() => {
@@ -32,35 +34,78 @@ export default function EditTimetable() {
   }, [schedules]);
 
   const handleSave = async () => {
-    console.log("EDITED SCHEDULE", editedSchedules);
+    console.log("EDITED SCHEDULE: RAW", editedSchedules);
 
     setIsSubmitting(true);
 
-    const payload_array = editedSchedules
-      .filter((schedule) => schedule.courseId === QURAN_ID)
+    const editedSchedulesQuran = editedSchedules.filter(
+      (schedule) => schedule.courseId === QURAN_ID,
+    );
+
+    console.log("EDITED SCHEDULE: QURAN ONLY", editedSchedulesQuran);
+
+    const classesToCreate = editedSchedulesQuran
+      .filter((schedule) => schedule.id === schedule.userId)
       .map((schedule) => {
         return {
-          day: schedule.day,
+          day: schedule.day.toLowerCase(),
           start: schedule.start,
-          end: schedule.end,
-          status: "scheduled",
+          end: schedule.start,
           userId: schedule.userId,
-          courseId: schedule.courseId,
+          status: "scheduled",
         };
       });
 
-    console.log("PAYLOAD", {
-      classes: payload_array,
-    });
+    console.log("EDITED SCHEDULE: TO CREATE", classesToCreate);
 
-    try {
-      const response = await updateSchedules({
-        classes: [],
+    const classesToUpdate = editedSchedulesQuran
+      .filter((schedule) => schedule.id !== schedule.userId)
+      .map((schedule) => {
+        return {
+          id: schedule.id,
+          day: schedule.day.toLowerCase(),
+          start: schedule.start,
+          end: schedule.start,
+          courseId: schedule.courseId,
+          userId: schedule.userId,
+          status: "scheduled",
+        };
       });
 
-      console.log("Update Schedules Response Data", response);
+    console.log("EDITED SCHEDULE: TO UPDATE", classesToUpdate);
+
+    try {
+      // Prepare API calls
+      const apiCalls = [];
+
+      // Add create API call if needed
+      if (classesToCreate.length > 0) {
+        apiCalls.push(
+          createSchedules({
+            classes: classesToCreate,
+            courseId: QURAN_ID,
+          }),
+        );
+      }
+
+      // Add update API call if needed
+      if (classesToUpdate.length > 0) {
+        apiCalls.push(
+          updateSchedules({
+            classes: classesToUpdate,
+          }),
+        );
+      }
+
+      // Execute all API calls in parallel
+      if (apiCalls.length > 0) {
+        const responses = await Promise.all(apiCalls);
+        console.log("CREATE AND UPDATE RESPONSES:", responses);
+      }
 
       toast.success("Schedules saved successfully");
+
+      router.back();
     } catch (error) {
       console.error("Error saving schedules:", error);
 
