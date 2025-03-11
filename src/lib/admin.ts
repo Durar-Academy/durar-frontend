@@ -213,3 +213,20 @@ export async function getAssignments(options?: { signal?: AbortSignal }) {
   });
   return response.data.data.records;
 }
+
+export async function getAssignmentMetrics(
+  assignmentId: string,
+  options?: { signal?: AbortSignal },
+) {
+  const response = await axiosInstance.get(`/metrics/assignment?id=${assignmentId}`, {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}
+
+export async function getAssignment(assignmentId: string, options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get(`/assignment/${assignmentId}`, {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}

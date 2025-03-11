@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import {
   downloadTransactions,
   getActivities,
+  getAssignment,
+  getAssignmentMetrics,
   getAssignments,
   getAssignmentsMetrics,
   getCourse,
@@ -221,5 +223,21 @@ export function useAssignmentsMetrics() {
 
 export function useAssignments() {
   const query = useQuery({ queryKey: ["all-assignments"], queryFn: getAssignments });
+  return query;
+}
+
+export function useAssignmentMetrics(assignmentId: string) {
+  const query = useQuery({
+    queryKey: ["single-assignment-metrics", assignmentId],
+    queryFn: () => getAssignmentMetrics(assignmentId),
+  });
+  return query;
+}
+
+export function useAssignment(assignmentId: string) {
+  const query = useQuery<Assignment>({
+    queryKey: ["single-assignment", assignmentId],
+    queryFn: () => getAssignment(assignmentId),
+  });
   return query;
 }

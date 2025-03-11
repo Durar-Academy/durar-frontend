@@ -731,3 +731,42 @@ export const processAssignmentsPage = (assignments: Assignment[]): AssignmentsLi
 
   return _assignments;
 };
+
+export const processAssignmentMetrics = (
+  assignmentsMetrics: AssignmentsMetrics,
+): OverviewCardProps[] => {
+  return [
+    {
+      title: "Total Students",
+      figure: String(assignmentsMetrics.totalStudents ?? 0),
+      children: React.createElement(List, { key: "icon", className: "w-6 h-6 text-orange" }),
+    },
+
+    {
+      title: "Submissions",
+      figure: String(assignmentsMetrics.totalSubmissions ?? 0),
+      children: React.createElement(CheckCircle, {
+        key: "icon",
+        className: "w-6 h-6 text-success",
+      }),
+    },
+
+    {
+      title: "Pending",
+      figure: String(assignmentsMetrics.pendingAssignments ?? 0),
+      children: React.createElement(Clock, {
+        key: "icon",
+        className: "w-6 h-6 text-orange",
+      }),
+    },
+
+    {
+      title: "Late",
+      figure: String(assignmentsMetrics.lateSubmissions ?? 0),
+      children: React.createElement(Info, {
+        key: "icon",
+        className: "w-6 h-6 text-danger",
+      }),
+    },
+  ];
+};
