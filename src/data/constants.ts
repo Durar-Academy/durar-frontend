@@ -63,7 +63,7 @@ export const ADMIN_SIDEBAR_LINKS: ComponentConfig[] = [
     type: "link",
     component: LinkComponent,
     props: {
-      href: "/admin/assignment",
+      href: "/admin/assignments",
       children: [React.createElement(Table2, { key: "icon", className: "h-4 w-4" }), "Assignment"],
     },
   },
