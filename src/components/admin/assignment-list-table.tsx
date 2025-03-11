@@ -1,4 +1,4 @@
-import { Download, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import Link from "next/link";
 
 import {
@@ -8,7 +8,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { DatePicker } from "@/components/ui/date-picker";
 import {
   Table,
   TableBody,
@@ -18,17 +17,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 
 import { cn } from "@/lib/utils";
-import { formatAmount, formatToReadableId } from "@/utils/formatter";
-import { PAYMENT_STATUSES } from "@/data/constants";
+import { ASSIGNMENT_STATUSES } from "@/data/constants";
 
-export function PaymentsPageTable({ payments }: { payments: PaymentsPageTableProps }) {
+export function AssignmentListTable({ assignments }: { assignments: AssignmentsListTableProps }) {
   return (
     <div className="rounded-xl p-6 border border-shade-2 bg-white h-full">
       <div className="flex justify-between items-center mb-6">
-        <h3 className="text-base text-high font-semibold">Payments</h3>
+        <h3 className="text-base text-high font-semibold">Assignments</h3>
 
         <div className="flex gap-3">
           <div className="relative w-[200px]">
@@ -48,86 +45,65 @@ export function PaymentsPageTable({ payments }: { payments: PaymentsPageTablePro
             </SelectTrigger>
 
             <SelectContent>
-              {PAYMENT_STATUSES.map((paymentStatus, index) => (
+              {ASSIGNMENT_STATUSES.map((assignment, index) => (
                 <SelectItem
-                  value={paymentStatus.status}
-                  key={paymentStatus.status + index}
+                  value={assignment.status}
+                  key={assignment.status + index}
                   className="capitalize"
                 >
-                  {paymentStatus.label}
+                  {assignment.label}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-
-          <div>
-            <DatePicker />
-          </div>
-
-          <Button
-            variant={"_outline"}
-            className="bg-white border-orange text-orange hover:bg-offwhite px-4 py-2 h-10"
-          >
-            <Download className="w-6 h-6" strokeWidth={3} />
-            <span>Export List</span>
-          </Button>
         </div>
       </div>
 
       <div className="min-h-[280px] overflow-y-scroll hide-scrollbar">
-        {payments.length > 0 ? (
+        {assignments.length > 0 ? (
           <Table>
             <TableHeader>
               <TableRow className="text-low text-sm font-semibold">
-                <TableHead>Name</TableHead>
+                <TableHead>Assignment Title</TableHead>
 
-                <TableHead>Invoice ID</TableHead>
-
-                <TableHead>Amount</TableHead>
+                <TableHead>Course</TableHead>
 
                 <TableHead>Status</TableHead>
 
-                <TableHead className="text-center">Date</TableHead>
+                <TableHead>Due Date</TableHead>
 
-                <TableHead className="text-center">Payment Method</TableHead>
+                <TableHead className="text-center">Submissions</TableHead>
 
                 <TableHead>Action</TableHead>
               </TableRow>
             </TableHeader>
 
             <TableBody className="space-y-3">
-              {payments.map((payment) => (
+              {assignments.map((assignment) => (
                 <TableRow
                   className="text-sm text-high bg-offwhite h-12"
-                  key={payment.id + payment.status}
+                  key={assignment.id + assignment.status}
                 >
-                  <TableCell className="capitalize">
-                    {payment.firstName} {payment.lastName}
-                  </TableCell>
+                  <TableCell className="capitalize">{assignment.assignmentTitle}</TableCell>
 
-                  <TableCell className="capitalize">
-                    {formatToReadableId(payment.id, "INV")}
-                  </TableCell>
-
-                  <TableCell>{formatAmount(payment.amount, payment.currency)}</TableCell>
+                  <TableCell className="capitalize">{assignment.courseTitle}</TableCell>
 
                   <TableCell
                     className={cn(
                       "capitalize font-medium text-high",
-                      payment.status === "completed" && "text-success",
-                      payment.status === "pending" && "text-orange",
-                      payment.status === "failed" && "text-danger",
+                      assignment.status === "graded" && "text-success",
+                      assignment.status === "pending" && "text-orange",
                     )}
                   >
-                    {payment.status}
+                    {assignment.status}
                   </TableCell>
 
-                  <TableCell className="text-center">{payment.date}</TableCell>
+                  <TableCell>{assignment.dueDate}</TableCell>
 
-                  <TableCell className="text-center capitalize">{payment.paymentMethod}</TableCell>
+                  <TableCell className="text-center">{assignment.submissions ?? 0}</TableCell>
 
                   <TableCell>
-                    <Link href={`/admin/payments/${payment.id}`}>
+                    <Link href={`/admin/assignments/${assignment.id}`}>
                       <button className="font-bold text-orange hover:underline">View</button>
                     </Link>
                   </TableCell>
@@ -136,7 +112,7 @@ export function PaymentsPageTable({ payments }: { payments: PaymentsPageTablePro
             </TableBody>
           </Table>
         ) : (
-          <p className="text-sm mt-4 text-low">No Payments found</p>
+          <p className="text-sm mt-4 text-low">No Assignments found</p>
         )}
       </div>
     </div>

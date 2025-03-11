@@ -45,14 +45,14 @@ export default function PaymentsPage() {
             </div>
           )}
         </div>
+      </div>
 
-        <div className="h-[500px]">
-          {paymentsLoading ? (
-            <Skeleton className="w-full h-full rounded-xl" />
-          ) : (
-            <PaymentsPageTable payments={paymentsRecords} />
-          )}
-        </div>
+      <div className="h-[600px]">
+        {paymentsLoading ? (
+          <Skeleton className="w-full h-full rounded-xl" />
+        ) : (
+          <PaymentsPageTable payments={paymentsRecords} />
+        )}
       </div>
     </section>
   );

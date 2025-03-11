@@ -199,3 +199,17 @@ export async function deleteSchedule(scheduleId: string, options?: { signal?: Ab
   const response = await axiosInstance.delete(`/class/${scheduleId}`, { signal: options?.signal });
   return response.data;
 }
+
+export async function getAssignmentsMetrics(options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get("/metrics/assignment", {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}
+
+export async function getAssignments(options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get("/assignment", {
+    signal: options?.signal,
+  });
+  return response.data.data.records;
+}

@@ -441,7 +441,7 @@ type Assignment = {
   courseId: string;
   dueAt: Date;
   duration: number | null;
-  type: "assignment";
+  type: "quiz" | "assignment";
   description: string | null;
   allowLate: boolean;
   mediaId: string | null;
@@ -662,3 +662,23 @@ type CreateSchedule = {
   status: string;
   userId: string;
 };
+
+type AssignmentsMetrics = {
+  totalAssignments: number;
+  pendingAssignments: number;
+  completedAssignments: number;
+  lateAssignments: number;
+  totalSubmissions: number;
+  lateSubmissions: number;
+  totalPending: number;
+  totalStudents: number;
+};
+
+type AssignmentsListTableProps = {
+  id: string;
+  assignmentTitle: string;
+  courseTitle: string;
+  status: AssignmentStatus;
+  dueDate: string;
+  submissions: number;
+}[];

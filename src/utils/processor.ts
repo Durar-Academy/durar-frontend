@@ -2,6 +2,7 @@ import React from "react";
 import {
   CheckCircle,
   CircleDollarSign,
+  Clock,
   Glasses,
   GraduationCap,
   Info,
@@ -15,9 +16,9 @@ import {
   ScanFace,
   Users,
 } from "lucide-react";
+import { format, parse } from "date-fns";
 
 import { formatDateAndTime, formatAmount } from "@/utils/formatter";
-import { format, parse } from "date-fns";
 
 export function processSchedules(schedules: Schedule[]) {
   const extractedSchedulesDetails = schedules.map((schedule) => {
@@ -673,4 +674,60 @@ export const processPaymentsPage = (payments: Payment[]) => {
   });
 
   return extractedPayments;
+};
+
+export const processAssignmentsMetrics = (
+  assignmentsMetrics: AssignmentsMetrics,
+): OverviewCardProps[] => {
+  return [
+    {
+      title: "Total Assignments",
+      figure: String(assignmentsMetrics.totalAssignments ?? 0),
+      children: React.createElement(List, { key: "icon", className: "w-6 h-6 text-orange" }),
+    },
+
+    {
+      title: "Completed",
+      figure: String(assignmentsMetrics.completedAssignments ?? 0),
+      children: React.createElement(CheckCircle, {
+        key: "icon",
+        className: "w-6 h-6 text-success",
+      }),
+    },
+
+    {
+      title: "Pending",
+      figure: String(assignmentsMetrics.totalPending ?? 0),
+      children: React.createElement(Clock, {
+        key: "icon",
+        className: "w-6 h-6 text-orange",
+      }),
+    },
+
+    {
+      title: "Overdue",
+      figure: String(assignmentsMetrics.lateAssignments ?? 0),
+      children: React.createElement(Info, {
+        key: "icon",
+        className: "w-6 h-6 text-danger",
+      }),
+    },
+  ];
+};
+
+export const processAssignmentsPage = (assignments: Assignment[]): AssignmentsListTableProps => {
+  const _assignments = assignments
+    .filter((assignment) => assignment.type === "assignment")
+    .map((assignment) => {
+      const id = assignment.id;
+      const assignmentTitle = assignment.title;
+      const courseTitle = assignment.course.title;
+      const status = assignment.status;
+      const dueDate = format(new Date(assignment.dueAt), "PP");
+      const submissions = assignment.AssignmentSubmission.length;
+
+      return { id, assignmentTitle, courseTitle, status, dueDate, submissions };
+    });
+
+  return _assignments;
 };

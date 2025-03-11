@@ -3,6 +3,8 @@ import { useQuery } from "@tanstack/react-query";
 import {
   downloadTransactions,
   getActivities,
+  getAssignments,
+  getAssignmentsMetrics,
   getCourse,
   getCourses,
   getCoursesMetrics,
@@ -209,5 +211,15 @@ export function useCourses(filters?: SearchFilters) {
     queryKey: ["all-courses", filters],
     queryFn: () => getCourses({ filters }),
   });
+  return query;
+}
+
+export function useAssignmentsMetrics() {
+  const query = useQuery({ queryKey: ["all-assignment-metrics"], queryFn: getAssignmentsMetrics });
+  return query;
+}
+
+export function useAssignments() {
+  const query = useQuery({ queryKey: ["all-assignments"], queryFn: getAssignments });
   return query;
 }
