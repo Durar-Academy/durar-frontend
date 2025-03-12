@@ -230,3 +230,13 @@ export async function getAssignment(assignmentId: string, options?: { signal?: A
   });
   return response.data.data;
 }
+
+export async function getStudentAssignmentFeedbacks(
+  assignmentId: string,
+  options?: { signal?: AbortSignal },
+) {
+  const response = await axiosInstance.get(`/assignment-feedback?assignmentId=${assignmentId}`, {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}

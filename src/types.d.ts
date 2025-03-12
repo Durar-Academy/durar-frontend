@@ -454,6 +454,7 @@ type Assignment = {
   QuizSubmission: QuizSubmission[];
   course: Course;
   status: AssignmentStatus;
+  // AssignmentFeedback: StudentFeedback[];
 };
 
 type AssignmentSubmission = {
@@ -682,3 +683,14 @@ type AssignmentsListTableProps = {
   dueDate: string;
   submissions: number;
 }[];
+
+type StudentFeedback = {
+  id: string;
+  submissionId: string;
+  userId: string;
+  feedback: string;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: null;
+  user: Student;
+};

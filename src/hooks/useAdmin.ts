@@ -15,6 +15,7 @@ import {
   getPayments,
   getPaymentsMetrics,
   getSchedules,
+  getStudentAssignmentFeedbacks,
   getStudentAssignments,
   getStudentCourses,
   getStudentMetrics,
@@ -238,6 +239,14 @@ export function useAssignment(assignmentId: string) {
   const query = useQuery<Assignment>({
     queryKey: ["single-assignment", assignmentId],
     queryFn: () => getAssignment(assignmentId),
+  });
+  return query;
+}
+
+export function useStudentAssignmentFeedbacks(assignmentId: string) {
+  const query = useQuery<StudentFeedback[]>({
+    queryKey: ["single-assignment-students-feedbacks", assignmentId],
+    queryFn: () => getStudentAssignmentFeedbacks(assignmentId),
   });
   return query;
 }
