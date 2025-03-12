@@ -21,7 +21,7 @@ export function CreateCourseStructure() {
       ...formData,
       Lesson: [
         ...formData.Lesson,
-        { name: "", video: null, id: newId, type: "video", isLocked: false },
+        { name: "", video: null, id: newId, type: "video", isLocked: true },
       ],
     });
   };

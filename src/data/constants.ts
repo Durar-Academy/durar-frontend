@@ -276,3 +276,8 @@ export function timeSlots(): string[] {
 }
 
 export const QURAN_ID = "cm80bspne0001f72obj1pt2vi";
+
+export const NEW_ASSIGNMENT_OPTIONS = [
+  { label: "Assignment", url: "/admin/assignments/add-assignment" },
+  { label: "Quiz", url: "/admin/assignments/add-quiz" },
+];
