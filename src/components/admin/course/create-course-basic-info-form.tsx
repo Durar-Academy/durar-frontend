@@ -84,7 +84,7 @@ export function CreateCourseBasicInfoForm() {
       <div className="space-y-2">
         <Label htmlFor="thumbnail">Thumbnail (1920 x 1080)</Label>
 
-        <div className="" id="thumbnail">
+        <div className="h-60" id="thumbnail">
           <ThumbnailDropzone
             onFileDrop={({ file, preview }) =>
               updateFormData({ ...formData, thumbnailId: { file, preview } })

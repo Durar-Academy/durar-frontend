@@ -281,3 +281,13 @@ export const NEW_ASSIGNMENT_OPTIONS = [
   { label: "Assignment", url: "/admin/assignments/add-assignment" },
   { label: "Quiz", url: "/admin/assignments/add-quiz" },
 ];
+
+export const createAssignmentDefaultValues: CreateAssignment = {
+  title: "",
+  courseId: "",
+  dueAt: null,
+  description: "",
+  allowLate: false,
+  totalScore: 0,
+  thumbnail: null,
+};

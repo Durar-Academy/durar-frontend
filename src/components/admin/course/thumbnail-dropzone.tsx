@@ -7,7 +7,7 @@ import { useState, MouseEvent } from "react";
 
 import { cn, fileToBase64 } from "@/lib/utils";
 
-export function ThumbnailDropzone({ onFileDrop, value }: DropzoneProps) {
+export function ThumbnailDropzone({ onFileDrop, value, showThumbnail = true }: DropzoneProps) {
   const [previews, setPreviews] = useState<FileDropValue>(value);
   const [error, setError] = useState("");
 
@@ -54,7 +54,7 @@ export function ThumbnailDropzone({ onFileDrop, value }: DropzoneProps) {
         {({ getRootProps, getInputProps }) => (
           <section
             className={cn(
-              "w-full h-60 flex flex-col items-center justify-center border-2 border-dashed border-shade-3 rounded-xl focus:border-orange transition-colors cursor-pointer hover:border-orange",
+              "w-full h-full flex flex-col items-center justify-center border-2 border-dashed border-shade-3 rounded-xl focus:border-orange transition-colors cursor-pointer hover:border-orange",
               error && "border-red-500",
             )}
             {...getRootProps()}
@@ -81,7 +81,7 @@ export function ThumbnailDropzone({ onFileDrop, value }: DropzoneProps) {
         </div>
       )}
 
-      {previews && (
+      {showThumbnail && previews && (
         <div className="preview mt-4">
           <div className="relative h-40 w-40 border border-shade-2 rounded-xl">
             <Image

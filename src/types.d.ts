@@ -616,6 +616,7 @@ type CreateCourseFormContextProps = {
 type DropzoneProps = {
   onFileDrop: ({ file: File, preview: string }) => void;
   value: FileDropValue;
+  showThumbnail?: boolean;
 };
 
 type FileDropValue = { file: File; preview: string } | null;
@@ -693,4 +694,14 @@ type StudentFeedback = {
   updatedAt: Date;
   deletedAt: null;
   user: Student;
+};
+
+type CreateAssignment = {
+  title: string;
+  courseId: string;
+  dueAt: Date | null;
+  description: string;
+  allowLate: boolean;
+  totalScore: number;
+  thumbnail: FileDropValue;
 };
