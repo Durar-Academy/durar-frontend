@@ -29,6 +29,8 @@ import { CreateAssignmentPreview } from "@/components/admin/create-assignment-pr
 import { useCurrentUser } from "@/hooks/useAccount";
 import { useCourses } from "@/hooks/useAdmin";
 import { createAssignmentDefaultValues } from "@/data/constants";
+import { uploadFile } from "@/lib/storage";
+import { axiosInstance } from "@/lib/axios";
 
 export default function AddNewAssignmentPage() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
@@ -62,6 +64,37 @@ export default function AddNewAssignmentPage() {
     setIsSubmitting(true);
 
     try {
+      // upload thumbnail
+      let thumbnailResponse;
+      if (assignment.thumbnail?.file) {
+        thumbnailResponse = await uploadFile(assignment.thumbnail.file);
+      }
+      console.log("CREATE ASSIGNMENT THUMBNAIL RESPONSE:", thumbnailResponse);
+
+      // construct assignment payload
+      const payload = {
+        title: assignment.title,
+        courseId: assignment.courseId,
+        dueAt: assignment.dueAt,
+        type: "assignment",
+        description: assignment.description,
+        allowLate: assignment.allowLate,
+        storageId: thumbnailResponse ? thumbnailResponse.storageId : null,
+        totalScore: assignment.totalScore,
+      };
+
+      console.log("CREATE ASSIGNMENT Payload:", payload);
+
+      // await axiosInstance.post("/assignment", payload);
+
+      const createAssignmentResponse = await axiosInstance.post("/assignment", payload);
+      console.log("CREATE ASSIGNMENT RESPONSE", createAssignmentResponse);
+
+      toast.success("Course Created Successfully!");
+
+      // reset form
+      setAssignment(createAssignmentDefaultValues);
+      router.push("/admin/assignments");
     } catch (error) {
       console.error("CREATE ASSIGNMENT ERROR: ", error);
       toast.error("Something went Wrong. Please try again!");
@@ -208,17 +241,18 @@ export default function AddNewAssignmentPage() {
 
               <Input
                 id="maxScore"
-                type="number"
+                type="text"
                 className="shadow-none px-3 py-2 rounded-[10px] h-12 placeholder:text-low text-high text-sm focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-2 focus-visible:border-orange border border-shade-3"
                 placeholder="1"
-                min={1}
-                value={assignment.totalScore}
-                onChange={(event) =>
-                  setAssignment((previous) => ({
-                    ...previous,
-                    totalScore: Number(event.target.value),
-                  }))
-                }
+                value={String(assignment.totalScore)}
+                onChange={({ target: { value } }) => {
+                  if (value === "" || !isNaN(Number(value))) {
+                    setAssignment((previous) => ({
+                      ...previous,
+                      totalScore: value === "" ? 0 : Number(value),
+                    }));
+                  }
+                }}
               />
             </div>
           </div>

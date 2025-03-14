@@ -288,6 +288,6 @@ export const createAssignmentDefaultValues: CreateAssignment = {
   dueAt: null,
   description: "",
   allowLate: false,
-  totalScore: 0,
+  totalScore: 10,
   thumbnail: null,
 };

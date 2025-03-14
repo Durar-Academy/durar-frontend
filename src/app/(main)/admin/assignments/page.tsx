@@ -24,10 +24,11 @@ export default function AssignmentPage() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: assignmentMetrics, isLoading: assignmentMetricsLoading } = useAssignmentsMetrics();
   const { data: assignments, isLoading: assignmentsLoading } = useAssignments();
+
   const router = useRouter();
 
   const allAssignmentsMetrics = processAssignmentsMetrics(assignmentMetrics ?? []);
-  const assignmentsRecords = processAssignmentsPage(assignments?.records ?? []);
+  const assignmentsRecords = processAssignmentsPage(assignments ?? []);
 
   const handleValueChange = (value: string) => {
     const selectedOption = NEW_ASSIGNMENT_OPTIONS.find((option) => option.label === value);
