@@ -720,13 +720,14 @@ export const processAssignmentsPage = (assignments: Assignment[]): AssignmentsLi
     .filter((assignment) => assignment.type === "assignment" || assignment.type === "quiz")
     .map((assignment) => {
       const id = assignment.id;
+      const type = assignment.type;
       const assignmentTitle = assignment.title;
       const courseTitle = assignment.course.title;
       const status = assignment.status;
       const dueDate = format(new Date(assignment.dueAt), "PP");
       const submissions = assignment.AssignmentSubmission.length;
 
-      return { id, assignmentTitle, courseTitle, status, dueDate, submissions };
+      return { id, type, assignmentTitle, courseTitle, status, dueDate, submissions };
     });
 
   return _assignments;

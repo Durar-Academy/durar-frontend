@@ -68,6 +68,8 @@ export function AssignmentListTable({ assignments }: { assignments: AssignmentsL
 
                 <TableHead>Course</TableHead>
 
+                <TableHead>Type</TableHead>
+
                 <TableHead>Status</TableHead>
 
                 <TableHead>Due Date</TableHead>
@@ -87,6 +89,16 @@ export function AssignmentListTable({ assignments }: { assignments: AssignmentsL
                   <TableCell className="capitalize">{assignment.assignmentTitle}</TableCell>
 
                   <TableCell className="capitalize">{assignment.courseTitle}</TableCell>
+
+                  <TableCell
+                    className={cn(
+                      "capitalize font-medium text-high",
+                      assignment.type === "assignment" && "text-success",
+                      assignment.type === "quiz" && "text-orange",
+                    )}
+                  >
+                    {assignment.type}
+                  </TableCell>
 
                   <TableCell
                     className={cn(

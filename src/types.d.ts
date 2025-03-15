@@ -683,6 +683,7 @@ type AssignmentsListTableProps = {
   status: AssignmentStatus;
   dueDate: string;
   submissions: number;
+  type: "quiz" | "assignment";
 }[];
 
 type StudentFeedback = {

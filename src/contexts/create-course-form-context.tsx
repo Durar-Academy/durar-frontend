@@ -91,9 +91,7 @@ export function CreateCourseFormProvider({ children }: { children: React.ReactNo
       toast.success("Course Created Successfully!");
 
       // reset form
-      setFormData(defaultCreateFormValues);
-      setCurrentFormStep(1);
-      router.refresh();
+      cancelForm();
     } catch (error) {
       console.error("CREATE COURSE ERROR:", error);
 

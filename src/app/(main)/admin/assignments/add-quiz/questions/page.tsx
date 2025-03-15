@@ -3,10 +3,10 @@
 import { ArrowLeft, Plus, SendHorizonal, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
-
-import { useQuizFormProvider } from "@/hooks/useForm";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+
+import { useQuizFormProvider } from "@/hooks/useForm";
 
 export default function AddNewQuizQuestionsPage() {
   const { formData, prevStep, isSubmitting, publishQuiz, updateFormData } = useQuizFormProvider();
@@ -141,7 +141,7 @@ export default function AddNewQuizQuestionsPage() {
               className="text-white bg-success rounded-xl py-2 px-4 h-10 hover:bg-light-green"
               disabled={isSubmitting}
             >
-              {false ? (
+              {isSubmitting ? (
                 <>Publishing...</>
               ) : (
                 <>
