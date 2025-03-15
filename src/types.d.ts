@@ -705,3 +705,31 @@ type CreateAssignment = {
   totalScore: number;
   thumbnail: FileDropValue;
 };
+
+type CreateQuiz = {
+  title: string;
+  courseId: string;
+  dueAt: Date | null;
+  totalScore: number;
+  description: string;
+  allowLate: boolean;
+  randomnize: boolean;
+  duration: number;
+  autograded: boolean;
+
+  questions: [];
+};
+
+type CreateQuizFormContextProps = {
+  formData: CreateQuiz;
+
+  updateFormData: (newData: Partial<CreateQuiz>) => void;
+  cancelForm: () => void;
+
+  prevStep: () => void;
+  nextStep: () => void;
+
+  publishQuiz: () => void;
+
+  isSubmitting: boolean;
+};

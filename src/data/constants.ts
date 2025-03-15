@@ -1,5 +1,16 @@
 import { deleteCookie } from "cookies-next";
-import { Bell, BookText, Columns2, Grid2X2, LogOut, Settings, Table2, Wallet } from "lucide-react";
+import {
+  Bell,
+  BookText,
+  Columns2,
+  Grid2X2,
+  LogOut,
+  Settings,
+  Table2,
+  Wallet,
+  Layers2,
+  PanelsTopLeft,
+} from "lucide-react";
 import React from "react";
 
 import { ButtonComponent } from "@/components/admin/button-component";
@@ -290,4 +301,28 @@ export const createAssignmentDefaultValues: CreateAssignment = {
   allowLate: false,
   totalScore: 10,
   thumbnail: null,
+};
+
+export const quizLinks = [
+  { label: "Quiz Details", icon: PanelsTopLeft, url: `/admin/assignments/add-quiz` },
+
+  {
+    label: "Questions",
+    icon: Layers2,
+    url: `/admin/assignments/add-quiz/questions`,
+  },
+];
+
+export const createQuizDefaultValues: CreateQuiz = {
+  title: "",
+  courseId: "",
+  dueAt: null,
+  description: "",
+  allowLate: false,
+  totalScore: 10,
+  randomnize: false,
+  duration: 0,
+  autograded: false,
+
+  questions: [],
 };

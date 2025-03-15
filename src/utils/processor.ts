@@ -717,7 +717,7 @@ export const processAssignmentsMetrics = (
 
 export const processAssignmentsPage = (assignments: Assignment[]): AssignmentsListTableProps => {
   const _assignments = assignments
-    .filter((assignment) => assignment.type === "assignment")
+    .filter((assignment) => assignment.type === "assignment" || assignment.type === "quiz")
     .map((assignment) => {
       const id = assignment.id;
       const assignmentTitle = assignment.title;

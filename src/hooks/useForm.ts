@@ -3,7 +3,8 @@ import { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { CreateCourseFormContext } from "@/contexts/create-course-form-provider";
+import { CreateCourseFormContext } from "@/contexts/create-course-form-context";
+import { CreateQuizFormContext } from "@/contexts/quiz-form-provider";
 import { loginFormSchema, registerFormSchema, setPasswordFormSchema } from "@/lib/schemas";
 
 export const useLoginForm = () =>
@@ -46,5 +47,16 @@ export function useCreateCourseFormProvider() {
 
   if (createCourseContext === null)
     throw new Error("Create Course Context Used Outside of its scope.");
+
   return createCourseContext;
+}
+
+export function useQuizFormProvider() {
+  const createQuizContext = useContext(CreateQuizFormContext);
+
+  if (createQuizContext === null) {
+    throw new Error("Create Quiz Context Used Outside of its scope.");
+  }
+
+  return createQuizContext;
 }

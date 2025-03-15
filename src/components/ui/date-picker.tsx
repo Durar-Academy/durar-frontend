@@ -46,7 +46,7 @@ export function ControlledDatePicker({
         <Button
           variant={"outline"}
           className={cn(
-            "w-full h-10 justify-start text-left font-normal text-base text-high border border-shade-3 shadow-none",
+            "w-full h-12 justify-start text-left font-normal text-base text-high border border-shade-3 shadow-none rounded-xl",
           )}
         >
           {date ? format(date, "PPP") : <span>Date</span>}{" "}

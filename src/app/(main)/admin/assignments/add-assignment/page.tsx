@@ -175,7 +175,7 @@ export default function AddNewAssignmentPage() {
                     }
                     required
                   >
-                    <SelectTrigger className="h-12 text-high bg-white border border-shade-3 rounded-lg text-base px-4 py-3 focus:ring-0">
+                    <SelectTrigger className="h-12 text-high bg-white border border-shade-3 rounded-lg text-sm px-4 py-3 focus:ring-0">
                       <SelectValue placeholder="Select Course" />
                     </SelectTrigger>
 
