@@ -61,7 +61,7 @@ export default function AddNewQuizPage() {
         </div>
 
         <div className="flex flex-col gap-3">
-          <div className="flex item-center justify-between gap-4 flex-wrap">
+          <div className="flex item-center justify-between gap-4 flex-col lg:flex-row">
             <div className="space-y-2 w-full">
               <Label htmlFor="title">Title</Label>
 
@@ -134,7 +134,7 @@ export default function AddNewQuizPage() {
             />
           </div>
 
-          <div className="flex item-center justify-between gap-4 flex-wrap">
+          <div className="flex item-center justify-between gap-4 flex-col xl:flex-row">
             <div className="space-y-2 w-full">
               <Label htmlFor="dueDate">Due Date</Label>
 
@@ -192,7 +192,7 @@ export default function AddNewQuizPage() {
       <div className="w-full bg-white rounded-xl border border-shade-2 p-6 flex flex-col gap-4">
         <h3 className="text-high font-medium text-lg">Advanced Settings</h3>
 
-        <div className="flex gap-4 flex-wrap">
+        <div className="flex gap-4 flex-col xl:flex-row">
           <div className="py-4 px-6 rounded-xl border border-shade-3 bg-white flex justify-between items-center w-full">
             <Label className="text-sm space-y-2" htmlFor="randomize">
               <p className="text-high font-medium">Randomize Questions</p>
