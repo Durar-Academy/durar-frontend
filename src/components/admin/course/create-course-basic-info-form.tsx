@@ -36,16 +36,6 @@ export function CreateCourseBasicInfoForm() {
 
         <div className="space-y-2 w-full">
           <Label htmlFor="category">Category</Label>
-
-          {/* <Input
-            id="category"
-            type="text"
-            className="shadow-none px-3 py-2 rounded-[10px] h-12 placeholder:text-low text-high text-sm focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-2 focus-visible:border-orange border border-shade-3"
-            placeholder="Idaadiyah"
-            value={formData.category}
-            onChange={(event) => updateFormData({ ...formData, category: event.target.value })}
-          /> */}
-
           <Select
             value={formData.category}
             onValueChange={(value) => updateFormData({ ...formData, category: value })}
@@ -84,7 +74,7 @@ export function CreateCourseBasicInfoForm() {
       <div className="space-y-2">
         <Label htmlFor="thumbnail">Thumbnail (1920 x 1080)</Label>
 
-        <div className="" id="thumbnail">
+        <div className="h-60" id="thumbnail">
           <ThumbnailDropzone
             onFileDrop={({ file, preview }) =>
               updateFormData({ ...formData, thumbnailId: { file, preview } })

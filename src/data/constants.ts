@@ -1,5 +1,16 @@
 import { deleteCookie } from "cookies-next";
-import { Bell, BookText, Columns2, Grid2X2, LogOut, Settings, Table2, Wallet } from "lucide-react";
+import {
+  Bell,
+  BookText,
+  Columns2,
+  Grid2X2,
+  LogOut,
+  Settings,
+  Table2,
+  Wallet,
+  Layers2,
+  PanelsTopLeft,
+} from "lucide-react";
 import React from "react";
 
 import { ButtonComponent } from "@/components/admin/button-component";
@@ -63,7 +74,7 @@ export const ADMIN_SIDEBAR_LINKS: ComponentConfig[] = [
     type: "link",
     component: LinkComponent,
     props: {
-      href: "/admin/assignment",
+      href: "/admin/assignments",
       children: [React.createElement(Table2, { key: "icon", className: "h-4 w-4" }), "Assignment"],
     },
   },
@@ -71,8 +82,8 @@ export const ADMIN_SIDEBAR_LINKS: ComponentConfig[] = [
     type: "link",
     component: LinkComponent,
     props: {
-      href: "/admin/payment",
-      children: [React.createElement(Wallet, { key: "icon", className: "h-4 w-4" }), "Payment"],
+      href: "/admin/payments",
+      children: [React.createElement(Wallet, { key: "icon", className: "h-4 w-4" }), "Payments"],
     },
   },
   {
@@ -179,7 +190,7 @@ export const defaultCreateFormValues = {
   thumbnailId: null,
 
   category: "",
-  Lesson: [{ name: "", video: null, id: 1, type: "video", isLocked: false }],
+  Lesson: [{ name: "", video: null, id: 1, type: "video", isLocked: true }],
   language: "",
   difficultyLevel: "",
   enableCertification: false,
@@ -251,3 +262,79 @@ export const COURSE_DIFFICULTY = [
     label: "Advanced",
   },
 ];
+
+export const daysOfWeek = [
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+  "Sunday",
+];
+
+// Create fixed time slots from 0:00 to 23:00 (12 to 12pm)
+export function timeSlots(): string[] {
+  const timeSlots: string[] = [];
+
+  for (let hour = 0; hour < 24; hour++) {
+    const startHour = hour.toString().padStart(2, "0");
+    const endHour = (hour + 1).toString().padStart(2, "0");
+    timeSlots.push(`${startHour}:00 - ${endHour}:00`);
+  }
+
+  return timeSlots;
+}
+
+export const QURAN_ID = "cm80bspne0001f72obj1pt2vi";
+
+export const NEW_ASSIGNMENT_OPTIONS = [
+  { label: "Assignment", url: "/admin/assignments/add-assignment" },
+  { label: "Quiz", url: "/admin/assignments/add-quiz" },
+];
+
+export const createAssignmentDefaultValues: CreateAssignment = {
+  title: "",
+  courseId: "",
+  dueAt: null,
+  description: "",
+  allowLate: false,
+  totalScore: 10,
+  thumbnail: null,
+};
+
+export const quizLinks = [
+  { label: "Quiz Details", icon: PanelsTopLeft, url: `/admin/assignments/add-quiz` },
+
+  {
+    label: "Questions",
+    icon: Layers2,
+    url: `/admin/assignments/add-quiz/questions`,
+  },
+];
+
+export const createQuizDefaultValues: CreateQuiz = {
+  title: "",
+  courseId: "",
+  dueAt: null,
+  description: "",
+  allowLate: false,
+  totalScore: 10,
+  randomnize: false,
+  duration: 0,
+  autograded: false,
+
+  questions: [
+    {
+      id: 1,
+      questionText: "",
+      options: [
+        {
+          id: 1,
+          optionText: "",
+        },
+      ],
+      correctAnswerId: null,
+    },
+  ],
+};

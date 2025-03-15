@@ -127,15 +127,115 @@ export async function getCoursesMetrics(options?: { signal?: AbortSignal }) {
   return response.data.data;
 }
 
-export async function getCourses(options?: { signal?: AbortSignal }) {
-  const response = await axiosInstance.get("/course", {
+export async function getCourse(courseId: string, options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get(`/course/${courseId}`, {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}
+
+export async function getPaymentsMetrics(options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get("/metrics/payment", {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}
+
+export async function downloadTransactions(options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get("/payment/download-transactions", {
+    signal: options?.signal,
+    responseType: "blob",
+  });
+  return response.data.data;
+}
+
+export async function getPayment(paymentId: string, options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get(`/payment/${paymentId}`, {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}
+
+export async function createSchedules(
+  { classes, courseId }: { classes: CreateSchedule | CreateSchedule[]; courseId: string },
+  options?: { signal?: AbortSignal },
+) {
+  const response = await axiosInstance.post(
+    "/class",
+    { classes, courseId },
+    {
+      signal: options?.signal,
+    },
+  );
+  return response.data;
+}
+
+export async function updateSchedules(
+  { classes }: { classes: CreateSchedule | CreateSchedule[] },
+  options?: { signal?: AbortSignal },
+) {
+  const response = await axiosInstance.put(
+    "/class",
+    { classes },
+    {
+      signal: options?.signal,
+    },
+  );
+  return response.data;
+}
+
+export async function getCourses(options?: { signal?: AbortSignal; filters?: SearchFilters }) {
+  const params = new URLSearchParams();
+  if (options?.filters?.search) params.append("search", options.filters.search);
+  if (options?.filters?.status) params.append("status", options.filters.status);
+
+  const response = await axiosInstance.get(`/course?${params.toString()}`, {
     signal: options?.signal,
   });
   return response.data.data.records;
 }
 
-export async function getCourse(courseId: string, options?: { signal?: AbortSignal }) {
-  const response = await axiosInstance.get(`/course/${courseId}`, {
+export async function deleteSchedule(scheduleId: string, options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.delete(`/class/${scheduleId}`, { signal: options?.signal });
+  return response.data;
+}
+
+export async function getAssignmentsMetrics(options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get("/metrics/assignment", {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}
+
+export async function getAssignments(options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get("/assignment", {
+    signal: options?.signal,
+  });
+  return response.data.data.records;
+}
+
+export async function getAssignmentMetrics(
+  assignmentId: string,
+  options?: { signal?: AbortSignal },
+) {
+  const response = await axiosInstance.get(`/metrics/assignment?id=${assignmentId}`, {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}
+
+export async function getAssignment(assignmentId: string, options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get(`/assignment/${assignmentId}`, {
+    signal: options?.signal,
+  });
+  return response.data.data;
+}
+
+export async function getStudentAssignmentFeedbacks(
+  assignmentId: string,
+  options?: { signal?: AbortSignal },
+) {
+  const response = await axiosInstance.get(`/assignment-feedback?assignmentId=${assignmentId}`, {
     signal: options?.signal,
   });
   return response.data.data;

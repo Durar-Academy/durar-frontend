@@ -12,7 +12,7 @@ export async function changePassword(payload: { password: string }) {
   return response.data;
 }
 
-export async function inviteTutor(payload: { email: string }) {
+export async function inviteTutor(payload: { email: string; courseIds?: string[] }) {
   const response = await axiosInstance.post(`/user/invite-tutor`, payload);
   return response.data;
 }

@@ -2,6 +2,7 @@ import React from "react";
 import {
   CheckCircle,
   CircleDollarSign,
+  Clock,
   Glasses,
   GraduationCap,
   Info,
@@ -15,17 +16,17 @@ import {
   ScanFace,
   Users,
 } from "lucide-react";
+import { format, parse } from "date-fns";
 
 import { formatDateAndTime, formatAmount } from "@/utils/formatter";
-import { format } from "date-fns";
 
 export function processSchedules(schedules: Schedule[]) {
   const extractedSchedulesDetails = schedules.map((schedule) => {
-    const firstName = schedule.user.firstName;
-    const lastName = schedule.user.lastName;
-    const startTime = schedule.startTime;
+    const firstName = schedule.user?.firstName ?? "Tutor";
+    const lastName = schedule.user?.lastName ?? "Tutor";
 
-    const { date, time } = formatDateAndTime(startTime);
+    const time = format(parse(schedule.start, "HH:mm", new Date()), "hh:mm a");
+    const date = schedule.day;
 
     return {
       firstName,
@@ -608,6 +609,164 @@ export const processCoursesMetrics = (coursesMetrics: CoursesMetrics): OverviewC
       children: React.createElement(CheckCircle, {
         key: "icon",
         className: "w-6 h-6 text-success",
+      }),
+    },
+  ];
+};
+
+export const processPaymentsMetrics = (paymentsMetrics: PaymentsMetrics): OverviewCardProps[] => {
+  return [
+    {
+      title: "Total Revenue",
+      figure: formatAmount(paymentsMetrics.totalRevenue ?? 0, "ngn"),
+      children: React.createElement(List, { key: "icon", className: "w-6 h-6 text-orange" }),
+    },
+
+    {
+      title: "Total Transactions",
+      figure: String(paymentsMetrics.totalTransactions),
+      children: React.createElement(CheckCircle, {
+        key: "icon",
+        className: "w-6 h-6 text-success",
+      }),
+    },
+
+    {
+      title: "Pending Payments",
+      figure: String(paymentsMetrics.pendingPayments),
+      children: React.createElement(Info, { key: "icon", className: "w-6 h-6 text-danger" }),
+    },
+
+    {
+      title: "Refunded Payments",
+      figure: formatAmount(paymentsMetrics.refundedPayments ?? 0, "ngn"),
+      children: React.createElement(CheckCircle, {
+        key: "icon",
+        className: "w-6 h-6 text-success",
+      }),
+    },
+  ];
+};
+
+export const processPaymentsPage = (payments: Payment[]) => {
+  const extractedPayments = payments.map((payment) => {
+    const id = payment.charge.id;
+    const firstName = payment.charge.user.firstName;
+    const lastName = payment.charge.user.lastName;
+    const amount = payment.charge.amount;
+    const status = payment.status;
+
+    const date = format(new Date(payment.charge.createdAt), "PP");
+    const paymentMethod = payment.provider;
+    const currency = payment.currency;
+
+    return {
+      id,
+      firstName,
+      lastName,
+      amount,
+      status,
+      date,
+
+      paymentMethod,
+      currency,
+    };
+  });
+
+  return extractedPayments;
+};
+
+export const processAssignmentsMetrics = (
+  assignmentsMetrics: AssignmentsMetrics,
+): OverviewCardProps[] => {
+  return [
+    {
+      title: "Total Assignments",
+      figure: String(assignmentsMetrics.totalAssignments ?? 0),
+      children: React.createElement(List, { key: "icon", className: "w-6 h-6 text-orange" }),
+    },
+
+    {
+      title: "Completed",
+      figure: String(assignmentsMetrics.completedAssignments ?? 0),
+      children: React.createElement(CheckCircle, {
+        key: "icon",
+        className: "w-6 h-6 text-success",
+      }),
+    },
+
+    {
+      title: "Pending",
+      figure: String(assignmentsMetrics.totalPending ?? 0),
+      children: React.createElement(Clock, {
+        key: "icon",
+        className: "w-6 h-6 text-orange",
+      }),
+    },
+
+    {
+      title: "Overdue",
+      figure: String(assignmentsMetrics.lateAssignments ?? 0),
+      children: React.createElement(Info, {
+        key: "icon",
+        className: "w-6 h-6 text-danger",
+      }),
+    },
+  ];
+};
+
+export const processAssignmentsPage = (assignments: Assignment[]): AssignmentsListTableProps => {
+  const _assignments = assignments
+    .filter((assignment) => assignment.type === "assignment" || assignment.type === "quiz")
+    .map((assignment) => {
+      const id = assignment.id;
+      const type = assignment.type;
+      const assignmentTitle = assignment.title;
+      const courseTitle = assignment.course.title;
+      const status = assignment.status;
+      const dueDate = format(new Date(assignment.dueAt), "PP");
+      const submissions = assignment.AssignmentSubmission.length;
+
+      return { id, type, assignmentTitle, courseTitle, status, dueDate, submissions };
+    });
+
+  return _assignments;
+};
+
+export const processAssignmentMetrics = (
+  assignmentsMetrics: AssignmentsMetrics,
+): OverviewCardProps[] => {
+  return [
+    {
+      title: "Total Students",
+      figure: String(assignmentsMetrics.totalStudents ?? 0),
+      children: React.createElement(List, { key: "icon", className: "w-6 h-6 text-orange" }),
+    },
+
+    {
+      title: "Submissions",
+      figure: String(assignmentsMetrics.totalSubmissions ?? 0),
+      children: React.createElement(CheckCircle, {
+        key: "icon",
+        className: "w-6 h-6 text-success",
+      }),
+    },
+
+    {
+      title: "Pending",
+      figure: String(assignmentsMetrics.pendingAssignments ?? 0),
+      children: React.createElement(Clock, {
+        key: "icon",
+        className: "w-6 h-6 text-orange",
+      }),
+    },
+
+    {
+      title: "Late",
+      figure: String(assignmentsMetrics.lateSubmissions ?? 0),
+      children: React.createElement(Info, {
+        key: "icon",
+        className: "w-6 h-6 text-danger",
       }),
     },
   ];

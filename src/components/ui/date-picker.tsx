@@ -17,9 +17,40 @@ export function DatePicker() {
       <PopoverTrigger asChild>
         <Button
           variant={"outline"}
-          className={cn("w-fit h-10 justify-start text-left font-normal text-base text-high border border-shade-3 shadow-none", !date && "w-[96px]")}
+          className={cn(
+            "w-fit h-10 justify-start text-left font-normal text-base text-high border border-shade-3 shadow-none",
+            !date && "w-[96px]",
+          )}
         >
-          {date ? format(date, "PPP") : <span>Date</span>} <CalendarIcon className="h-4 w-4 text-low" />
+          {date ? format(date, "PPP") : <span>Date</span>}{" "}
+          <CalendarIcon className="h-4 w-4 text-low" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-auto p-0">
+        <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+export function ControlledDatePicker({
+  date,
+  setDate,
+}: {
+  date: Date;
+  setDate: (day?: Date) => void;
+}) {
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <Button
+          variant={"outline"}
+          className={cn(
+            "w-full h-12 justify-start text-left font-normal text-base text-high border border-shade-3 shadow-none rounded-xl",
+          )}
+        >
+          {date ? format(date, "PPP") : <span>Date</span>}{" "}
+          <CalendarIcon className="h-4 w-4 text-low" />
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">

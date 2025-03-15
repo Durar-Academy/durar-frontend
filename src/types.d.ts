@@ -138,21 +138,6 @@ type EnrollmentTrendGraphProps = {
 //   updatedAt: string;
 // };
 
-type Schedule = {
-  id: string;
-  day: string;
-  startTime: Date;
-  endTime: Date;
-  courseId: string;
-  status: string;
-  userId: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: null;
-  course: Course;
-  user: User;
-};
-
 type Metrics = {
   tutorsCount: number;
   activeTutorsCount: number;
@@ -256,7 +241,7 @@ type StudentStatus = "unverified" | "active" | "suspended" | "deactivated" | "gr
 
 type SearchFilters = {
   search?: string;
-  status?: StudentStatus | TutorStatus;
+  status?: StudentStatus | TutorStatus | CourseStatus;
 };
 
 type Student = {
@@ -456,7 +441,7 @@ type Assignment = {
   courseId: string;
   dueAt: Date;
   duration: number | null;
-  type: "assignment";
+  type: "quiz" | "assignment";
   description: string | null;
   allowLate: boolean;
   mediaId: string | null;
@@ -469,6 +454,7 @@ type Assignment = {
   QuizSubmission: QuizSubmission[];
   course: Course;
   status: AssignmentStatus;
+  // AssignmentFeedback: StudentFeedback[];
 };
 
 type AssignmentSubmission = {
@@ -630,6 +616,133 @@ type CreateCourseFormContextProps = {
 type DropzoneProps = {
   onFileDrop: ({ file: File, preview: string }) => void;
   value: FileDropValue;
+  showThumbnail?: boolean;
 };
 
 type FileDropValue = { file: File; preview: string } | null;
+
+type Schedule = {
+  id: string;
+  day: string;
+  start: string;
+  end: string;
+  courseId: string;
+  status: string;
+  userId: string;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: null;
+  course: Course;
+
+  user: Tutor;
+};
+
+type PaymentsPageTableProps = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  amount: number;
+  status: PaymentStatus;
+  currency: string;
+
+  date: string;
+  paymentMethod: string;
+}[];
+
+type PaymentsMetrics = {
+  pendingPayments: number;
+  refundedPayments: number;
+  totalRevenue: number;
+  totalTransactions: number;
+};
+
+type CreateSchedule = {
+  day: string;
+  start: string;
+  end: string;
+  courseId?: string;
+  status: string;
+  userId: string;
+};
+
+type AssignmentsMetrics = {
+  totalAssignments: number;
+  pendingAssignments: number;
+  completedAssignments: number;
+  lateAssignments: number;
+  totalSubmissions: number;
+  lateSubmissions: number;
+  totalPending: number;
+  totalStudents: number;
+};
+
+type AssignmentsListTableProps = {
+  id: string;
+  assignmentTitle: string;
+  courseTitle: string;
+  status: AssignmentStatus;
+  dueDate: string;
+  submissions: number;
+  type: "quiz" | "assignment";
+}[];
+
+type StudentFeedback = {
+  id: string;
+  submissionId: string;
+  userId: string;
+  feedback: string;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: null;
+  user: Student;
+};
+
+type CreateAssignment = {
+  title: string;
+  courseId: string;
+  dueAt: Date | null;
+  description: string;
+  allowLate: boolean;
+  totalScore: number;
+  thumbnail: FileDropValue;
+};
+
+type CreateQuiz = {
+  title: string;
+  courseId: string;
+  dueAt: Date | null;
+  totalScore: number;
+  description: string;
+  allowLate: boolean;
+  randomnize: boolean;
+  duration: number;
+  autograded: boolean;
+
+  questions: Question[];
+};
+
+type CreateQuizFormContextProps = {
+  formData: CreateQuiz;
+
+  updateFormData: (newData: Partial<CreateQuiz>) => void;
+  cancelForm: () => void;
+
+  prevStep: () => void;
+  nextStep: () => void;
+
+  publishQuiz: () => void;
+
+  isSubmitting: boolean;
+};
+
+type Option = {
+  id: number;
+  optionText: string;
+};
+
+type Question = {
+  id: number;
+  questionText: string;
+  options: Option[];
+  correctAnswerId: number | null;
+};

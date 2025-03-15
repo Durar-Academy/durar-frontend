@@ -1,13 +1,21 @@
 import { useQuery } from "@tanstack/react-query";
 
 import {
+  downloadTransactions,
   getActivities,
+  getAssignment,
+  getAssignmentMetrics,
+  getAssignments,
+  getAssignmentsMetrics,
   getCourse,
   getCourses,
   getCoursesMetrics,
   getMetrics,
+  getPayment,
   getPayments,
+  getPaymentsMetrics,
   getSchedules,
+  getStudentAssignmentFeedbacks,
   getStudentAssignments,
   getStudentCourses,
   getStudentMetrics,
@@ -171,15 +179,74 @@ export function useCoursesMetrics() {
   return query;
 }
 
-export function useCourses() {
-  const query = useQuery<Course[]>({ queryKey: ["all-courses"], queryFn: getCourses });
-  return query;
-}
-
 export function useCourse(courseId: string) {
   const query = useQuery<Course>({
     queryKey: ["course", courseId],
     queryFn: () => getCourse(courseId),
+  });
+  return query;
+}
+
+export function usePaymentsMetrics() {
+  const query = useQuery({ queryKey: ["all-payments-metrics"], queryFn: getPaymentsMetrics });
+  return query;
+}
+
+export function useDownloadTransactions() {
+  const query = useQuery({
+    queryKey: ["download-transactions"],
+    queryFn: downloadTransactions,
+    enabled: false,
+  });
+  return query;
+}
+
+export function usePayment(paymentId: string) {
+  const query = useQuery<Payment>({
+    queryKey: ["payment", paymentId],
+    queryFn: () => getPayment(paymentId),
+  });
+  return query;
+}
+
+export function useCourses(filters?: SearchFilters) {
+  const query = useQuery<Course[]>({
+    queryKey: ["all-courses", filters],
+    queryFn: () => getCourses({ filters }),
+  });
+  return query;
+}
+
+export function useAssignmentsMetrics() {
+  const query = useQuery({ queryKey: ["all-assignment-metrics"], queryFn: getAssignmentsMetrics });
+  return query;
+}
+
+export function useAssignments() {
+  const query = useQuery({ queryKey: ["all-assignments"], queryFn: getAssignments });
+  return query;
+}
+
+export function useAssignmentMetrics(assignmentId: string) {
+  const query = useQuery({
+    queryKey: ["single-assignment-metrics", assignmentId],
+    queryFn: () => getAssignmentMetrics(assignmentId),
+  });
+  return query;
+}
+
+export function useAssignment(assignmentId: string) {
+  const query = useQuery<Assignment>({
+    queryKey: ["single-assignment", assignmentId],
+    queryFn: () => getAssignment(assignmentId),
+  });
+  return query;
+}
+
+export function useStudentAssignmentFeedbacks(assignmentId: string) {
+  const query = useQuery<StudentFeedback[]>({
+    queryKey: ["single-assignment-students-feedbacks", assignmentId],
+    queryFn: () => getStudentAssignmentFeedbacks(assignmentId),
   });
   return query;
 }

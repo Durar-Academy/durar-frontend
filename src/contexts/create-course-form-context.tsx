@@ -1,12 +1,12 @@
 "use client";
 
-import { createContext, useState } from "react";
 import { useRouter } from "next/navigation";
+import { createContext, useState } from "react";
 import toast from "react-hot-toast";
 
 import { defaultCreateFormValues } from "@/data/constants";
-import { uploadFile } from "@/lib/storage";
 import { axiosInstance } from "@/lib/axios";
+import { uploadFile } from "@/lib/storage";
 
 export const CreateCourseFormContext = createContext<CreateCourseFormContextProps | null>(null);
 
@@ -42,7 +42,7 @@ export function CreateCourseFormProvider({ children }: { children: React.ReactNo
     try {
       // upload thumbnail
       let thumbnailResponse;
-      if (formData.thumbnailId) {
+      if (formData.thumbnailId?.file) {
         thumbnailResponse = await uploadFile(formData.thumbnailId.file);
       }
 
@@ -50,16 +50,16 @@ export function CreateCourseFormProvider({ children }: { children: React.ReactNo
       const lessons = await Promise.all(
         formData.Lesson.map(async (lesson) => {
           let lessonVideoResponse;
-          if (lesson.video) {
+          if (lesson.video?.file) {
             lessonVideoResponse = await uploadFile(lesson.video.file);
           }
 
           return {
             title: lesson.name,
-            duration: Number(lesson.video?.preview),
+            duration: lesson.video?.preview ? Number(lesson.video.preview) : 0,
             isLocked: lesson.isLocked,
             type: lesson.type,
-            storageId: lessonVideoResponse.storageId,
+            storageId: lessonVideoResponse ? lessonVideoResponse.storageId : null,
           };
         }),
       );
@@ -69,7 +69,7 @@ export function CreateCourseFormProvider({ children }: { children: React.ReactNo
         title: formData.title,
         category: formData.category,
         description: formData.description,
-        storageId: thumbnailResponse.storageId,
+        storageId: thumbnailResponse ? thumbnailResponse.storageId : null,
 
         lessons,
         language: formData.language,
@@ -83,16 +83,15 @@ export function CreateCourseFormProvider({ children }: { children: React.ReactNo
 
       console.log("Payload", payload);
 
-      await axiosInstance.post("/course", payload);
+      // await axiosInstance.post("/course", payload);
 
-      // const createCourseResponse = await axiosInstance.post("/course", payload);
-      // console.log("CREATE COURSE RESPONSE", createCourseResponse);
+      const createCourseResponse = await axiosInstance.post("/course", payload);
+      console.log("CREATE COURSE RESPONSE", createCourseResponse);
 
       toast.success("Course Created Successfully!");
 
       // reset form
-      setFormData(defaultCreateFormValues);
-      setCurrentFormStep(1);
+      cancelForm();
     } catch (error) {
       console.error("CREATE COURSE ERROR:", error);
 
