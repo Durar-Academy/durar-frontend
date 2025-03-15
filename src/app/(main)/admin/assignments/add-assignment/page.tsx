@@ -90,7 +90,7 @@ export default function AddNewAssignmentPage() {
       const createAssignmentResponse = await axiosInstance.post("/assignment", payload);
       console.log("CREATE ASSIGNMENT RESPONSE", createAssignmentResponse);
 
-      toast.success("Course Created Successfully!");
+      toast.success("Assignment Created Successfully!");
 
       // reset form
       setAssignment(createAssignmentDefaultValues);

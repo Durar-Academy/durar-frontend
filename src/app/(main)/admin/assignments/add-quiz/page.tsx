@@ -69,7 +69,7 @@ export default function AddNewQuizPage() {
                 id="title"
                 type="text"
                 className="shadow-none px-3 py-2 rounded-[10px] h-12 placeholder:text-low text-high text-sm focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-2 focus-visible:border-orange border border-shade-3"
-                placeholder="Asssignment"
+                placeholder="Quiz"
                 value={formData.title}
                 onChange={(event) =>
                   updateFormData({

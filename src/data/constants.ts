@@ -324,5 +324,17 @@ export const createQuizDefaultValues: CreateQuiz = {
   duration: 0,
   autograded: false,
 
-  questions: [],
+  questions: [
+    {
+      id: 1,
+      questionText: "",
+      options: [
+        {
+          id: 1,
+          optionText: "",
+        },
+      ],
+      correctAnswerId: null,
+    },
+  ],
 };

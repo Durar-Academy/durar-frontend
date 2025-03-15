@@ -717,7 +717,7 @@ type CreateQuiz = {
   duration: number;
   autograded: boolean;
 
-  questions: [];
+  questions: Question[];
 };
 
 type CreateQuizFormContextProps = {
@@ -732,4 +732,16 @@ type CreateQuizFormContextProps = {
   publishQuiz: () => void;
 
   isSubmitting: boolean;
+};
+
+type Option = {
+  id: number;
+  optionText: string;
+};
+
+type Question = {
+  id: number;
+  questionText: string;
+  options: Option[];
+  correctAnswerId: number | null;
 };

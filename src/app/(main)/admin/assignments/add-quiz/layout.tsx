@@ -38,7 +38,7 @@ export default function AddNewQuizLayout({ children }: { children: React.ReactNo
       </div>
 
       <div className="flex h-[720px] gap-5">
-        <div className="w-full h-full max-w-[220px] bg-white rounded-xl border border-shade-2 text-sm shrink-0 flex flex-col gap-4 p-6">
+        <div className="w-full h-full max-w-[220px] bg-white rounded-xl border border-shade-2 text-sm shrink-0 lg:flex flex-col gap-4 p-6 hidden">
           {quizLinks.map((link, index) => (
             <Link
               key={index}
