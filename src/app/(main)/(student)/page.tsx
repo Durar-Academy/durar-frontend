@@ -1,3 +1,108 @@
+"use client";
+
+import Link from "next/link";
+
+import { Skeleton } from "@/components/ui/skeleton";
+import { TopBar } from "@/components/shared/top-bar";
+
+import { CourseCard } from "@/components/student/courses-card";
+import { AssignmentListItem } from "@/components/student/assignment-list-item";
+import { SingleDayFixedTimeSchedule } from "@/components/student/single-day-timetable";
+
+import { useCurrentUser } from "@/hooks/useAccount";
+import { formatUserName } from "@/utils/formatter";
+import { currentDay } from "@/utils/time";
+
+import { schedules, studentAssignments, studentCourses } from "@/data/mockData";
+
 export default function StudentPage() {
-  return <div>STUDENT PAGE</div>;
+  const { data: user, isLoading: currentUserLoading } = useCurrentUser();
+
+  const { firstName } = formatUserName(user);
+
+  return (
+    <section className="flex flex-col gap-5">
+      <div className="top-bar">
+        {currentUserLoading ? (
+          <Skeleton className="w-full rounded-xl h-[80px] " />
+        ) : (
+          <TopBar subtext={`Welcome Back, ${firstName}`} user={user as User}>
+            Dashboard
+          </TopBar>
+        )}
+      </div>
+
+      <div className="flex gap-3">
+        <div className="bg-shade-1 rounded-xl p-3 pt-6 w-full max-w-[720px]">
+          <div className="flex justify-between items-center mb-6">
+            <p className="text-high text-base leading-5 tracking-normal">
+              Learning Progress: <span className="font-bold">25%</span>
+            </p>
+
+            <Link
+              href={"/courses"}
+              className="text-orange hover:underline text-balance leading-5 tracking-normal"
+            >
+              View All
+            </Link>
+          </div>
+
+          <div className="flex gap-3 overflow-x-scroll hide-scrollbar w-full">
+            {studentCourses.map((course) => (
+              <CourseCard
+                key={course.title}
+                name={course.title}
+                thumbnail={course.image}
+                progress={course.progress}
+                link={""}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="bg-shade-1 rounded-xl p-3 pt-6">
+          <div className="flex justify-between items-center mb-6">
+            <p className="text-high text-base leading-5 tracking-normal">
+              Next Course: <span className="font-bold">Arabic</span>
+            </p>
+          </div>
+
+          <CourseCard name={"Arabic"} thumbnail={""} progress={10} link={""} />
+        </div>
+
+        <div className="bg-white p-6 rounded-xl border-2 border-shade-1 flex-grow">
+          <h3 className="text-high tracking-wide text-base leading-5 mb-6">Assignments</h3>
+
+          <div className="overflow-y-auto max-h-40 hide-scrollbar">
+            <div className="flex flex-col gap-3">
+              {studentAssignments.map(({ id, text, dueDate, isChecked }) => (
+                <AssignmentListItem
+                  key={id}
+                  id={id}
+                  text={text}
+                  dueDate={dueDate}
+                  isChecked={isChecked}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="bg-shade-1 rounded-xl p-6 pb-3">
+        <div className="flex justify-between items-center mb-6">
+          <p className="text-high text-base leading-5 tracking-normal">Time Table</p>
+
+          <Link
+            href={"/timetable"}
+            className="text-orange hover:underline text-balance leading-5 tracking-normal"
+          >
+            View All
+          </Link>
+        </div>
+
+        <SingleDayFixedTimeSchedule schedules={schedules} selectedDay={currentDay} />
+      </div>
+    </section>
+  );
 }

@@ -3,10 +3,18 @@ import { Bell } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-export function TopBar({ children, subtext, user }: { children: React.ReactNode; subtext: string; user: User }) {
-  const userFullName = user.role === "admin" ? "Admin" : `${user?.firstName} ${user?.lastName}`;
-  const userInitials =
-    user.role === "admin" ? "AA" : `${user.firstName[0].toUpperCase()} ${user.lastName[0].toUpperCase()}`;
+import { formatUserName } from "@/utils/formatter";
+
+export function TopBar({
+  children,
+  subtext,
+  user,
+}: {
+  children: React.ReactNode;
+  subtext: string;
+  user: User;
+}) {
+  const { initials, fullName } = formatUserName(user);
 
   return (
     <div className="bg-white border border-shade-2 py-5 px-6 rounded-xl flex justify-between items-center w-full">
@@ -26,13 +34,16 @@ export function TopBar({ children, subtext, user }: { children: React.ReactNode;
 
         <Avatar className="h-9 w-9">
           {user?.profilePictureId && <AvatarImage src={user.profilePictureId as string} />}
-          <AvatarFallback className="bg-shade-3 text-black">{userInitials}</AvatarFallback>
+          <AvatarFallback className="bg-shade-3 text-black">{initials}</AvatarFallback>
         </Avatar>
 
         <div className="">
-          <p className="text-sm text-high font-semibold">{userFullName}</p>
+          <p className="text-sm text-high font-semibold">{fullName}</p>
 
-          <Link href="/admin/settings/profile" className="hover:underline text-low text-xs font-normal">
+          <Link
+            href="/admin/settings/profile"
+            className="hover:underline text-low text-xs font-normal"
+          >
             View Profile
           </Link>
         </div>
