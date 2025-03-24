@@ -1489,3 +1489,44 @@ export const studentAssignments = [
     isChecked: false,
   },
 ];
+
+export const studentCourse = {
+  courseTitle: "Hifz Quran",
+  lessons: [
+    {
+      id: 1,
+      title: "Importance of the Quran in Islam",
+      duration: "6",
+      locked: false, // Still unlocked
+      completed: true, // Mark as completed when watched
+      videoUrl: "https://www.youtube.com/watch?v=NYVaCr3T1T0",
+    },
+    {
+      id: 2,
+      title: "Brief history of the Quran’s revelation",
+      duration: "6",
+      locked: false, // Unlocked now
+      completed: false,
+      videoUrl: "https://www.youtube.com/watch?v=Pb6RYlRtEEA",
+    },
+    {
+      id: 3,
+      title: "Structure and composition of the Quran (Makki and Madani Surahs, chapters, verses)",
+      duration: "6",
+      locked: true,
+      completed: false,
+      unlockIn: "3 Days",
+      videoUrl: null,
+    },
+    {
+      id: 4,
+      title: "How to approach Quranic study and memorization",
+      duration: "6",
+      locked: true,
+      completed: false,
+      unlockIn: "5 Days",
+      videoUrl: null,
+    },
+  ],
+  currentLessonId: 2,
+};
