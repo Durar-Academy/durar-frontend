@@ -53,5 +53,5 @@ export function formatUserName(user?: User) {
   const fullName = `${user.firstName || "Unknown"} ${user.lastName || ""}`.trim();
   const firstName = user.firstName || "Unknown";
 
-  return { initials: `${firstInitial} ${lastInitial}`.trim(), fullName, firstName };
+  return { initials: `${firstInitial}${lastInitial}`.trim(), fullName, firstName };
 }

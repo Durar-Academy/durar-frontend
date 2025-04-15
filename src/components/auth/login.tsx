@@ -71,7 +71,8 @@ export function Login() {
       storeAuthData(accessToken, refreshToken, role);
 
       loginFormController.reset();
-      router.push(`/${role.toLowerCase()}`);
+      router.push("/");
+      // router.push(`/${role.toLowerCase()}`);
     } catch (error: unknown) {
       console.log("Login Form Error", error);
 
