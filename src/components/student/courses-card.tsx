@@ -3,22 +3,10 @@ import Link from "next/link";
 
 import { Progress } from "@/components/ui/progress";
 
-type CourseCardProps = {
-  name: string;
-  thumbnail: string;
-  progress: number;
-  link: string;
-};
-
-export function CourseCard({
-  name = "Nahwu",
-  thumbnail = "/course-image.png",
-  progress = 25,
-  link = "/course",
-}: CourseCardProps) {
+export function CourseCard({ name, thumbnail, progress, id }: CourseCardProps) {
   return (
     <Link
-      href={link}
+      href={`/courses/${id}`}
       className="rounded-xl bg-white p-3 flex flex-col justify-between gap-3 w-full max-w-60"
     >
       <Image
@@ -36,7 +24,7 @@ export function CourseCard({
       </div>
 
       <div>
-        <Progress value={progress} indicatorClassName="bg-orange " />
+        <Progress value={progress} indicatorClassName="bg-orange" />
       </div>
     </Link>
   );

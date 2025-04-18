@@ -348,6 +348,7 @@ type Lesson = {
   duration: number;
   isLocked: boolean;
   isCompleted: boolean;
+  progress: number;
   type: string;
   mediaId: string | null;
   courseId: string;
@@ -745,4 +746,11 @@ type Question = {
   questionText: string;
   options: Option[];
   correctAnswerId: number | null;
+};
+
+type CourseCardProps = {
+  name: string;
+  thumbnail: string;
+  progress: number;
+  id: string;
 };
