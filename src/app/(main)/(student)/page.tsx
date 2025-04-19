@@ -13,10 +13,16 @@ import { useCurrentUser } from "@/hooks/useAccount";
 import { formatUserName } from "@/utils/formatter";
 import { currentDay } from "@/utils/time";
 
-import { schedules, studentAssignments, studentCourses } from "@/data/mockData";
+import { studentAssignments } from "@/data/mockData";
+import { useCourses, useSchedules } from "@/hooks/useAdmin";
+import { getCumulativeProgress } from "@/utils/processor";
 
 export default function StudentPage() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
+  const { data: schedules, isLoading: schedulesLoading } = useSchedules();
+  const { data: courses, isLoading: coursesLoading } = useCourses({ status: "published" });
+
+  const learningProgress = getCumulativeProgress(courses);
 
   const { firstName } = formatUserName(user);
 
@@ -24,7 +30,7 @@ export default function StudentPage() {
     <section className="flex flex-col gap-5">
       <div className="top-bar">
         {currentUserLoading ? (
-          <Skeleton className="w-full rounded-xl h-[80px] " />
+          <Skeleton className="w-full rounded-xl h-[80px]" />
         ) : (
           <TopBar subtext={`Welcome Back, ${firstName}`} user={user as User}>
             Dashboard
@@ -33,10 +39,10 @@ export default function StudentPage() {
       </div>
 
       <div className="flex gap-3">
-        <div className="bg-shade-1 rounded-xl p-3 pt-6 w-full max-w-[720px]">
+        <div className="bg-shade-1 rounded-xl p-3 pt-6 w-3/4">
           <div className="flex justify-between items-center mb-6">
             <p className="text-high text-base leading-5 tracking-normal">
-              Learning Progress: <span className="font-bold">25%</span>
+              Learning Progress: <span className="font-bold">{`${learningProgress}%`}</span>
             </p>
 
             <Link
@@ -48,19 +54,27 @@ export default function StudentPage() {
           </div>
 
           <div className="flex gap-3 overflow-x-scroll hide-scrollbar w-full">
-            {studentCourses.map((course) => (
-              <CourseCard
-                key={course.title}
-                name={course.title}
-                thumbnail={course.image}
-                progress={course.progress}
-                link={""}
-              />
-            ))}
+            {coursesLoading ? (
+              <Skeleton className="w-full rounded-xl h-40" />
+            ) : courses && courses.length > 0 ? (
+              <div className="flex gap-3 overflow-x-scroll hide-scrollbar w-full">
+                {courses.map((course, index) => (
+                  <CourseCard
+                    key={course.title + index}
+                    name={course.title}
+                    thumbnail={course.thumbnailId ?? ""}
+                    progress={course.UserCourse[0].progress}
+                    id={course.id}
+                  />
+                ))}
+              </div>
+            ) : (
+              <p className="text-low text-base">No courses yet.</p>
+            )}
           </div>
         </div>
 
-        <div className="bg-shade-1 rounded-xl p-3 pt-6">
+        {/* <div className="bg-shade-1 rounded-xl p-3 pt-6">
           <div className="flex justify-between items-center mb-6">
             <p className="text-high text-base leading-5 tracking-normal">
               Next Course: <span className="font-bold">Arabic</span>
@@ -68,9 +82,9 @@ export default function StudentPage() {
           </div>
 
           <CourseCard name={"Arabic"} thumbnail={""} progress={10} link={""} />
-        </div>
+        </div> */}
 
-        <div className="bg-white p-6 rounded-xl border-2 border-shade-1 flex-grow">
+        <div className="bg-white p-6 rounded-xl border-2 border-shade-1">
           <h3 className="text-high tracking-wide text-base leading-5 mb-6">Assignments</h3>
 
           <div className="overflow-y-auto max-h-40 hide-scrollbar">
@@ -101,7 +115,11 @@ export default function StudentPage() {
           </Link>
         </div>
 
-        <SingleDayFixedTimeSchedule schedules={schedules} selectedDay={currentDay} />
+        {schedulesLoading ? (
+          <Skeleton className="rounded-xl w-full h-40" />
+        ) : (
+          <SingleDayFixedTimeSchedule schedules={schedules.records} selectedDay={currentDay} />
+        )}
       </div>
     </section>
   );

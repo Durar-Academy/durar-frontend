@@ -771,3 +771,14 @@ export const processAssignmentMetrics = (
     },
   ];
 };
+
+export function getCumulativeProgress(courses?: Course[]): number {
+  if (!courses || courses.length === 0) return 0;
+
+  const totalProgress = courses.reduce(
+    (sum, course) => sum + (course.UserCourse[0]?.progress || 0),
+    0,
+  );
+
+  return Math.round(totalProgress / courses.length);
+}

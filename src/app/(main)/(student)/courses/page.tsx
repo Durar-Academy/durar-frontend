@@ -6,10 +6,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 import { useCurrentUser } from "@/hooks/useAccount";
 import { useCourses } from "@/hooks/useAdmin";
+import { getCumulativeProgress } from "@/utils/processor";
 
 export default function CoursesPage() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: courses, isLoading: coursesLoading } = useCourses({ status: "published" });
+
+  const learningProgress = getCumulativeProgress(courses);
 
   console.log("ALL COURSES", courses);
 
@@ -25,9 +28,9 @@ export default function CoursesPage() {
         )}
       </div>
 
-      {/* <p className="text-high text-base leading-5 tracking-normal">
-          Learning Progress: <span className="font-bold">50%</span>
-          </p> */}
+      <p className="text-high text-base leading-5 tracking-normal">
+        Learning Progress: <span className="font-bold">{`${learningProgress}%`}</span>
+      </p>
 
       <div>
         {coursesLoading ? (
