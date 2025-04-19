@@ -7,11 +7,13 @@ import { FullTimeSchedule } from "@/components/student/full-timetable";
 
 import { useCurrentUser } from "@/hooks/useAccount";
 import { formatUserName } from "@/utils/formatter";
+import { useSchedules } from "@/hooks/useAdmin";
 
-import { schedules } from "@/data/mockData";
+// import { schedules } from "@/data/mockData";
 
 export default function TimetablePage() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
+  const { data: schedules, isLoading: schedulesLoading } = useSchedules();
 
   const { firstName } = formatUserName(user);
 
@@ -29,10 +31,14 @@ export default function TimetablePage() {
 
       <div className="bg-shade-1 rounded-xl p-6 pb-3">
         <div className="flex justify-between items-center mb-6">
-          <p className="text-high text-base leading-5 tracking-normal">Time Table</p>
+          <p className="text-high text-base leading-5 tracking-normal font-bold">Time Table</p>
         </div>
 
-        <FullTimeSchedule schedules={schedules} />
+        {schedulesLoading ? (
+          <Skeleton className="rounded-xl w-full h-screen" />
+        ) : (
+          <FullTimeSchedule schedules={schedules.records} />
+        )}
       </div>
     </section>
   );
