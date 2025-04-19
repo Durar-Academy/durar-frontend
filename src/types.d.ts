@@ -451,6 +451,11 @@ type Assignment = {
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
+  randomnize: boolean;
+  autoGraded: boolean;
+  classAverage: number;
+  grade: number;
+  quizAverage: number;
   AssignmentSubmission: AssignmentSubmission[];
   QuizSubmission: QuizSubmission[];
   course: Course;

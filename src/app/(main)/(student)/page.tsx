@@ -13,17 +13,18 @@ import { useCurrentUser } from "@/hooks/useAccount";
 import { formatUserName } from "@/utils/formatter";
 import { currentDay } from "@/utils/time";
 
-import { studentAssignments } from "@/data/mockData";
+// import { studentAssignments } from "@/data/mockData";
 import { useCourses, useSchedules } from "@/hooks/useAdmin";
 import { getCumulativeProgress } from "@/utils/processor";
+import { useAssignments } from "@/hooks/useStudent";
 
 export default function StudentPage() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: schedules, isLoading: schedulesLoading } = useSchedules();
   const { data: courses, isLoading: coursesLoading } = useCourses({ status: "published" });
+  const { data: assignments, isLoading: assignmentsLoading } = useAssignments();
 
   const learningProgress = getCumulativeProgress(courses);
-
   const { firstName } = formatUserName(user);
 
   return (
@@ -84,22 +85,26 @@ export default function StudentPage() {
           <CourseCard name={"Arabic"} thumbnail={""} progress={10} link={""} />
         </div> */}
 
-        <div className="bg-white p-6 rounded-xl border-2 border-shade-1">
+        <div className="bg-white p-6 rounded-xl border-2 border-shade-1 w-1/4">
           <h3 className="text-high tracking-wide text-base leading-5 mb-6">Assignments</h3>
 
-          <div className="overflow-y-auto max-h-40 hide-scrollbar">
-            <div className="flex flex-col gap-3">
-              {studentAssignments.map(({ id, text, dueDate, isChecked }) => (
-                <AssignmentListItem
-                  key={id}
-                  id={id}
-                  text={text}
-                  dueDate={dueDate}
-                  isChecked={isChecked}
-                />
-              ))}
+          {assignmentsLoading ? (
+            <Skeleton className="rounded-xl w-full h-12" />
+          ) : (
+            <div className="overflow-y-auto max-h-40 hide-scrollbar">
+              <div className="flex flex-col gap-3">
+                {assignments.map((assignment: Assignment) => (
+                  <AssignmentListItem
+                    key={assignment.id + assignment.title}
+                    id={assignment.id}
+                    title={assignment.title}
+                    dueDate={assignment.dueAt}
+                    isChecked={assignment.status !== "pending"}
+                  />
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
 

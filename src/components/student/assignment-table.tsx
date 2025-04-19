@@ -6,9 +6,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { format } from "date-fns";
+
 import { cn } from "@/lib/utils";
 
-export function AssignmentsTable({ assignments }: { assignments: any }) {
+export function AssignmentsTable({ assignments }: { assignments: Assignment[] }) {
   return (
     <div className="h-screen overflow-y-scroll hide-scrollbar">
       {assignments.length > 0 ? (
@@ -18,7 +20,7 @@ export function AssignmentsTable({ assignments }: { assignments: any }) {
               <TableHead>Assignment Title</TableHead>
               <TableHead>Course</TableHead>
               <TableHead>Type</TableHead>
-              <TableHead>Due Date</TableHead>
+              <TableHead>Date Issued - Due Date</TableHead>
               <TableHead>Grade</TableHead>
               <TableHead>Total Score</TableHead>
               <TableHead>Status</TableHead>
@@ -31,8 +33,8 @@ export function AssignmentsTable({ assignments }: { assignments: any }) {
                 className="text-sm text-high bg-offwhite h-12"
                 key={assignment.id + assignment.status}
               >
-                <TableCell className="capitalize">{assignment.assignmentTitle}</TableCell>
-                <TableCell className="capitalize">{assignment.courseTitle}</TableCell>
+                <TableCell className="capitalize">{assignment.title}</TableCell>
+                <TableCell className="capitalize">{assignment.course.title}</TableCell>
                 <TableCell
                   className={cn(
                     "capitalize font-medium text-high",
@@ -42,7 +44,10 @@ export function AssignmentsTable({ assignments }: { assignments: any }) {
                 >
                   {assignment.type}
                 </TableCell>
-                <TableCell>{assignment.dueDate}</TableCell>
+                <TableCell>
+                  {format(new Date(assignment.createdAt), "PP")} -{" "}
+                  {format(new Date(assignment.dueAt), "PP")}
+                </TableCell>
                 <TableCell>{assignment.grade}</TableCell>
                 <TableCell>{assignment.totalScore}</TableCell>
                 <TableCell

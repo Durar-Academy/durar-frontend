@@ -8,13 +8,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { formatAssignmentDueDate } from "@/utils/time";
 
 type AssignmentItemProps = {
-  id: number;
-  text: string;
+  id: string;
+  title: string;
   dueDate: Date;
   isChecked: boolean;
 };
 
-export function AssignmentListItem({ id, text, dueDate, isChecked }: AssignmentItemProps) {
+export function AssignmentListItem({ id, title, dueDate, isChecked }: AssignmentItemProps) {
   const [checked] = useState(isChecked);
 
   // const handleCheck = () => {
@@ -40,7 +40,7 @@ export function AssignmentListItem({ id, text, dueDate, isChecked }: AssignmentI
         }`}
         htmlFor={String(id)}
       >
-        {text}
+        {title}
 
         {!checked && (
           <span className="text-sm text-low leading-4">

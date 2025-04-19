@@ -1,5 +1,8 @@
 "use client";
 
+import Image from "next/image";
+import { Search } from "lucide-react";
+
 import { TopBar } from "@/components/shared/top-bar";
 import { AssignmentsTable } from "@/components/student/assignment-table";
 import { Button } from "@/components/ui/button";
@@ -13,17 +16,24 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ASSIGNMENT_STATUSES } from "@/data/constants";
-import { assignments } from "@/data/mockData";
+// import { assignments } from "@/data/mockData";
 
 import { useCurrentUser } from "@/hooks/useAccount";
-import { Search } from "lucide-react";
-import Image from "next/image";
+import { useAssignments } from "@/hooks/useStudent";
+import Link from "next/link";
 
 export default function AssignmentsPage() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
 
-  const completedAssignments = assignments.filter((assignment) => assignment.status !== "pending");
-  const pendingAssignment = assignments.filter((assignment) => assignment.status === "pending");
+  const { data: assignments, isLoading: assignmentsLoading } = useAssignments();
+  console.log(assignments, "ASSIGNMENTS");
+
+  const completedAssignments: Assignment[] = assignments
+    ? assignments.filter((assignment: Assignment) => assignment.status !== "pending")
+    : [];
+  const pendingAssignment: Assignment[] = assignments
+    ? assignments.filter((assignment: Assignment) => assignment.status === "pending")
+    : [];
 
   return (
     <section className="flex flex-col gap-5">
@@ -33,7 +43,9 @@ export default function AssignmentsPage() {
         ) : (
           <TopBar
             subtext={
-              pendingAssignment.length > 0 ? `${1} pending payment(s)` : "No Pending Assignments"
+              pendingAssignment.length > 0
+                ? `${pendingAssignment.length} Pending Assignment(s)`
+                : "No Pending Assignments"
             }
             user={user as User}
           >
@@ -59,12 +71,10 @@ export default function AssignmentsPage() {
             <div className="absolute inset-0 z-[1] overlay-bg rounded-xl"></div>
 
             <div className="z-[2]">
-              <h3 className="mb-3 text-black text-lg font-semibold">
-                {assignment.assignmentTitle}
-              </h3>
+              <h3 className="mb-3 text-black text-lg font-semibold">{assignment.title}</h3>
 
               <Button className="bg-orange hover:bg-burnt transition-colors">
-                Go to Assignment
+                <Link href={`/assignments/${assignment.id}`}>Go to Assignment</Link>
               </Button>
             </div>
           </div>
@@ -107,7 +117,11 @@ export default function AssignmentsPage() {
           </div>
         </div>
 
-        <AssignmentsTable assignments={completedAssignments} />
+        {assignmentsLoading ? (
+          <Skeleton className="rounded-xl w-full h-screen" />
+        ) : (
+          <AssignmentsTable assignments={completedAssignments} />
+        )}
       </div>
     </section>
   );

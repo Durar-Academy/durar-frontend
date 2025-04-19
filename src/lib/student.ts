@@ -19,3 +19,10 @@ export async function updateLessonProgress(
   );
   return response.data;
 }
+
+export async function getAssignments(options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get("/assignment/student", {
+    signal: options?.signal,
+  });
+  return response.data.data.records;
+}
