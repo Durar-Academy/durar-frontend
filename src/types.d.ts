@@ -57,6 +57,7 @@ type User = {
   email: string;
   firstName: string;
   lastName: string;
+  title: string;
   middleName?: string;
   gender: "male" | "female";
   phone: string;

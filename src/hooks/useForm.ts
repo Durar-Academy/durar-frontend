@@ -5,7 +5,12 @@ import { z } from "zod";
 
 import { CreateCourseFormContext } from "@/contexts/create-course-form-context";
 import { CreateQuizFormContext } from "@/contexts/quiz-form-provider";
-import { loginFormSchema, registerFormSchema, setPasswordFormSchema } from "@/lib/schemas";
+import {
+  loginFormSchema,
+  registerFormSchema,
+  setPasswordFormSchema,
+  updateFormSchema,
+} from "@/lib/schemas";
 
 export const useLoginForm = () =>
   useForm<z.infer<typeof loginFormSchema>>({
@@ -60,3 +65,18 @@ export function useQuizFormProvider() {
 
   return createQuizContext;
 }
+
+export const useUpdateForm = () =>
+  useForm<z.infer<typeof updateFormSchema>>({
+    resolver: zodResolver(updateFormSchema),
+    defaultValues: {
+      firstName: "",
+      middleName: "",
+      lastName: "",
+      dialingCode: "",
+      phoneNumber: "",
+      country: "",
+      email: "",
+      profileImage: undefined,
+    },
+  });

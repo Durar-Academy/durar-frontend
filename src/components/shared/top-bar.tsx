@@ -25,12 +25,14 @@ export function TopBar({
       </div>
 
       <div className="flex items-center gap-3">
-        <Link
-          href="/admin/notification"
-          className="w-9 h-9 rounded-full flex items-center justify-center bg-orange hover:bg-burnt transition-colors"
-        >
-          <Bell className="h-5 w-5 text-white" />
-        </Link>
+        {user.role !== "student" && (
+          <Link
+            href="/admin/notification"
+            className="w-9 h-9 rounded-full flex items-center justify-center bg-orange hover:bg-burnt transition-colors"
+          >
+            <Bell className="h-5 w-5 text-white" />
+          </Link>
+        )}
 
         <Avatar className="h-9 w-9">
           {user?.profilePictureId && <AvatarImage src={user.profilePictureId as string} />}
@@ -41,7 +43,7 @@ export function TopBar({
           <p className="text-sm text-high font-semibold">{fullName}</p>
 
           <Link
-            href="/admin/settings/profile"
+            href={user.role === "student" ? "/settings" : "/admin/settings"}
             className="hover:underline text-low text-xs font-normal"
           >
             View Profile
