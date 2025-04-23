@@ -26,13 +26,13 @@ import {
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 import { useCurrentUser } from "@/hooks/useAccount";
-import { useRegisterForm, useSetPasswordForm } from "@/hooks/useForm";
+import { useRegisterForm } from "@/hooks/useForm";
 import { COUNTRIES, DAILING_CODES, GENDERS, TITLES } from "@/data/constants";
-import { PasswordField } from "@/components/auth/password-field";
+
+import { ChangePassword } from "@/components/auth/change-password";
 
 export default function ResultPage() {
   const registrationFormController = useRegisterForm();
-  const setPasswordFormController = useSetPasswordForm();
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
 
   const image = "";
@@ -403,55 +403,7 @@ export default function ResultPage() {
         </section>
       </div>
 
-      <section>
-        <div className="w-full rounded-xl border border-shade-2 bg-white p-6 flex flex-col gap-4">
-          <div className="flex justify-between items-center">
-            <h2 className="flex items-center gap-2 text-high font-semibold text-lg">
-              Change Password
-            </h2>
-
-            <div className="flex gap-4">
-              <button
-                className="text-orange flex items-center gap-2 text-base font-medium hover:underline"
-                onClick={setPasswordFormController.handleSubmit(handleSubmit)}
-              >
-                <Check className="w-5 h-5 " />
-                <span>Save</span>
-              </button>
-
-              <button className="text-danger flex items-center gap-2 text-base font-medium hover:underline">
-                <X className="w-5 h-5 " />
-                <span>Cancel</span>
-              </button>
-            </div>
-          </div>
-
-          <Form {...setPasswordFormController}>
-            <form className="flex flex-col gap-6">
-              {/* REMEMBER TO UPDATE */}
-              <PasswordField
-                label={"Current Password"}
-                name={"password"}
-                control={setPasswordFormController.control}
-              />
-
-              <div className="flex gap-3">
-                <PasswordField
-                  label={"New Password"}
-                  name={"password"}
-                  control={setPasswordFormController.control}
-                />
-
-                <PasswordField
-                  label={"Confirm New Password"}
-                  name={"confirmPassword"}
-                  control={setPasswordFormController.control}
-                />
-              </div>
-            </form>
-          </Form>
-        </div>
-      </section>
+      <ChangePassword />
     </section>
   );
 }
