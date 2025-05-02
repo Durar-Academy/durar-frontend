@@ -1,11 +1,11 @@
 "use client";
 import StudentTable from "@/components/tutor/StudentTable";
 import { Top_Bar } from "@/components/tutor/top-bar";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useCurrentUser } from "@/hooks/useAccount";
 import { useState } from "react";
 
-const page = () => {
-  const [loading, setLoading] = useState(false);
-
+const Page = () => {
   const students = [
     {
       id: "001",
@@ -15,7 +15,7 @@ const page = () => {
       status: "Active" as "Active",
     },
     {
-      id: "001",
+      id: "01",
       name: "Lawal Wahab Babatunde",
       category: "Idaadiyah",
       email: "wabdotmail@gmail.com",
@@ -50,9 +50,18 @@ const page = () => {
       status: "Inactive" as "Inactive",
     },
   ];
+  const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   return (
     <section className="flex flex-col gap-3">
-      <Top_Bar subtext={`Manage students`}>Students</Top_Bar>
+      <div className="top-bar">
+        {currentUserLoading ? (
+          <Skeleton className="w-full rounded-xl h-[80px]" />
+        ) : (
+          <Top_Bar subtext="Manage students" user={user as User}>
+            <p className="flex items-center gap-1">Students</p>
+          </Top_Bar>
+        )}
+      </div>
       <section className="StudentLists p-6 rounded-xl bg-white border-[1px] border-[#E7E8EE]">
         <StudentTable students={students} />
       </section>
@@ -60,4 +69,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

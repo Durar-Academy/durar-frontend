@@ -1,19 +1,6 @@
 "use client";
 import React, { ReactNode } from "react";
 import AssignmentStatCard from "../AssignmentStatCard";
-import Link from "next/link";
-import AddBtn from "../AddBtn";
-import Image from "next/image";
-import {
-  Delete,
-  DeleteIcon,
-  Edit,
-  Edit2,
-  Edit2Icon,
-  Edit3,
-  FileEdit,
-} from "lucide-react";
-import DescriptionSection from "./DescriptionSection";
 
 interface DataStructure {
   img: string;
@@ -27,12 +14,7 @@ interface overviewProps {
   data: DataStructure[];
   children: ReactNode;
 }
-const AssignmentOverview = ({
-  overview,
-  title,
-  data,
-  children,
-}: overviewProps) => {
+const AssignmentOverview = ({ title, data, children }: overviewProps) => {
   const StatData = [
     {
       title: "Total Assignment",
@@ -63,7 +45,11 @@ const AssignmentOverview = ({
         <span className="flex-1"></span>
         {children}
       </header>
-      <div className={`grid grid-cols-${data.length} gap-[18px]`}>
+      <div
+        className={`grid ${
+          data.length === 3 ? "grid-cols-3" : "grid-cols-4"
+        } gap-[18px]`}
+      >
         {data.map((stat, i) => (
           <AssignmentStatCard key={i} {...stat} />
         ))}

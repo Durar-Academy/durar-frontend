@@ -40,3 +40,4 @@ durar-app-structure.md
 *.txt
 .prettierrc.json
 .vscode
+*.stackdump

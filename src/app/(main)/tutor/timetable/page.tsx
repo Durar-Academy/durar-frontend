@@ -1,11 +1,20 @@
 "use client";
 import QuranTimetable from "@/components/tutor/QuranTimeTable";
 import { Top_Bar } from "@/components/tutor/top-bar";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useCurrentUser } from "@/hooks/useAccount";
 
-const page = () => {
+const Page = () => {
+  const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   return (
     <section className="flex flex-col gap-3">
-      <Top_Bar subtext={`Timetable`}>Timetable</Top_Bar>
+      {currentUserLoading ? (
+        <Skeleton className="w-full rounded-xl h-[80px]" />
+      ) : (
+        <Top_Bar subtext="Timetable" user={user as User}>
+          <p className="flex items-center gap-1">Timetable</p>
+        </Top_Bar>
+      )}
       <section className=" bg-white p-6 border-[1px] border-[#E7E8EE] rounded-xl">
         <QuranTimetable />
       </section>
@@ -13,4 +22,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

@@ -11,18 +11,32 @@ import AssignmentDetails from "@/components/tutor/Assignment-component/Assignmen
 import AdvanceSettings from "@/components/tutor/Assignment-component/AdvanceSettings";
 import AssignmentPreview from "@/components/tutor/Assignment-component/AssignmentPreview";
 import QuestionDetails from "@/components/tutor/Assignment-component/QuestionDetails";
+import { useCurrentUser } from "@/hooks/useAccount";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const page = () => {
+const Page = () => {
   const [active, setActive] = useState(0);
   const [show, setShow] = useState(false);
   const handleShow = () => {
     setShow(!show);
   };
+  const { data: user, isLoading: currentUserLoading } = useCurrentUser();
+
   return (
     <section className="flex flex-col gap-3">
-      <Top_Bar subtext={`Add New Assignment-Multiple Choice Questions`}>
-        {"Assignment > Add Assignment"}
-      </Top_Bar>
+      {currentUserLoading ? (
+        <Skeleton className="w-full rounded-xl h-[80px]" />
+      ) : (
+        <Top_Bar
+          subtext={"Add New Assignment-Multiple Choice Questions"}
+          user={user as User}
+        >
+          <p className="flex items-center gap-1">
+            {"Assignment > Add Assignment"}
+          </p>
+        </Top_Bar>
+      )}
+
       <section className="flex gap-3">
         <aside className="w-[227px] min-w-[227px] rounded-xl bg-white border border-shade-2 p-6 h-screen text-sm flex flex-col gap-4 ">
           {AssignmentData.map((profile, i) => (
@@ -62,4 +76,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

@@ -180,4 +180,145 @@ export const notificationStatData = [
         img: "/SVGs/recipient.svg",
         amount: 10,
     },
+];
+
+
+export const onboardingSidebarData = [
+    {
+        txt: "Personal Information",
+    },
+    {
+        txt: "Professional Details",
+    },
+    {
+        txt: "Address and Location",
+    },
+    {
+        txt: "Account Setup & Payments",
+    },
+];
+
+
+export const TermsAndConditions = [
+    {
+
+        title: 'Introduction',
+        descList: ['Welcome to Durar Academy. By accessing or using our platform, you agree to comply with and be bound by these Terms and Conditions. If you do not agree with any part of these terms, you must not use our services.']
+    },
+    {
+        title: 'Definitions',
+        descList: ['"Platform": Refers to the Durar Academy website and any related services.',
+            '"User": Any individual who accesses or uses the platform.',
+            '"Content": All materials, including courses, videos, text, images, and other educational resources available on the platform.']
+    },
+    {
+        title: 'User Accounts',
+        descList: ['Registration: Users must provide accurate and complete information during registration.',
+            'Account Security: Users are responsible for maintaining the confidentiality of their account credentials and for all activities under their account.']
+    },
+
+    {
+        title: 'Use of the Platform',
+        descList: ['License: Durar Academy grants users a non - exclusive, non - transferable license to access and use the content for personal, non - commercial purposes.',
+            'Prohibited Activities:',
+            'Users agree not to: Reproduce, distribute, or publicly display any content without prior authorization.',
+            'Use the platform for any unlawful purposes.',
+            'Attempt to gain unauthorized access to the platform\'s systems.',
+        ]
+    },
+    {
+        title: 'Intellectual Property Rights',
+        descList: [
+            'Ownership: All content on the platform is the property of Durar Academy or its licensors and is protected by intellectual property laws.',
+            'User - Generated Content: By submitting content to the platform, users grant Durar Academy a worldwide, royalty - free license to use, reproduce, and distribute such content.',]
+    },
+    {
+        title: "Payments and Refunds",
+        descList: [
+            'Pricing: All course fees are displayed on the platform and are subject to change.',
+            'Payments: Users must pay all fees associated with the courses they enroll in.',
+            'Refunds: Refund policies are outlined on the platform.Users should review these policies before making a purchase.',]
+    },
+    {
+        title: 'Termination',
+        descList: [
+            'Durar Academy reserves the right to suspend or terminate a user\'s access to the platform for violations of these terms or other policies.',]
+    },
+    {
+        title: 'Disclaimers and Limitation of Liability',
+        descList: [
+            'No Warranty: The platform and its content are provided "as is" without any warranties, express or implied.',
+            'Limitation: Durar Academy is not liable for any indirect, incidental, or consequential damages arising from the use of the platform.'
+        ]
+    },
+    {
+        title: 'Privacy Policy',
+        descList: ['Users\' personal information is collected and used in accordance with our Privacy Policy, which is incorporated into these terms by reference.']
+    },
+    {
+        title: 'Changes to Terms',
+        descList: ['Durar Academy may modify these Terms and Conditions at any time.Users will be notified of significant changes, and continued use of the platform constitutes acceptance of the revised terms.']
+    },
+    {
+        title: 'Governing Law',
+        descList: ['These terms are governed by the laws of[Your Country / State], without regard to its conflict of law principles.']
+    },
+    {
+        title: 'Contact Information',
+        descList: ['For any questions or concerns regarding these Terms and Conditions, please contact us at (+2347078874420).']
+    }
 ]
+
+export interface OnboardingProps {
+    handleNext: () => void;
+    handlePrev: () => void;
+}
+
+export const DashboardStatData = [
+    {
+        title: "Students",
+        active: 25,
+        img: "/SVGs/students.svg",
+        active2: "Active",
+        total: 250,
+        total2: "Total",
+    },
+    {
+        title: "Student Enrolled",
+        active: 4,
+        img: "/SVGs/enrolled-students.svg",
+        active2: "Active",
+        total: 12,
+        total2: "Courses",
+    },
+    {
+        title: "Student Enrolled",
+        active: 4,
+        img: "/SVGs/assignment.svg",
+        active2: "Pending",
+        total: 12,
+        total2: "Total Assignment",
+    },
+];
+
+
+export interface FormData {
+    email: string;
+    password: string;
+    paymentMode: 'banktransfer' | 'paypal' | 'crypto';
+    bankAccountDetails: string;
+    agreedToTerms: boolean;
+    documents: string[];
+}
+
+
+
+
+export interface FormData {
+    email: string;
+    password: string;
+    paymentMode: 'banktransfer' | 'paypal' | 'crypto';
+    bankAccountDetails: string;
+    agreedToTerms: boolean;
+    documents: string[];
+}

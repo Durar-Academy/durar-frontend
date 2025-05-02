@@ -7,11 +7,12 @@ import SubmissionLists from "@/components/tutor/Assignment-component/SubmissionL
 import { Top_Bar } from "@/components/tutor/top-bar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AssignmentStatData, OverviewData } from "@/data2/constants";
+import { useCurrentUser } from "@/hooks/useAccount";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
-const page = () => {
+const Page = () => {
   const [loading, setLoading] = useState(false);
   const [active, setActive] = useState(0);
 
@@ -91,11 +92,19 @@ const page = () => {
     },
   ];
 
+  const { data: user, isLoading: currentUserLoading } = useCurrentUser();
+
   return (
     <section className="flex flex-col gap-3">
-      <Top_Bar subtext={`Tajweed Rules - Assignment 1`}>
-        {"Assignment < View Details"}
-      </Top_Bar>
+      {currentUserLoading ? (
+        <Skeleton className="w-full rounded-xl h-[80px]" />
+      ) : (
+        <Top_Bar subtext="Tajweed Rules - Assignment 1" user={user as User}>
+          <p className="flex items-center gap-1">
+            {"Assignment > View Details"}
+          </p>
+        </Top_Bar>
+      )}
       <section className="stats">
         {loading ? (
           <Skeleton className="w-full rounded-xl h-[140px]" />
@@ -132,6 +141,7 @@ const page = () => {
         <header className="bg-[#F8F8FA] rounded-xl border border-shade-3 p-4 flex items-center gap-4 relative">
           {OverviewData.map((overview, i) => (
             <button
+              key={i}
               onClick={() => setActive(i)}
               className={`${
                 active == i ? "text-orange" : ""
@@ -165,4 +175,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

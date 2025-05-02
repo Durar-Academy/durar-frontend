@@ -7,7 +7,6 @@ import Image from "next/image";
 import { useState } from "react";
 
 const page = () => {
-  const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
 
   const handleShowNotification = () => {
@@ -15,11 +14,6 @@ const page = () => {
   };
   return (
     <section className="flex flex-col gap-3">
-      <Top_Bar
-        subtext={`Manage notifications for students, tutors, and administrators`}
-      >
-        Notificaition
-      </Top_Bar>
       <section className="flex justify-between items-center w-full bg-white rounded-xl border border-shade-2 p-4">
         <div className="flex flex-col gap-3.5">
           <div className="text-low text-sm flex items-center gap-1">

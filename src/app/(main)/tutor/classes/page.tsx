@@ -5,9 +5,10 @@ import RecentClassesTable from "@/components/tutor/RecentClassesTable";
 import { Top_Bar } from "@/components/tutor/top-bar";
 import TutorStatCard from "@/components/tutor/tutor-stat-card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useCurrentUser } from "@/hooks/useAccount";
 import { useState } from "react";
 
-const page = () => {
+const Page = () => {
   const [loading, setLoading] = useState(false);
 
   interface StatDataInterface {
@@ -89,9 +90,16 @@ const page = () => {
     },
   ];
 
+  const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   return (
     <section className="flex flex-col gap-3">
-      <Top_Bar subtext={`Manage classes`}>Classes</Top_Bar>
+      {currentUserLoading ? (
+        <Skeleton className="w-full rounded-xl h-[80px]" />
+      ) : (
+        <Top_Bar subtext={`Manage classes`} user={user as User}>
+          <p className="flex items-center gap-1">Classes</p>
+        </Top_Bar>
+      )}
       <section className="bg-white p-6 border-[1px] border-[#E7E8EE] rounded-xl">
         <DashboardTable />
       </section>
@@ -102,4 +110,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

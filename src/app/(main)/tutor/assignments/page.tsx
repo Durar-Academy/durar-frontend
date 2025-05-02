@@ -5,11 +5,11 @@ import AssignmentOverview from "@/components/tutor/Assignment-component/Assignme
 import { Top_Bar } from "@/components/tutor/top-bar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AssignmentStatData } from "@/data2/constants";
+import { useCurrentUser } from "@/hooks/useAccount";
 import Link from "next/link";
 import { useState } from "react";
 
-
-const page = () => {
+const Page = () => {
   const [loading, setLoading] = useState(false);
 
   const AssignmentListData = [
@@ -43,9 +43,16 @@ const page = () => {
     },
   ];
 
+  const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   return (
     <section className="flex flex-col gap-3">
-      <Top_Bar subtext={`Manage Assignment`}>Assignment</Top_Bar>
+      {currentUserLoading ? (
+        <Skeleton className="w-full rounded-xl h-[80px]" />
+      ) : (
+        <Top_Bar subtext="Manage Assignment" user={user as User}>
+          <p className="flex items-center gap-1">Assignments</p>
+        </Top_Bar>
+      )}
       <section className="stats">
         {loading ? (
           <Skeleton className="w-full rounded-xl h-[140px]" />
@@ -77,4 +84,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

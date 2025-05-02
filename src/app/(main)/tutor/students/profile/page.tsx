@@ -7,13 +7,24 @@ import { Top_Bar } from "@/components/tutor/top-bar";
 import { profileData } from "@/data2/constants";
 import Image from "next/image";
 import { useState } from "react";
+import { useCurrentUser } from "@/hooks/useAccount";
+import { Skeleton } from "@/components/ui/skeleton";
 
-const page = () => {
+const Page = () => {
   const [active, setActive] = useState(0);
+  const { data: user, isLoading: currentUserLoading } = useCurrentUser();
 
   return (
     <section className="flex flex-col gap-3">
-      <Top_Bar subtext={`Profile`}>{"Users > Students > Profile"}</Top_Bar>
+      {currentUserLoading ? (
+        <Skeleton className="w-full rounded-xl h-[80px]" />
+      ) : (
+        <Top_Bar subtext="Profile" user={user as User}>
+          <p className="flex items-center gap-1">
+            {"Users > Students > Profile"}
+          </p>
+        </Top_Bar>
+      )}
       <section className="flex gap-3">
         <aside className="w-[227px] min-w-[227px] rounded-xl bg-white border border-shade-2 p-6 h-screen text-sm flex flex-col gap-4 ">
           {profileData.map((profile, i) => (
@@ -38,18 +49,18 @@ const page = () => {
             </button>
           ))}
         </aside>
-          {active == 0 ? (
-            <Overview />
-          ) : active == 1 ? (
-            <ActivityLog />
-          ) : active == 2 ? (
-            <Assignment />
-          ) : (
-            <CommentsNotes />
-          )}
+        {active == 0 ? (
+          <Overview />
+        ) : active == 1 ? (
+          <ActivityLog />
+        ) : active == 2 ? (
+          <Assignment />
+        ) : (
+          <CommentsNotes />
+        )}
       </section>
     </section>
   );
 };
 
-export default page;
+export default Page;

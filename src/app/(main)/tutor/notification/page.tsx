@@ -6,10 +6,10 @@ import NotificaitionList from "@/components/tutor/Notification-component/Notific
 import { Top_Bar } from "@/components/tutor/top-bar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { notificationStatData } from "@/data2/constants";
+import { useCurrentUser } from "@/hooks/useAccount";
 import { useState } from "react";
 
-const page = () => {
-  const [loading, setLoading] = useState(false);
+const Page = () => {
   const [show, setShow] = useState(false);
 
   const notificationData = [
@@ -42,15 +42,23 @@ const page = () => {
   const handleShowNotification = () => {
     setShow(!show);
   };
+
+  const { data: user, isLoading: currentUserLoading } = useCurrentUser();
+
   return (
     <section className="flex flex-col gap-3">
-      <Top_Bar
-        subtext={`Manage notifications for students, tutors, and administrators`}
-      >
-        Notificaition
-      </Top_Bar>
+      {currentUserLoading ? (
+        <Skeleton className="w-full rounded-xl h-[80px]" />
+      ) : (
+        <Top_Bar
+          subtext="Manage notifications for students, tutors, and administrators"
+          user={user as User}
+        >
+          <p className="flex items-center gap-1">Notifications</p>
+        </Top_Bar>
+      )}
       <section className="stats">
-        {loading ? (
+        {currentUserLoading ? (
           <Skeleton className="w-full rounded-xl h-[140px]" />
         ) : (
           <AssignmentOverview
@@ -77,4 +85,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

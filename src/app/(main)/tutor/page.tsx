@@ -4,57 +4,34 @@ import RecentNotificatin from "@/components/tutor/Recent-notificatin";
 import { Top_Bar } from "@/components/tutor/top-bar";
 import TutorStatCard from "@/components/tutor/tutor-stat-card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useState } from "react";
+import { useCurrentUser } from "@/hooks/useAccount";
+import { useTutorMetrics } from "@/hooks/tutorQueries";
+import { processTutorDashboardMetrics } from "@/utils/tutorProcessor";
 
-const page = () => {
-  const [loading, setLoading] = useState(false);
+const Page = () => {
+  const { data: user, isLoading: currentUserLoading } = useCurrentUser();
+  const { data: metrics, isLoading: metricsLoading } = useTutorMetrics();
 
-  interface StatDataInterface {
-    title: string;
-    active: number;
-    img: string;
-    active2: string;
-    total: number;
-    total2: string;
-  }
-
-  const StatData: StatDataInterface[] = [
-    {
-      title: "Students",
-      active: 25,
-      img: "/SVGs/students.svg",
-      active2: "Active",
-      total: 250,
-      total2: "Total",
-    },
-    {
-      title: "Student Enrolled",
-      active: 4,
-      img: "/SVGs/enrolled-students.svg",
-      active2: "Active",
-      total: 12,
-      total2: "Courses",
-    },
-    {
-      title: "Student Enrolled",
-      active: 4,
-      img: "/SVGs/assignment.svg",
-      active2: "Pending",
-      total: 12,
-      total2: "Total Assignment",
-    },
-  ];
+  const dashboardMetrics = processTutorDashboardMetrics(metrics);
 
   return (
     <section className="flex flex-col gap-3">
-      <Top_Bar subtext={`Manage classes and students`}>Dashboard</Top_Bar>
+      <div className="top-bar">
+        {currentUserLoading ? (
+          <Skeleton className="w-full rounded-xl h-[80px]" />
+        ) : (
+          <Top_Bar subtext="Manage classes and students" user={user as User}>
+            <p className="flex items-center gap-1">Dashboard</p>
+          </Top_Bar>
+        )}
+      </div>
       <section className="stats">
-        {loading ? (
+        {metricsLoading ? (
           <Skeleton className="w-full rounded-xl h-[140px]" />
         ) : (
           <div className="grid grid-cols-3 gap-[18px]">
-            {StatData.map((stat, i) => (
-              <TutorStatCard key={i} {...stat} />
+            {dashboardMetrics.map((stat, i) => (
+              <TutorStatCard i={i} key={i} {...stat} />
             ))}
           </div>
         )}
@@ -72,4 +49,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
