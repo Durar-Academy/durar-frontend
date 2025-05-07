@@ -6,51 +6,9 @@ import { useCurrentUser } from "@/hooks/useAccount";
 import { useState } from "react";
 
 const Page = () => {
-  const students = [
-    {
-      id: "001",
-      name: "Lawal Wahab Babatunde",
-      category: "Thanawiyah",
-      email: "wabdotmail@gmail.com",
-      status: "Active" as "Active",
-    },
-    {
-      id: "01",
-      name: "Lawal Wahab Babatunde",
-      category: "Idaadiyah",
-      email: "wabdotmail@gmail.com",
-      status: "Active" as "Active",
-    },
-    {
-      id: "002",
-      name: "Lawal Wahab Babatunde",
-      category: "Awal temhidi",
-      email: "wabdotmail@gmail.com",
-      status: "Active" as "Active",
-    },
-    {
-      id: "003",
-      name: "Lawal Wahab Babatunde",
-      category: "Idaadiyah",
-      email: "wabdotmail@gmail.com",
-      status: "Active" as "Active",
-    },
-    {
-      id: "004",
-      name: "Lawal Wahab Babatunde",
-      category: "Idaadiyah",
-      email: "wabdotmail@gmail.com",
-      status: "Active" as "Active",
-    },
-    {
-      id: "005",
-      name: "Akanji Abayomi Biodun",
-      category: "Idaadiyah",
-      email: "wabdotmail@gmail.com",
-      status: "Inactive" as "Inactive",
-    },
-  ];
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
+  const [page, setPage] = useState(1);
+
   return (
     <section className="flex flex-col gap-3">
       <div className="top-bar">
@@ -63,7 +21,7 @@ const Page = () => {
         )}
       </div>
       <section className="StudentLists p-6 rounded-xl bg-white border-[1px] border-[#E7E8EE]">
-        <StudentTable students={students} />
+        <StudentTable page={page} setPage={setPage} />
       </section>
     </section>
   );

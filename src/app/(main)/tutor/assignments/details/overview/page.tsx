@@ -1,5 +1,4 @@
 "use client";
-import AssignmentTable from "@/components/tutor/Assignment-component/AssignmentListTable";
 import AssignmentOverview from "@/components/tutor/Assignment-component/AssignmentOverview";
 import DescriptionSection from "@/components/tutor/Assignment-component/DescriptionSection";
 import FeedbackTable from "@/components/tutor/Assignment-component/FeedbackTable";
@@ -9,7 +8,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { AssignmentStatData, OverviewData } from "@/data2/constants";
 import { useCurrentUser } from "@/hooks/useAccount";
 import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
 
 const Page = () => {
@@ -21,37 +19,6 @@ const Page = () => {
     img: string;
     amount: number;
   }
-
-  const AssignmentListData = [
-    {
-      title: "Surah Al-Baqarah Memorization",
-      course: "Quran Memorization",
-      status: "Completed" as "Completed",
-      due_date: "Feb 25, 2025",
-      submission: 18,
-    },
-    {
-      title: "Surah Al-fatiha Memorization",
-      course: "Nahwu",
-      status: "Completed" as "Completed",
-      due_date: "Feb 24, 2024",
-      submission: 18,
-    },
-    {
-      title: "Surah Al-fatiha Memorization",
-      course: "Quran Memorization",
-      status: "Pending" as "Pending",
-      due_date: "Feb 24, 2024",
-      submission: 18,
-    },
-    {
-      title: "Surah Al-fatiha Memorization",
-      course: "Sorf",
-      status: "Pending" as "Pending",
-      due_date: "Feb 24, 2024",
-      submission: 18,
-    },
-  ];
 
   const SubmissionListData = [
     {

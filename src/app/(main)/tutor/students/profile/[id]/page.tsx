@@ -9,24 +9,25 @@ import Image from "next/image";
 import { useState } from "react";
 import { useCurrentUser } from "@/hooks/useAccount";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useParams } from "next/navigation";
 
 const Page = () => {
   const [active, setActive] = useState(0);
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
+  const params = useParams();
+  const id = params.id as string;
 
   return (
     <section className="flex flex-col gap-3">
       {currentUserLoading ? (
         <Skeleton className="w-full rounded-xl h-[80px]" />
       ) : (
-        <Top_Bar subtext="Profile" user={user as User}>
-          <p className="flex items-center gap-1">
-            {"Users > Students > Profile"}
-          </p>
+        <Top_Bar subtext="Student Profile" user={user as User}>
+          <p className="flex items-center gap-1">Users &gt; Students &gt; Profile</p>
         </Top_Bar>
       )}
       <section className="flex gap-3">
-        <aside className="w-[227px] min-w-[227px] rounded-xl bg-white border border-shade-2 p-6 h-screen text-sm flex flex-col gap-4 ">
+        <aside className="w-[227px] min-w-[227px] rounded-xl bg-white border border-shade-2 p-6 h-screen text-sm flex flex-col gap-4">
           {profileData.map((profile, i) => (
             <button
               onClick={() => setActive(i)}
@@ -34,14 +35,14 @@ const Page = () => {
               className="flex items-center gap-2"
             >
               <Image
-                src={active == i ? profile.activeImage : profile.img}
+                src={active === i ? profile.activeImage : profile.img}
                 width={16}
                 height={16}
-                alt="overview Icon"
+                alt={`${profile.text} Icon`}
               />
               <p
                 className={`${
-                  active == i ? "text-orange" : "text-low"
+                  active === i ? "text-orange" : "text-low"
                 } text-sm`}
               >
                 {profile.text}
@@ -49,11 +50,11 @@ const Page = () => {
             </button>
           ))}
         </aside>
-        {active == 0 ? (
-          <Overview />
-        ) : active == 1 ? (
+        {active === 0 ? (
+          <Overview userId={id} />
+        ) : active === 1 ? (
           <ActivityLog />
-        ) : active == 2 ? (
+        ) : active === 2 ? (
           <Assignment />
         ) : (
           <CommentsNotes />
