@@ -1,8 +1,4 @@
 "use client";
-import ActivityLog from "@/components/tutor/Profile-component/ActivityLog";
-import Assignment from "@/components/tutor/Assignment";
-import CommentsNotes from "@/components/tutor/Profile-component/Comments";
-import Overview from "@/components/tutor/Profile-component/Overview";
 import { Top_Bar } from "@/components/tutor/top-bar";
 import { AssignmentData } from "@/data2/constants";
 import Image from "next/image";
@@ -13,6 +9,7 @@ import AssignmentPreview from "@/components/tutor/Assignment-component/Assignmen
 import QuestionDetails from "@/components/tutor/Assignment-component/QuestionDetails";
 import { useCurrentUser } from "@/hooks/useAccount";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useParams } from "next/navigation";
 
 const Page = () => {
   const [active, setActive] = useState(0);
@@ -21,7 +18,9 @@ const Page = () => {
     setShow(!show);
   };
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
-
+  const params = useParams();
+  const id = params.id as string;
+  
   return (
     <section className="flex flex-col gap-3">
       {currentUserLoading ? (

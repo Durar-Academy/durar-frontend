@@ -4,7 +4,6 @@ import AssignmentTable from "@/components/tutor/Assignment-component/AssignmentL
 import AssignmentOverview from "@/components/tutor/Assignment-component/AssignmentOverview";
 import { Top_Bar } from "@/components/tutor/top-bar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AssignmentStatData } from "@/data2/constants";
 import { useCurrentUser } from "@/hooks/useAccount";
 import Link from "next/link";
 import { useState } from "react";
@@ -13,6 +12,29 @@ const Page = () => {
   const [page, setPage] = useState(1);
 
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
+  
+  const AssignmentStatData = [
+    {
+      title: "Total Assignment",
+      img: "/SVGs/assignment.svg",
+      amount: 25,
+    },
+    {
+      title: "Pending",
+      img: "/SVGs/completed.svg",
+      amount: 3,
+    },
+    {
+      title: "Completed",
+      img: "/SVGs/completed.svg",
+      amount: 12,
+    },
+    {
+      title: "Overdue",
+      img: "/SVGs/overdue.svg",
+      amount: 0,
+    },
+  ];
   return (
     <section className="flex flex-col gap-3">
       {currentUserLoading ? (

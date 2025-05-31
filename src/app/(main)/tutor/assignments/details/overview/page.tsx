@@ -14,12 +14,6 @@ const Page = () => {
   const [loading, setLoading] = useState(false);
   const [active, setActive] = useState(0);
 
-  interface StatDataInterface {
-    title: string;
-    img: string;
-    amount: number;
-  }
-
   const SubmissionListData = [
     {
       studentName: "Adam Abdullahi Jibreal",

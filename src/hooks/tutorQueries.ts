@@ -46,3 +46,26 @@ export const useUserProfile = (id: string) => {
     enabled: !!id,
   });
 };
+
+export const useTutorActivity = () => {
+  return useQuery({
+    queryKey: ["tutor-activity"],
+    queryFn: () => tutorApi.getTutorActivity({ limit: 5 }),
+  });
+};
+
+
+export const useStudentActivity = ({
+  userId,
+  page = 1,
+}: {
+  userId: string;
+  page?: number;
+}) => {
+  return useQuery({
+    queryKey: ["student-activity", userId, page],
+    queryFn: () => tutorApi.getStudentActivity({ userId, page }),
+    enabled: !!userId,
+    keepPreviousData: true,
+  });
+};

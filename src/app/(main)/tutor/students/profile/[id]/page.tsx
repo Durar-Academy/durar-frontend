@@ -13,6 +13,7 @@ import { useParams } from "next/navigation";
 
 const Page = () => {
   const [active, setActive] = useState(0);
+  const [page, setPage] = useState(1);
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const params = useParams();
   const id = params.id as string;
@@ -53,7 +54,7 @@ const Page = () => {
         {active === 0 ? (
           <Overview userId={id} />
         ) : active === 1 ? (
-          <ActivityLog />
+          <ActivityLog userId={id} page={page} setPage={setPage} />
         ) : active === 2 ? (
           <Assignment />
         ) : (

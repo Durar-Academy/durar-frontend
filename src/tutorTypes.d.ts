@@ -1,3 +1,17 @@
+interface User {
+  firstName: string | null;
+  lastName: string | null;
+  role: string;
+  profilePictureId: string | null;
+}
+
+interface TopBarProps {
+  children: React.ReactNode;
+  subtext: string;
+  user: User | undefined;
+  isLoading: boolean;
+}
+
 interface TutorStatCardProps {
   title: string;
   value: string;
@@ -194,4 +208,81 @@ interface UserProfile {
   status: string;
   role: string;
   profilePictureId: string | null;
+}
+
+interface TutorActivityResponse {
+  records: {
+    id: string;
+    userId: string;
+    action: string;
+    context: string;
+    contextId: string;
+    metadata: any | null;
+    deletedAt: string | null;
+    createdAt: string;
+    updatedAt: string;
+    user: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+      profilePicture: string | null;
+    };
+  }[];
+  metaData: {
+    page: number;
+    perPage: number;
+    pageCount: number;
+    totalCount: number;
+    hasPreviousPages: boolean;
+    hasNextPages: boolean;
+    links: {
+      number: number;
+      url: string;
+    }[];
+  };
+}
+
+interface NotificationItem {
+  id: string;
+  context: string;
+  createdAt: string;
+}
+
+interface StudentActivityResponse {
+  records: {
+    id: string;
+    action: string;
+    context: string;
+    contextId: string;
+    metadata: any | null;
+    createdAt: string;
+    updatedAt: string;
+  }[];
+  metaData: {
+    page: number;
+    perPage: number;
+    pageCount: number | null;
+    totalCount: {
+      id: number;
+      action: number;
+      context: number;
+      contextId: number;
+      metadata: number;
+      createdAt: number;
+      updatedAt: number;
+    };
+    hasPreviousPages: boolean;
+    hasNextPages: boolean;
+    links: {
+      number: number;
+      url: string;
+    }[];
+  };
+}
+
+interface ActivityItem {
+  id: string;
+  context: string;
+  createdAt: string;
 }

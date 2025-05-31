@@ -73,22 +73,50 @@ export const processTutorAssignments = (assignmentsData?: TutorAssignmentsRespon
 
 export const processUserProfile = (userData?: UserProfileResponse): UserProfile | null => {
     if (!userData) return null;
-  
+
     const fullNameParts = [
-      userData.title,
-      userData.firstName,
-      userData.middleName,
-      userData.lastName,
+        userData.title,
+        userData.firstName,
+        userData.middleName,
+        userData.lastName,
     ].filter(Boolean);
     const fullName = fullNameParts.join(" ");
-  
+
     return {
-      fullName: fullName || "Unknown",
-      email: userData.email,
-      phone: userData.phone || "N/A",
-      enrollmentDate: format(new Date(userData.createdAt), "MMM d, yyyy"),
-      status: userData.status.charAt(0).toUpperCase() + userData.status.slice(1),
-      role: userData.role.charAt(0).toUpperCase() + userData.role.slice(1),
-      profilePictureId: userData.profilePictureId,
+        fullName: fullName || "Unknown",
+        email: userData.email,
+        phone: userData.phone || "N/A",
+        enrollmentDate: format(new Date(userData.createdAt), "MMM d, yyyy"),
+        status: userData.status.charAt(0).toUpperCase() + userData.status.slice(1),
+        role: userData.role.charAt(0).toUpperCase() + userData.role.slice(1),
+        profilePictureId: userData.profilePictureId,
     };
-  };
+};
+
+
+export const processTutorActivity = (activityData?: TutorActivityResponse): NotificationItem[] => {
+    if (!activityData?.records) return [];
+
+    return activityData.records
+        .map((record) => ({
+            id: record.id,
+            context: record.context,
+            createdAt: record.createdAt,
+        }))
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        .slice(0, 5);
+};
+
+
+
+export const processStudentActivity = (activityData?: StudentActivityResponse): ActivityItem[] => {
+  if (!activityData?.records) return [];
+
+  return activityData.records
+    .map((record) => ({
+      id: record.id,
+      context: record.context,
+      createdAt: format(new Date(record.createdAt), "MMM d, yyyy"),
+    }))
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+};

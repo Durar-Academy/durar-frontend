@@ -7,26 +7,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useCurrentUser } from "@/hooks/useAccount";
 import { useTutorMetrics } from "@/hooks/tutorQueries";
 import { processTutorDashboardMetrics } from "@/utils/tutorProcessor";
-import { useEffect } from "react";
-import { axiosInstance } from "@/lib/axios";
 
 const Page = () => {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: metrics, isLoading: metricsLoading } = useTutorMetrics();
 
   const dashboardMetrics = processTutorDashboardMetrics(metrics);
-
-  const callData = async () => {
-    try {
-      const res = await axiosInstance.get("/assignment/tutor");
-      console.log(res.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  useEffect(() => {
-    callData();
-  }, []);
 
   return (
     <section className="flex flex-col gap-3">
