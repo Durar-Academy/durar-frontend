@@ -17,6 +17,19 @@ type CreateAccountPayload = {
   title: "Mr" | "Mrs" | "Ms" | "Dr";
 };
 
+type UpdateAccountPayload = {
+  firstName: string;
+  lastName: string;
+  middleName: string;
+  email: string;
+  gender: string;
+  phone: string;
+  country: string;
+
+  // title: string;
+  // profilePic: string;
+};
+
 type AuthenticationContextProps = {
   loggedIn: boolean;
   authLoading: boolean;

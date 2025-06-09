@@ -1,12 +1,14 @@
 "use client";
 
-import Image from "next/image";
 import { Camera, Check, User, X } from "lucide-react";
+import Image from "next/image";
+import { useState } from "react";
+import { z } from "zod";
+import toast from "react-hot-toast";
 
-import { Label } from "@/components/ui/label";
 import { TopBar } from "@/components/shared/top-bar";
+import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
-
 import {
   Form,
   FormControl,
@@ -16,6 +18,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
   SelectContent,
@@ -23,22 +26,54 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { ChangePassword } from "@/components/auth/change-password";
 
+import { COUNTRIES, DAILING_CODES, GENDERS, TITLES } from "@/data/constants";
 import { useCurrentUser } from "@/hooks/useAccount";
 import { useUpdateForm } from "@/hooks/useForm";
-import { COUNTRIES, DAILING_CODES, GENDERS, TITLES } from "@/data/constants";
+import { updateUserInfo } from "@/lib/account";
+import { updateFormSchema } from "@/lib/schemas";
+import { extractDialingCode } from "@/lib/utils";
 
-import { ChangePassword } from "@/components/auth/change-password";
-import { useState } from "react";
-
-export default function ResultPage() {
+export default function SettingsPage() {
   const updateFormController = useUpdateForm();
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [imagePreview, setImagePreview] = useState<string | null>(user?.profilePictureId || null);
 
-  const handleSubmit = () => {};
+  const handleSubmit = async (values: z.infer<typeof updateFormSchema>) => {
+    setIsSubmitting(true);
+    console.log("Update Form Values: ", values);
+
+    const payload: Record<string, string> = {};
+
+    if (values.email) payload.email = values.email;
+    if (values.firstName) payload.firstName = values.firstName;
+    if (values.lastName) payload.lastName = values.lastName;
+    if (values.middleName) payload.middleName = values.middleName;
+    if (values.gender) payload.gender = values.gender.toLowerCase();
+    if (values.country) payload.country = values.country;
+    if (values.phoneNumber && values.dialingCode) {
+      payload.phone = `${extractDialingCode(values.dialingCode)}${values.phoneNumber}`;
+    }
+
+    // if (values.title) payload.title = values.title;
+    // if (values.profileImage) payload.profileImage = values.profileImage;
+
+    try {
+      const response = await updateUserInfo(payload, user?.id ?? "");
+      console.log("Update Form Response Data", response);
+
+      if (response.success) toast.success("Account updated successfully!");
+      updateFormController.reset();
+    } catch (error) {
+      console.error("Update Form Error", error);
+      toast.error("Unable to update your account. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <section className="flex flex-col gap-5">
@@ -141,10 +176,11 @@ export default function ResultPage() {
                     <button
                       className="text-orange flex items-center gap-2 text-base font-medium hover:underline"
                       onClick={updateFormController.handleSubmit(handleSubmit)}
+                      disabled={isSubmitting}
                       type="button"
                     >
                       <Check className="w-5 h-5 " />
-                      <span>Save</span>
+                      <span>{isSubmitting ? <>Saving...</> : <>Save</>}</span>
                     </button>
 
                     <button

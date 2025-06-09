@@ -49,7 +49,7 @@ export default function AssignmentsPage() {
             }
             user={user as User}
           >
-            Payments
+            Assignment
           </TopBar>
         )}
       </div>

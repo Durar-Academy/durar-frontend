@@ -77,6 +77,7 @@ export const useUpdateForm = () =>
       phoneNumber: "",
       country: "",
       email: "",
-      profileImage: undefined,
+
+      // profileImage: undefined,
     },
   });
