@@ -1,100 +1,151 @@
 "use client";
 
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ChevronRight, Plus, SendHorizonalIcon, Trash2 } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { v4 as uuidV4 } from "uuid";
 
+import { TopBar } from "@/components/shared/top-bar";
+import { AudioPlayer } from "@/components/student/audio-player";
+import { AudioRecorder } from "@/components/student/audio-recorder";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Skeleton } from "@/components/ui/skeleton";
 
-import { cn } from "@/lib/utils";
+import { useCurrentUser } from "@/hooks/useAccount";
 
+interface RecordingItem {
+  id: string;
+  blob: Blob | null;
+  url: string;
+  duration: number;
+  createdAt: Date;
+}
 export default function Assignment() {
+  const { data: user, isLoading: currentUserLoading } = useCurrentUser();
+
+  const [recordings, setRecordings] = useState<RecordingItem[]>(
+    Array.from({ length: 10 }).map(() => ({
+      id: uuidV4(),
+      blob: null,
+      url: "",
+      duration: 0,
+      createdAt: new Date(),
+    })),
+  );
+
+  const addNewVerseRecorder = () => {
+    const newItem: RecordingItem = {
+      id: uuidV4(),
+      blob: null,
+      url: "",
+      duration: 0,
+      createdAt: new Date(),
+    };
+    setRecordings((prev) => [...prev, newItem]);
+  };
+
+  const handleRecordingComplete = (id: string, blob: Blob, duration: number) => {
+    const url = URL.createObjectURL(blob);
+
+    setRecordings((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, blob, url, duration } : item)),
+    );
+  };
+
+  const deleteVerse = (id: string) => {
+    const item = recordings.find((r) => r.id === id);
+    if (item?.url) URL.revokeObjectURL(item.url);
+
+    setRecordings((prev) => prev.filter((r) => r.id !== id));
+  };
+
+  // Clean up audio URLs on unmount
+  useEffect(() => {
+    return () => {
+      recordings.forEach((r) => {
+        if (r.url) URL.revokeObjectURL(r.url);
+      });
+    };
+  }, [recordings]);
+
   return (
-    <section className="rounded-xl w-full border border-shade-3 p-6 bg-white flex flex-col gap-9">
-      <div className="rounded-xl border border-shade-3">
-        <div className="bg-shade-1 rounded-t-xl p-6 flex justify-between items-center">
-          <h1 className="text-high font-semibold text-xl">Assignment Name</h1>
+    <section className="flex flex-col gap-3">
+      <div className="top-bar">
+        {currentUserLoading ? (
+          <Skeleton className="w-full rounded-xl h-[80px] " />
+        ) : (
+          <TopBar subtext={"Assignment - Name"} user={user as User}>
+            <p className="flex items-center gap-1">
+              <Link href={"/assignments"} className="hover:underline">
+                Assignments
+              </Link>
 
-          <div className="flex items-center gap-1 text-xl font-semibold">
-            <span className="text-base font-normal">Questions: </span>
+              <ChevronRight className="h-4 w-4" />
 
-            <span className="text-orange">01</span>
+              <span>Submit Assignment</span>
+            </p>
+          </TopBar>
+        )}
+      </div>
 
-            <span>of 50</span>
-          </div>
+      <div className="bg-white border border-shade-2 rounded-xl p-6 flex justify-between flex-wrap gap-6">
+        <div className="flex flex-col gap-4 font-medium">
+          <h3 className="text-high text-sm">Surat Name</h3>
 
-          <div className="flex items-center text-xl font-semibold gap-1">
-            <p className="text-base font-normal">Time Left: </p>
+          <p className="text-low text-sm">Assignment Instruction</p>
 
-            <p>20:00</p>
+          <div className="mt-2">
+            <AudioPlayer />
           </div>
         </div>
 
-        <div className="p-6 flex items-start gap-6">
-          <div
-            className="border rounded-xl bg-shade-1 border-shade-3
-          flex items-center justify-center shrink-0 w-12 h-12 text-xl font-semibold text-high"
-          >
-            01
-          </div>
-
-          <div className="text-xl text-high py-3">
-            <h3 className="mb-6 font-semibold">Question</h3>
-
-            <RadioGroup className="flex flex-col gap-6">
-              {Array.from({ length: 4 }).map((_, index) => (
-                <div key={index} className="flex items-center gap-3">
-                  <RadioGroupItem
-                    value={String(index + 1)}
-                    className="h-6 w-6 shadow-none border border-shade-3
-                    focus:outline-0 focus-visible:ring-0 focus:border-2"
-                  >
-                    <div className="h-4 w-4 bg-orange rounded-full"></div>
-                  </RadioGroupItem>
-
-                  <Label className="text-high text-base">Option {index + 1}</Label>
-                </div>
-              ))}
-            </RadioGroup>
-
-            <div className="mt-10 flex h-10 gap-3">
-              <Button
-                className="bg-orange hover:bg-burnt transition-colors text-white"
-                variant="_default"
-                disabled={true}
-              >
-                <ArrowLeft className="w-6 h-6" />
-                Previous
-              </Button>
-
-              <Button
-                className="bg-orange hover:bg-burnt transition-colors text-white"
-                variant="_default"
-              >
-                Next
-                <ArrowRight className="w-6 h-6" />
-              </Button>
-            </div>
-          </div>
+        <div>
+          <Button className="bg-orange hover:bg-burnt" variant={"_default"}>
+            <SendHorizonalIcon className="size-4" />
+            Submit Assignment
+          </Button>
         </div>
       </div>
 
-      <div className="flex flex-col gap-2">
-        <h3 className="text-low font-semibold text-base">Questions</h3>
-
-        <div className="flex gap-3 flex-wrap">
-          {Array.from({ length: 50 }).map((_, index) => (
-            <div
-              key={index}
-              className={cn(
-                "w-10 h-10 rounded-lg flex items-center justify-center text-xl font-normal text-high bg-light shrink-0",
-
-                false && "bg-success/20",
-              )}
+      <div className="bg-white border border-shade-2 rounded-xl p-6">
+        <div className="space-y-6">
+          {/* Header */}
+          <div className="flex justify-between items-center">
+            <h2 className="text-base text-high font-semibold ">Verse Recordings</h2>
+            <button
+              onClick={addNewVerseRecorder}
+              className="bg-white border border-orange text-orange px-3 py-1 rounded-md flex items-center gap-2"
             >
-              {index + 1}
-            </div>
-          ))}
+              <Plus size={16} />
+              Add Verse
+            </button>
+          </div>
+
+          {/* Recording List */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-4">
+            {recordings.map((item, index) => (
+              <div key={item.id} className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <p className="text-sm font-medium text-gray-700">Verse {index + 1}</p>
+
+                  <button
+                    onClick={() => deleteVerse(item.id)}
+                    className="text-danger text-sm gap-1 flex items-center"
+                    title="Delete this verse"
+                  >
+                    <Trash2 size={16} />
+                    Verse {index + 1}
+                  </button>
+                </div>
+
+                <AudioRecorder
+                  onRecordingComplete={(blob, duration) =>
+                    handleRecordingComplete(item.id, blob, duration)
+                  }
+                />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </section>
