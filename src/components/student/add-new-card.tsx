@@ -3,6 +3,7 @@
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
+import { ControlledDatePicker } from "@/components/ui/date-picker";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +13,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ControlledDatePicker } from "@/components/ui/date-picker";
 import {
   Select,
   SelectContent,
@@ -71,8 +71,8 @@ export function AddNewCard() {
 
                   <div>
                     <ControlledDatePicker
-                      date={undefined}
-                      setDate={function (day?: Date): void {
+                      date={new Date()}
+                      setDate={function (): void {
                         throw new Error("Function not implemented.");
                       }}
                     />
