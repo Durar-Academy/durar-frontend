@@ -1,5 +1,5 @@
 import React from "react";
-import { List, Users, GraduationCap } from "lucide-react";
+import { List, Users, GraduationCap, CheckCircle, Clock, Info } from "lucide-react";
 import { format } from "date-fns";
 
 export const processTutorDashboardMetrics = (tutorMetrics2?: TutorsMetrics2): TutorStatCardProps[] => {
@@ -70,7 +70,6 @@ export const processTutorAssignments = (assignmentsData?: TutorAssignmentsRespon
     }));
 };
 
-
 export const processUserProfile = (userData?: UserProfileResponse): UserProfile | null => {
     if (!userData) return null;
 
@@ -93,7 +92,6 @@ export const processUserProfile = (userData?: UserProfileResponse): UserProfile 
     };
 };
 
-
 export const processTutorActivity = (activityData?: TutorActivityResponse): NotificationItem[] => {
     if (!activityData?.records) return [];
 
@@ -107,8 +105,6 @@ export const processTutorActivity = (activityData?: TutorActivityResponse): Noti
         .slice(0, 5);
 };
 
-
-
 export const processStudentActivity = (activityData?: StudentActivityResponse): ActivityItem[] => {
   if (!activityData?.records) return [];
 
@@ -120,3 +116,39 @@ export const processStudentActivity = (activityData?: StudentActivityResponse): 
     }))
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 };
+
+// Returns metrics: total, completed, pending, overdue assignments as OverviewCardProps[]
+export function processTutorAssignmentMetrics(assignments: AssignmentItem[]): OverviewCardProps[] {
+    const total = assignments.length;
+    const completed = assignments.filter(a => a.status === "Completed").length;
+    const pending = assignments.filter(a => a.status === "Pending").length;
+    // Overdue: pending assignments with dueDate in the past
+    const now = new Date();
+    const overdue = assignments.filter(a => {
+        if (a.status !== "Pending") return false;
+        const due = new Date(a.dueDate);
+        return due < now;
+    }).length;
+    return [
+        {
+            title: "Total Assignments",
+            figure: String(total),
+            children: React.createElement(List, { key: "icon", className: "w-6 h-6 text-orange" })
+        },
+        {
+            title: "Completed",
+            figure: String(completed),
+            children: React.createElement(CheckCircle, { key: "icon", className: "w-6 h-6 text-success" })
+        },
+        {
+            title: "Pending",
+            figure: String(pending),
+            children: React.createElement(Clock, { key: "icon", className: "w-6 h-6 text-orange" })
+        },
+        {
+            title: "Overdue",
+            figure: String(overdue),
+            children: React.createElement(Info, { key: "icon", className: "w-6 h-6 text-danger" })
+        },
+    ];
+}

@@ -44,7 +44,7 @@ export const tutorApi = {
     return response.data.data as TutorClassesResponse;
   },
   getTutorAssignments: async ({
-    limit = 10,
+    limit = 1000,
     page = 1,
     signal,
   }: {

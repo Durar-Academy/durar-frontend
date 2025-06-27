@@ -3,13 +3,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter, usePathname } from "next/navigation";
 import { useEffect } from "react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
-export function Top_Bar({ children, subtext, user, isLoading }: TopBarProps) {
+export function Top_Bar({ children, subtext, user }: TopBarProps) {
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
-    if (isLoading || !user || pathname === "/onboarding") return;
+    if (!user || pathname === "/onboarding") return;
 
     const firstName = user.firstName?.trim();
     const lastName = user.lastName?.trim();
@@ -17,10 +18,10 @@ export function Top_Bar({ children, subtext, user, isLoading }: TopBarProps) {
     if (!firstName || !lastName) {
       router.push("/onboarding");
     }
-  }, [user, isLoading, router, pathname]);
+  }, [user, router, pathname]);
 
-  if (isLoading || !user) {
-    return null; // Or a loading placeholder if needed
+  if (!user) {
+    return null;
   }
 
   const userFullName =
@@ -28,6 +29,11 @@ export function Top_Bar({ children, subtext, user, isLoading }: TopBarProps) {
       ? `${user.firstName} ${user.lastName}`.trim()
       : "Unknown";
 
+  const userInitials =
+    user.firstName && user.lastName
+      ? `${user?.firstName[0].toUpperCase()} ${user?.lastName[0].toUpperCase()}`
+      : "TU";
+      
   return (
     <div className="bg-white border border-shade-2 py-5 px-6 rounded-xl flex justify-between items-center w-full">
       <div>
@@ -55,17 +61,14 @@ export function Top_Bar({ children, subtext, user, isLoading }: TopBarProps) {
         </div>
         <div>
           <div className="flex justify-center items-center gap-2">
-            <Image
-              src={
-                user.profilePictureId
-                  ? `/api/images/${user.profilePictureId}`
-                  : "/SVGs/profile.svg"
-              }
-              className="rounded-full"
-              alt={`${userFullName}'s profile image`}
-              width={36}
-              height={36}
-            />
+            <Avatar className="h-9 w-9">
+              {user?.profilePictureId && (
+                <AvatarImage src={user.profilePictureId as string} />
+              )}
+              <AvatarFallback className="bg-shade-3 text-black">
+                {userInitials}
+              </AvatarFallback>
+            </Avatar>
             <div className="flex flex-col gap-1">
               <h1 className="text-sm text-high font-semibold">
                 {userFullName}

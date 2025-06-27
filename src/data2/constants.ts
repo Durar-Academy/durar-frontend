@@ -1,4 +1,3 @@
-import { deleteCookie } from "cookies-next";
 import {
     Bell,
     BookText,
@@ -7,6 +6,8 @@ import {
     User,
     Table2,
     Wallet,
+    PanelsTopLeft,
+    Layers2,
 } from "lucide-react";
 import React from "react";
 
@@ -322,3 +323,18 @@ export interface FormData {
     agreedToTerms: boolean;
     documents: string[];
 }
+
+export const NEW_ASSIGNMENT_OPTIONS = [
+    { label: "Assignment", url: "/tutor/assignments/add-assignment" },
+    { label: "Quiz", url: "/tutor/assignments/add-quiz" },
+];
+
+export const quizLinks = [
+    { label: "Quiz Details", icon: PanelsTopLeft, url: `/tutor/assignments/add-quiz` },
+
+    {
+        label: "Questions",
+        icon: Layers2,
+        url: `/tutor/assignments/add-quiz/questions`,
+    },
+];

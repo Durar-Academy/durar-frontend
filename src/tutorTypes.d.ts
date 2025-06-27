@@ -9,7 +9,6 @@ interface TopBarProps {
   children: React.ReactNode;
   subtext: string;
   user: User | undefined;
-  isLoading: boolean;
 }
 
 interface TutorStatCardProps {

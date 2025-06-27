@@ -170,9 +170,7 @@ export default function AssignmentTable({
                         {assignment.submissions}
                       </td>
                       <td className="text-sm py-4 border-[1px] border-[#D2D4E0] border-l-0 rounded-r-xl text-orange cursor-pointer hover:underline">
-                        <Link
-                          href={`/tutor/assignments/details/${assignment.id}`}
-                        >
+                        <Link href={`/tutor/assignments/${assignment.id}`}>
                           View
                         </Link>
                       </td>
