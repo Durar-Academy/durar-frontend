@@ -326,6 +326,7 @@ export const sampleCourses: Course[] = [
         deletedAt: null,
         createdAt: new Date("2024-01-15T10:00:00Z"),
         updatedAt: new Date("2024-01-15T10:00:00Z"),
+        progress: 1,
       },
       {
         id: "l002",
@@ -339,6 +340,7 @@ export const sampleCourses: Course[] = [
         deletedAt: null,
         createdAt: new Date("2024-01-16T10:00:00Z"),
         updatedAt: new Date("2024-01-16T10:00:00Z"),
+        progress: 1,
       },
     ],
     UserCourse: [
@@ -394,6 +396,7 @@ export const sampleCourses: Course[] = [
         deletedAt: null,
         createdAt: new Date("2024-02-01T12:00:00Z"),
         updatedAt: new Date("2024-02-01T12:00:00Z"),
+        progress: 1,
       },
     ],
     UserCourse: [],
@@ -458,6 +461,7 @@ export const sampleCourses: Course[] = [
         deletedAt: null,
         createdAt: new Date("2023-11-10T15:00:00Z"),
         updatedAt: new Date("2023-11-10T15:00:00Z"),
+        progress: 1,
       },
       {
         id: "l005",
@@ -471,6 +475,7 @@ export const sampleCourses: Course[] = [
         deletedAt: null,
         createdAt: new Date("2023-11-12T15:00:00Z"),
         updatedAt: new Date("2023-11-12T15:00:00Z"),
+        progress: 1,
       },
       {
         id: "l006",
@@ -484,6 +489,7 @@ export const sampleCourses: Course[] = [
         deletedAt: null,
         createdAt: new Date("2023-11-14T15:00:00Z"),
         updatedAt: new Date("2023-11-14T15:00:00Z"),
+        progress: 1,
       },
     ],
     UserCourse: [
@@ -566,6 +572,7 @@ export const sampleCourses: Course[] = [
         deletedAt: null,
         createdAt: new Date("2024-01-05T09:30:00Z"),
         updatedAt: new Date("2024-01-05T09:30:00Z"),
+        progress: 1,
       },
       {
         id: "l008",
@@ -579,6 +586,7 @@ export const sampleCourses: Course[] = [
         deletedAt: null,
         createdAt: new Date("2024-01-06T09:30:00Z"),
         updatedAt: new Date("2024-01-06T09:30:00Z"),
+        progress: 1,
       },
     ],
     UserCourse: [
@@ -658,6 +666,7 @@ export const sampleCourses: Course[] = [
         deletedAt: null,
         createdAt: new Date("2023-10-15T11:00:00Z"),
         updatedAt: new Date("2023-10-15T11:00:00Z"),
+        progress: 1,
       },
       {
         id: "l010",
@@ -671,6 +680,7 @@ export const sampleCourses: Course[] = [
         deletedAt: null,
         createdAt: new Date("2023-10-16T11:00:00Z"),
         updatedAt: new Date("2023-10-16T11:00:00Z"),
+        progress: 1,
       },
       {
         id: "l011",
@@ -684,6 +694,7 @@ export const sampleCourses: Course[] = [
         deletedAt: null,
         createdAt: new Date("2023-10-17T11:00:00Z"),
         updatedAt: new Date("2023-10-17T11:00:00Z"),
+        progress: 1,
       },
     ],
     UserCourse: [
@@ -1579,6 +1590,7 @@ export const mockPayments: Payment[] = [
         updatedAt: new Date(),
         paypalCustomerId: null,
         paypalCardCustomerId: null,
+        title: "Mr",
       },
     },
   },
@@ -1629,6 +1641,7 @@ export const mockPayments: Payment[] = [
         updatedAt: new Date(),
         paypalCustomerId: null,
         paypalCardCustomerId: null,
+        title: "Mr",
       },
     },
   },
@@ -1679,6 +1692,7 @@ export const mockPayments: Payment[] = [
         updatedAt: new Date(),
         paypalCustomerId: null,
         paypalCardCustomerId: null,
+        title: "Mr",
       },
     },
   },
@@ -1729,6 +1743,7 @@ export const mockPayments: Payment[] = [
         updatedAt: new Date(),
         paypalCustomerId: null,
         paypalCardCustomerId: null,
+        title: "Mr",
       },
     },
   },
