@@ -1,15 +1,7 @@
 import React from "react";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { SaveIcon, EyeIcon, ForwardIcon } from "lucide-react";
-import {
-  Select,
-  SelectTrigger,
-  SelectContent,
-  SelectItem,
-  SelectValue,
-} from "@/components/ui/select";
 import Image from "next/image";
 
 const QuestionDetails = () => {

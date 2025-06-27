@@ -15,29 +15,6 @@ interface overviewProps {
   children: ReactNode;
 }
 const AssignmentOverview = ({ title, data, children }: overviewProps) => {
-  const StatData = [
-    {
-      title: "Total Assignment",
-      img: "/SVGs/assignment.svg",
-      amount: 25,
-    },
-    {
-      title: "Pending",
-      img: "/SVGs/completed.svg",
-      amount: 3,
-    },
-    {
-      title: "Completed",
-      img: "/SVGs/completed.svg",
-      amount: 12,
-    },
-    {
-      title: "Overdue",
-      img: "/SVGs/overdue.svg",
-      amount: 0,
-    },
-  ];
-
   return (
     <div className="flex flex-col gap-4  border border-shade-3 rounded-xl bg-white p-6 w-full">
       <header className="flex items-center gap-3">

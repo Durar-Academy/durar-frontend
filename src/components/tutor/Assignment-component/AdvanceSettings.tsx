@@ -29,8 +29,8 @@ const AdvanceSettings = () => {
     <div className="rounded-xl p-6 w-full border border-shade-3 bg-white h-max flex flex-col gap-4">
       <h1 className="text-[18px] text-high font-medium">Advanced Settings</h1>
       <section className="grid grid-cols-2 gap-4">
-        {AdvancedData.map((data) => (
-          <div className="flex justify-between items-center px-6 py-4 border-[1px] border-[#D2D4E0] rounded-xl ">
+        {AdvancedData.map((data, index) => (
+          <div key={index} className="flex justify-between items-center px-6 py-4 border-[1px] border-[#D2D4E0] rounded-xl ">
             <div className="text-sm flex flex-col gap-4">
               <p className="text-high font-medium">{data.title}</p>
               <p className="text-low">{data.desc}</p>

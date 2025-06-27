@@ -9,7 +9,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { closestIndexTo } from "date-fns";
 
 interface SubmissionList {
   studentName: string;

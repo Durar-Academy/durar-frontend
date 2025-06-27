@@ -2,10 +2,32 @@ import { X, ChevronRight, ArrowLeft, Loader } from "lucide-react";
 import React, { useState } from "react";
 import TermsAndConditionModal from "./TermsAndConditionModal";
 
+interface FormData {
+  title: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  dob: string;
+  email: string;
+  gender: string;
+  phone: string;
+  specializationAndSkill: string;
+  language: string;
+  documents: string[];
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  password: string;
+  paymentMode: string;
+  bankAccountDetails: string;
+  agreedToTerms: boolean;
+}
+
 interface AccountSetupProps {
   handlePrev: () => void;
-  formData: any;
-  updateFormData: (data: any) => void;
+  formData: FormData;
+  updateFormData: (data: Partial<FormData>) => void;
   handleSubmit: () => void;
   isSubmitting: boolean;
   handleCancel: () => void;

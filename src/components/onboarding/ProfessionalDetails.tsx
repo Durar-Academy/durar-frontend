@@ -26,11 +26,33 @@ type Document = {
   error?: string;
 };
 
+interface FormData {
+  title: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  dob: string;
+  email: string;
+  gender: string;
+  phone: string;
+  specializationAndSkill: string;
+  language: string;
+  documents: string[];
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  password: string;
+  paymentMode: string;
+  bankAccountDetails: string;
+  agreedToTerms: boolean;
+}
+
 interface ProfessionalDetailsProps {
   handleNext: () => void;
   handlePrev: () => void;
-  formData: any;
-  updateFormData: (data: any) => void;
+  formData: FormData;
+  updateFormData: (data: Partial<FormData>) => void;
   handleCancel: () => void;
 }
 
@@ -232,7 +254,11 @@ const ProfessionalDetails = ({
       } else {
         throw new Error(response.data.message || "Failed to upload file");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : "Failed to upload file";
+      
       console.error("File upload error:", error);
       setDocuments((prev) =>
         prev.map((doc) =>
@@ -240,12 +266,12 @@ const ProfessionalDetails = ({
             ? {
                 ...doc,
                 uploading: false,
-                error: error.message || "Failed to upload file",
+                error: errorMessage,
               }
             : doc
         )
       );
-      toast.error(error.message || "Failed to upload file");
+      toast.error(errorMessage);
     }
   };
 

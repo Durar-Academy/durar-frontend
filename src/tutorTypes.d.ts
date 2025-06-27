@@ -216,7 +216,7 @@ interface TutorActivityResponse {
     action: string;
     context: string;
     contextId: string;
-    metadata: any | null;
+    metadata: Record<string, unknown> | null;
     deletedAt: string | null;
     createdAt: string;
     updatedAt: string;
@@ -254,7 +254,7 @@ interface StudentActivityResponse {
     action: string;
     context: string;
     contextId: string;
-    metadata: any | null;
+    metadata: Record<string, unknown> | null;
     createdAt: string;
     updatedAt: string;
   }[];

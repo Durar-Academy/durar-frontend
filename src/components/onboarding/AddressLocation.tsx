@@ -2,11 +2,33 @@ import { COUNTRY_DATA } from "@/data/data";
 import { X, ChevronRight, ArrowLeft } from "lucide-react";
 import React, { useState } from "react";
 
+interface FormData {
+  title: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  dob: string;
+  email: string;
+  gender: string;
+  phone: string;
+  specializationAndSkill: string;
+  language: string;
+  documents: string[];
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  password: string;
+  paymentMode: string;
+  bankAccountDetails: string;
+  agreedToTerms: boolean;
+}
+
 interface AddressLocationProps {
   handleNext: () => void;
   handlePrev: () => void;
-  formData: any;
-  updateFormData: (data: any) => void;
+  formData: FormData;
+  updateFormData: (data: Partial<FormData>) => void;
   handleCancel: () => void;
 }
 

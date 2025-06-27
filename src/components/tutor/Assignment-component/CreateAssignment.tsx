@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -9,7 +8,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { UploadCloud, SaveIcon, EyeIcon, ForwardIcon } from "lucide-react";
 
@@ -19,8 +17,6 @@ interface createAssignmentProps {
 export default function CreateAssignment({
   handleShow,
 }: createAssignmentProps) {
-  const [date, setDate] = useState(new Date());
-
   return (
     <div className="p-6 max-w-6xl mx-auto space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

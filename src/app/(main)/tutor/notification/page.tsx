@@ -17,25 +17,25 @@ const Page = () => {
       title: "New Course Schedule",
       allStudents: "All students",
       date: "Feb 25, 2025",
-      status: "Sent" as "Sent",
+      status: "Sent" as const,
     },
     {
       title: "New Course Schedule",
       allStudents: "All students",
       date: "Feb 25, 2025",
-      status: "Sent" as "Sent",
+      status: "Sent" as const,
     },
     {
       title: "New Course Schedule",
       allStudents: "All students",
       date: "Feb 27, 2025",
-      status: "Sent" as "Sent",
+      status: "Sent" as const,
     },
     {
       title: "New Course Schedule",
       allStudents: "All students",
       date: "Feb 25, 2025",
-      status: "Failed" as "Failed",
+      status: "Failed" as const,
     },
   ];
 

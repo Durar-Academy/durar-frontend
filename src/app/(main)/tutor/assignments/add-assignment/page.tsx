@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ChevronRight, Eye, Save, SendHorizonal, X } from "lucide-react";
+import { Eye, Save, SendHorizonal, X } from "lucide-react";
 import toast from "react-hot-toast";
 import { format } from "date-fns";
 

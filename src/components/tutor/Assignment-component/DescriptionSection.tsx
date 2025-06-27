@@ -43,8 +43,8 @@ const DescriptionSection = () => {
       </div>
       <div className="flex flex-col gap-3">
         <h1 className="pb-1">Details</h1>
-        {descriptionData.map((desc) => (
-          <div className="flex gap-11 text-sm">
+        {descriptionData.map((desc, index) => (
+          <div key={index} className="flex gap-11 text-sm">
             <p className="w-20 text-low">{desc.DetailsTitle}</p>
             <p
               className={`text-sm text-low ${

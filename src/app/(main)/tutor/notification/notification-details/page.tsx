@@ -1,17 +1,9 @@
 "use client";
 import DeliveryStats from "@/components/tutor/Notification-component/DeliveryStats";
 import NotificationContentCard from "@/components/tutor/Notification-component/NotificationContent";
-import { Top_Bar } from "@/components/tutor/top-bar";
-import { Skeleton } from "@/components/ui/skeleton";
 import Image from "next/image";
-import { useState } from "react";
 
-const page = () => {
-  const [show, setShow] = useState(false);
-
-  const handleShowNotification = () => {
-    setShow(!show);
-  };
+const Page = () => {
   return (
     <section className="flex flex-col gap-3">
       <section className="flex justify-between items-center w-full bg-white rounded-xl border border-shade-2 p-4">
@@ -65,4 +57,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

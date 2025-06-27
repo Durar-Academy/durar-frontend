@@ -133,12 +133,16 @@ const Page = () => {
       } else {
         toast.error(response.data.message || "Something went wrong");
       }
-    } catch (error: any) {
-      toast.error(
-        error.response?.data?.message || "An error occurred during onboarding"
-      );
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error 
+        ? error.message 
+        : error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data
+        ? String(error.response.data.message)
+        : "An error occurred during onboarding";
+      
+      toast.error(errorMessage);
       console.error("Onboarding error:", error);
-      console.error("Error response data:", error.response?.data);
+      console.error("Error response data:", error && typeof error === 'object' && 'response' in error ? (error.response as Record<string, unknown>)?.data : undefined);
     } finally {
       setIsSubmitting(false);
     }

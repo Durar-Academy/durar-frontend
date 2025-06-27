@@ -8,37 +8,37 @@ const Assignment = () => {
       course: "001",
       date: "Lawal Wahab Babatunde",
       score: "Thanawiyah",
-      status: "Done" as "Done",
+      status: "Done" as const,
     },
     {
       course: "001",
       date: "Lawal Wahab Babatunde",
       score: "Idaadiyah",
-      status: "Done" as "Done",
+      status: "Done" as const,
     },
     {
       course: "002",
       date: "Lawal Wahab Babatunde",
       score: "Awal temhidi",
-      status: "Done" as "Done",
+      status: "Done" as const,
     },
     {
       course: "003",
       date: "Lawal Wahab Babatunde",
       score: "Idaadiyah",
-      status: "Done" as "Done",
+      status: "Done" as const,
     },
     {
       course: "004",
       date: "Lawal Wahab Babatunde",
       score: "Idaadiyah",
-      status: "Done" as "Done",
+      status: "Done" as const,
     },
     {
       course: "005",
       date: "Akanji Abayomi Biodun",
       score: "Idaadiyah",
-      status: "Pending" as "Pending",
+      status: "Pending" as const,
     },
   ];
   return (
