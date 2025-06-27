@@ -17,6 +17,19 @@ type CreateAccountPayload = {
   title: "Mr" | "Mrs" | "Ms" | "Dr";
 };
 
+type UpdateAccountPayload = {
+  firstName: string;
+  lastName: string;
+  middleName: string;
+  email: string;
+  gender: string;
+  phone: string;
+  country: string;
+
+  // title: string;
+  // profilePic: string;
+};
+
 type AuthenticationContextProps = {
   loggedIn: boolean;
   authLoading: boolean;
@@ -57,6 +70,7 @@ type User = {
   email: string;
   firstName: string;
   lastName: string;
+  title: string;
   middleName?: string;
   gender: "male" | "female";
   phone: string;
@@ -348,6 +362,7 @@ type Lesson = {
   duration: number;
   isLocked: boolean;
   isCompleted: boolean;
+  progress: number;
   type: string;
   mediaId: string | null;
   courseId: string;
@@ -450,6 +465,11 @@ type Assignment = {
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
+  randomnize: boolean;
+  autoGraded: boolean;
+  classAverage: number;
+  grade: number;
+  quizAverage: number;
   AssignmentSubmission: AssignmentSubmission[];
   QuizSubmission: QuizSubmission[];
   course: Course;
@@ -745,4 +765,11 @@ type Question = {
   questionText: string;
   options: Option[];
   correctAnswerId: number | null;
+};
+
+type CourseCardProps = {
+  name: string;
+  thumbnail: string;
+  progress: number;
+  id: string;
 };

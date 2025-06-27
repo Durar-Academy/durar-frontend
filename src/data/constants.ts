@@ -10,6 +10,7 @@ import {
   Wallet,
   Layers2,
   PanelsTopLeft,
+  Layers,
 } from "lucide-react";
 import React from "react";
 
@@ -338,3 +339,86 @@ export const createQuizDefaultValues: CreateQuiz = {
     },
   ],
 };
+
+export const STUDENT_SIDEBAR_LINKS: ComponentConfig[] = [
+  {
+    type: "link",
+    component: LinkComponent,
+    props: {
+      href: "/",
+      children: [React.createElement(Grid2X2, { key: "icon", className: "h-4 w-4" }), "Dashboard"],
+      exact: true,
+    },
+  },
+
+  {
+    type: "link",
+    component: LinkComponent,
+    props: {
+      href: "/courses",
+      children: [React.createElement(BookText, { key: "icon", className: "h-4 w-4" }), "Courses"],
+    },
+  },
+
+  {
+    type: "link",
+    component: LinkComponent,
+    props: {
+      href: "/timetable",
+      children: [React.createElement(Columns2, { key: "icon", className: "h-4 w-4" }), "Timetable"],
+    },
+  },
+
+  {
+    type: "link",
+    component: LinkComponent,
+    props: {
+      href: "/assignments",
+      children: [React.createElement(Table2, { key: "icon", className: "h-4 w-4" }), "Assignment"],
+    },
+  },
+
+  {
+    type: "link",
+    component: LinkComponent,
+    props: {
+      href: "/result",
+      children: [React.createElement(Layers, { key: "icon", className: "h-4 w-4" }), "Result"],
+    },
+  },
+
+  {
+    type: "link",
+    component: LinkComponent,
+    props: {
+      href: "/payments",
+      children: [
+        React.createElement(Wallet, { key: "icon", className: "h-4 w-4" }),
+        "Payment History",
+      ],
+    },
+  },
+
+  {
+    type: "link",
+    component: LinkComponent,
+    props: {
+      href: "/settings",
+      children: [React.createElement(Settings, { key: "icon", className: "h-4 w-4" }), "Settings"],
+    },
+  },
+
+  {
+    type: "button",
+    component: ButtonComponent,
+    props: {
+      href: "/auth",
+      onClick: () => {
+        deleteCookie("accessToken");
+        deleteCookie("refreshToken");
+        deleteCookie("userRole");
+      },
+      children: [React.createElement(LogOut, { key: "icon", className: "h-4 w-4" }), "Logout"],
+    },
+  },
+];

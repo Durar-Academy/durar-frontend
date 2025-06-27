@@ -111,3 +111,53 @@ export const setPasswordFormSchema = z
     message: "Passwords don't match",
     path: ["confirmPassword"],
   });
+
+export const updateFormSchema = z.object({
+  title: z
+    .enum(TITLES, {
+      invalid_type_error: "Please select a valid title",
+    })
+    .optional(),
+
+  firstName: z.string().max(50, "First name cannot exceed 50 characters"),
+
+  middleName: z.string().max(50, "Middle name cannot exceed 50 characters").optional(),
+
+  lastName: z.string().max(50, "Last name cannot exceed 50 characters"),
+
+  gender: z
+    .enum(GENDERS, {
+      invalid_type_error: "Please select a gender",
+    })
+    .optional(),
+
+  dialingCode: z
+    .string({
+      invalid_type_error: "Please select a dialing code",
+    })
+    .refine((value) => DAILING_CODES.includes(value), {
+      message: "Please select a dialing code",
+    })
+    .optional()
+    .or(z.literal("")),
+
+  phoneNumber: z
+    .string()
+    .regex(/^\d+$/, "Phone number must contain only digits")
+    .optional()
+    .or(z.literal("")),
+
+  country: z
+    .string({
+      invalid_type_error: "Please select a country",
+    })
+    .refine((value) => COUNTRIES.includes(value), {
+      message: "Please select a country",
+    })
+    .optional()
+    .or(z.literal("")),
+
+  email: z.string().email("Invalid Email!").optional().or(z.literal("")),
+
+  profileImage: z.any().optional(),
+});
