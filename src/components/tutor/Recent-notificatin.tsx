@@ -1,0 +1,89 @@
+// import Image from "next/image";
+// import React from "react";
+
+// const RecentNotificatin = () => {
+//   const RecentNotifionData = [
+//     "New Students Enrolled",
+//     "Assignment Submitted",
+//     "Message from Administration",
+//     "Missed a class",
+//     "New Students Enrolled",
+//   ];
+//   return (
+//     <div className="flex flex-col gap-4">
+//       <header className="flex items-center gap-3 pb-2">
+//         <Image
+//           src={"/SVGs/plainBell.svg"}
+//           alt="Bell Icon"
+//           width={24}
+//           height={24}
+//         />
+//         <h1 className="font-semibold">Recent Notifications</h1>
+//       </header>
+
+//       {RecentNotifionData.map((notification, i) => (
+//         <div key={i} className="flex items-center gap-2 hover:underline">
+//           <Image
+//             className="p-2 bg-orange/25 rounded-full"
+//             src={"/SVGs/plainBell.svg"}
+//             alt="bell Icon"
+//             width={32}
+//             height={32}
+//           />
+//           <p className="text-high">{notification}</p>
+//         </div>
+//       ))}
+//     </div>
+//   );
+// };
+
+// export default RecentNotificatin;
+
+"use client";
+import Image from "next/image";
+import { useTutorActivity } from "@/hooks/tutorQueries";
+import { processTutorActivity } from "@/utils/tutorProcessor";
+import { Skeleton } from "@/components/ui/skeleton";
+
+const RecentNotificatin = () => {
+  const { data: activityData, isLoading } = useTutorActivity();
+  const notifications = processTutorActivity(activityData);
+
+  return (
+    <div className="flex flex-col gap-4">
+      <header className="flex items-center gap-3 pb-2">
+        <Image
+          src="/SVGs/plainBell.svg"
+          alt="Bell Icon"
+          width={24}
+          height={24}
+        />
+        <h1 className="font-semibold">Recent Notifications</h1>
+      </header>
+
+      {isLoading ? (
+        <Skeleton className="w-full h-[150px] rounded-xl" />
+      ) : notifications.length === 0 ? (
+        <p className="text-sm text-gray-500">No notifications available</p>
+      ) : (
+        notifications.map((notification) => (
+          <div
+            key={notification.id}
+            className="flex items-center gap-2 hover:underline"
+          >
+            <Image
+              className="p-2 bg-orange/25 rounded-full"
+              src="/SVGs/plainBell.svg"
+              alt="Bell Icon"
+              width={32}
+              height={32}
+            />
+            <p className="text-high">{notification.context}</p>
+          </div>
+        ))
+      )}
+    </div>
+  );
+};
+
+export default RecentNotificatin;

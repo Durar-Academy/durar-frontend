@@ -18,7 +18,7 @@ export function SelectComponent({ options }: SelectComponentProps) {
 
   let selectValue;
 
-  if (pathname.includes("/admin/students") || pathname.includes("/admin/tutors")) {
+  if (pathname.includes("/tutor/students") || pathname.includes("/admin/tutors")) {
     selectValue = pathname.split("/").slice(0, 3).join("/");
   } else selectValue = undefined;
 
