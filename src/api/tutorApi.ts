@@ -5,7 +5,7 @@ export const tutorApi = {
     const response = await axiosInstance.get("/metrics/tutordashboard", {
       signal: options?.signal,
     });
-    return response.data.data as TutorsMetrics;
+    return response.data.data as DashboardTutorsMetrics;
   },
   getTutorDashboard: async (options?: { signal?: AbortSignal }) => {
     const response = await axiosInstance.get("/metrics/tutordashboard", {

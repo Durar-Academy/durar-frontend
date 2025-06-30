@@ -8,11 +8,29 @@ import { useCurrentUser } from "@/hooks/useAccount";
 import { useTutorMetrics } from "@/hooks/tutorQueries";
 import { processTutorDashboardMetrics } from "@/utils/tutorProcessor";
 
+// Map TutorsMetrics to TutorsMetrics2
+function mapTutorsMetricsToTutorsMetrics2(
+  metrics?: DashboardTutorsMetrics
+): TutorsMetrics2 {
+  return {
+    totalCourses: metrics?.totalCourses ?? 0,
+    totalStudents: metrics?.totalStudents ?? 0,
+    totalAssignments: metrics?.totalAssignments ?? 0, // or another appropriate field
+    totalEarnings: metrics?.totalEarnings,
+    pendingEarnings: metrics?.pendingEarnings,
+    avgCourseRating: metrics?.avgCourseRating,
+    totalStudentsTaught: metrics?.totalStudentsTaught,
+    totalClasses: metrics?.totalAssignments,
+  };
+}
+
 const Page = () => {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: metrics, isLoading: metricsLoading } = useTutorMetrics();
 
-  const dashboardMetrics = processTutorDashboardMetrics(metrics);
+  const dashboardMetrics = processTutorDashboardMetrics(
+    mapTutorsMetricsToTutorsMetrics2(metrics)
+  );
 
   return (
     <section className="flex flex-col gap-3">
@@ -31,7 +49,12 @@ const Page = () => {
         ) : (
           <div className="grid grid-cols-3 gap-[18px]">
             {dashboardMetrics.map((stat, i) => (
-              <TutorStatCard i={i} key={i} {...stat} />
+              <TutorStatCard
+                key={i}
+                title={stat.title}
+                value={stat.value}
+                icon={stat.icon}
+              />
             ))}
           </div>
         )}
