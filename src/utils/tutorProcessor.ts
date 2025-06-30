@@ -30,6 +30,7 @@ export const processUpcomingClasses = (dashboardData?: TutorsDashboard): ClassIt
         student: schedule.studentName,
         category: schedule.category || "Uncategorized",
         time: schedule.time,
+        status: schedule.status || "Scheduled", // Add status, default to 'Scheduled'
     }));
 };
 

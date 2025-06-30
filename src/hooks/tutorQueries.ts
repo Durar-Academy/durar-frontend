@@ -19,7 +19,7 @@ export const useTutorStudents = ({ page = 1 }: { page?: number }) => {
   return useQuery({
     queryKey: ["tutor-students", page],
     queryFn: () => tutorApi.getTutorStudents({ page }),
-    keepPreviousData: true, // Maintain data while fetching new page
+    placeholderData: (prev) => prev, // Maintain data while fetching new page
   });
 };
 
@@ -27,7 +27,7 @@ export const useTutorClasses = ({ page = 1 }: { page?: number }) => {
   return useQuery({
     queryKey: ["tutor-classes", page],
     queryFn: () => tutorApi.getTutorClasses({ page }),
-    keepPreviousData: true,
+    placeholderData: (prev) => prev,
   });
 };
 
@@ -35,7 +35,7 @@ export const useTutorAssignments = ({ page = 1 }: { page?: number }) => {
   return useQuery({
     queryKey: ["tutor-assignments", page],
     queryFn: () => tutorApi.getTutorAssignments({ page }),
-    keepPreviousData: true,
+    placeholderData: (prev) => prev,
   });
 };
 
@@ -66,6 +66,6 @@ export const useStudentActivity = ({
     queryKey: ["student-activity", userId, page],
     queryFn: () => tutorApi.getStudentActivity({ userId, page }),
     enabled: !!userId,
-    keepPreviousData: true,
+    placeholderData: (prev) => prev,
   });
 };

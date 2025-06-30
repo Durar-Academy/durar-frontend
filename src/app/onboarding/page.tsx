@@ -10,13 +10,36 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
 
+// Explicitly define FormData type
+type FormData = {
+  title: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  dob: string;
+  email: string;
+  gender: string;
+  phone: string;
+  specializationAndSkill: string;
+  language: string;
+  documents: string[];
+  address: string;
+  city: string;
+  state: string;
+  country: string;
+  password: string;
+  paymentMode: string;
+  bankAccountDetails: string;
+  agreedToTerms: boolean;
+};
+
 const Page = () => {
   const router = useRouter();
   const [progress, setProgress] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Form data state to collect information across all steps
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     title: "",
     firstName: "",
     middleName: "",
@@ -39,7 +62,7 @@ const Page = () => {
   });
 
   // Update form data from any step
-  const updateFormData = (newData: Partial<typeof formData>) => {
+  const updateFormData = (newData: Partial<FormData>) => {
     setFormData((prev) => ({ ...prev, ...newData }));
   };
 
