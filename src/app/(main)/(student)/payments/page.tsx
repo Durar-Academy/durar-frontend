@@ -9,14 +9,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useCurrentUser } from "@/hooks/useAccount";
 import { processPayments } from "@/utils/processor";
 
-import { mockPayments } from "@/data/mockData";
+// import { mockPayments } from "@/data/mockData";
 import { usePayments } from "@/hooks/useStudent";
 
 export default function PaymentsPage() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: payments, isLoading: paymentsLoading } = usePayments();
 
-  const allPayments = processPayments(mockPayments);
+  const allPayments = processPayments(payments);
   const pendingPayments = allPayments.filter((payment) => payment.status === "pending");
 
   return (

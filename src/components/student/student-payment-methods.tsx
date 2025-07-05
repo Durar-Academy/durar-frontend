@@ -89,7 +89,10 @@ export function StudentPaymentMethods({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="w-[500px]">
+      <DialogContent
+        className="w-[500px] h-4/5 overflow-y-scroll hide-scrollbar"
+        onOpenAutoFocus={(e) => e.preventDefault()}
+      >
         <DialogHeader>
           <DialogTitle>Choose Payment Method</DialogTitle>
           <DialogDescription>Select a payment option to continue</DialogDescription>

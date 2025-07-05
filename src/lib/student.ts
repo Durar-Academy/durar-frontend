@@ -40,3 +40,21 @@ export async function getPaymentMethods(options?: { signal?: AbortSignal }) {
   });
   return response.data;
 }
+
+export async function addCard(payload: {
+  type: string;
+  provider: string;
+  name: string;
+  billingAddress: {
+    addressLine1: string;
+    adminArea1: string;
+    postalCode: string;
+    countryCode: string;
+    city: string;
+  };
+  cardNumber: string;
+  expiry: string;
+}) {
+  const response = await axiosInstance.post(`/payment/initialize`, payload);
+  return response.data;
+}
