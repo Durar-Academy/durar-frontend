@@ -1,3 +1,4 @@
+import { DatePicker } from "@/components/ui/date-picker";
 import {
   Select,
   SelectContent,
@@ -5,7 +6,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { DatePicker } from "@/components/ui/date-picker";
 import {
   Table,
   TableBody,
@@ -15,14 +15,33 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { PAYMENT_STATUSES } from "@/data/constants";
 import { cn } from "@/lib/utils";
 import { formatAmount, formatToReadableId } from "@/utils/formatter";
-import { PAYMENT_STATUSES } from "@/data/constants";
 import { Download, RefreshCw, Wallet } from "lucide-react";
+import { useState } from "react";
+import { AddNewCard } from "./add-new-card";
+import { StudentPaymentMethods } from "./student-payment-methods";
+import { usePaymentMethods } from "@/hooks/useStudent";
 
 export function PaymentsTable({ payments }: { payments: PaymentsTableProps }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [isAddNew, setIsAddNew] = useState(false);
+
+  const { data: methods } = usePaymentMethods();
+
+  const cardsFromBackend =
+    methods && methods.length > 0
+      ? methods.map((method) => ({
+          id: method.id,
+          last4: method.last4,
+          cardType: method.cardType.trim(),
+          preferred: method.preferred,
+        }))
+      : [];
+
   return (
-    <div className="p-6 dashboard-shadow rounded-xl bg-white h-full">
+    <div className="p-6 dashboard-shadow rounded-xl bg-white h-full w-full">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-base text-high font-semibold">Payment History</h3>
 
@@ -94,6 +113,7 @@ export function PaymentsTable({ payments }: { payments: PaymentsTableProps }) {
                     <button
                       className="font-bold text-white bg-orange hover:bg-burnt
                       rounded-lg py-2 px-4 flex items-center justify-center gap-2 transition-colors"
+                      onClick={() => setIsOpen(true)}
                     >
                       Pay
                       <Wallet className="w-5 h-5 text-white" />
@@ -125,6 +145,15 @@ export function PaymentsTable({ payments }: { payments: PaymentsTableProps }) {
           </TableBody>
         </Table>
       </div>
+
+      <StudentPaymentMethods
+        open={isOpen}
+        onOpenChange={() => setIsOpen(false)}
+        addNew={() => setIsAddNew(true)}
+        cardsFromBackend={cardsFromBackend}
+      />
+
+      <AddNewCard open={isAddNew} onOpenChange={() => setIsAddNew(false)} />
     </div>
   );
 }

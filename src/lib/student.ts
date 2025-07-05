@@ -26,3 +26,17 @@ export async function getAssignments(options?: { signal?: AbortSignal }) {
   });
   return response.data.data.records;
 }
+
+export async function getPayments(options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get("/payment", {
+    signal: options?.signal,
+  });
+  return response.data.data.records;
+}
+
+export async function getPaymentMethods(options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get("/payment-method", {
+    signal: options?.signal,
+  });
+  return response.data;
+}

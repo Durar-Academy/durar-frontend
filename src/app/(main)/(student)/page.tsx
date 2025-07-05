@@ -93,7 +93,7 @@ export default function StudentPage() {
           ) : (
             <div className="overflow-y-auto max-h-40 hide-scrollbar">
               <div className="flex flex-col gap-3">
-                {assignments.map((assignment: Assignment) => (
+                {assignments?.map((assignment: Assignment) => (
                   <AssignmentListItem
                     key={assignment.id + assignment.title}
                     id={assignment.id}

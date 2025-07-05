@@ -657,6 +657,19 @@ type Schedule = {
   user: Tutor;
 };
 
+type PaymentMethod = {
+  id: string;
+  userId: string;
+  last4: string;
+  cardType: string;
+  expMonth: number;
+  expYear: number;
+  preferred: boolean;
+  provider: string;
+  updatedAt: string;
+  createdAt: string;
+};
+
 type PaymentsPageTableProps = {
   id: string;
   firstName: string;
@@ -774,9 +787,6 @@ type CourseCardProps = {
   id: string;
 };
 
-
-
-
 // Tutor Types starts here
 interface TopBarProps {
   children: React.ReactNode;
@@ -829,7 +839,7 @@ type TutorsDashboard = {
     time: string;
     day: string;
   }[];
-}
+};
 
 interface ClassItem {
   day: string;
@@ -838,7 +848,6 @@ interface ClassItem {
   time: string;
   status: string;
 }
-
 
 interface TutorStudentsResponse {
   records: {
@@ -876,8 +885,6 @@ interface StudentTableProps {
   page: number;
   setPage: (page: number) => void;
 }
-
-
 
 interface TutorClassesResponse {
   records: {
