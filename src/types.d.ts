@@ -1080,3 +1080,54 @@ interface ActivityItem {
   context: string;
   createdAt: string;
 }
+
+type RecipientType = "all_students" | "all_tutors" | "selected_users" | "users";
+
+type NotificationMedia = {
+  id: string;
+  fileType: string; // e.g. 'image'
+  fileName: string;
+  storageId: string;
+  src: string;
+  width: number;
+  height: number;
+  alt: string | null;
+  size: number;
+  deletedAt: Date | null;
+  updatedAt: Date;
+  createdAt: Date;
+  tutorId: string;
+};
+
+type NotificationCreator = {
+  id: string;
+  firstName: string | null;
+  lastName: string | null;
+  email: string;
+};
+
+type Notification = {
+  id: string;
+  title: string;
+  content: string;
+  mediaId: string;
+  recipientType: RecipientType;
+  createdById: string;
+  deletedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+  media: NotificationMedia;
+  createdBy: NotificationCreator;
+};
+
+type UserNotification = {
+  id: string;
+  notificationId: string;
+  userId: string;
+  isRead: boolean;
+  readAt: Date | null;
+  deletedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+  notification: Notification;
+};

@@ -1,16 +1,17 @@
 import { deleteCookie } from "cookies-next";
 import {
   Bell,
+  BellIcon,
   BookText,
   Columns2,
   Grid2X2,
+  Layers,
+  Layers2,
   LogOut,
+  PanelsTopLeft,
   Settings,
   Table2,
   Wallet,
-  Layers2,
-  PanelsTopLeft,
-  Layers,
 } from "lucide-react";
 import React from "react";
 
@@ -395,6 +396,18 @@ export const STUDENT_SIDEBAR_LINKS: ComponentConfig[] = [
       children: [
         React.createElement(Wallet, { key: "icon", className: "h-4 w-4" }),
         "Payment History",
+      ],
+    },
+  },
+
+  {
+    type: "link",
+    component: LinkComponent,
+    props: {
+      href: "/notifications",
+      children: [
+        React.createElement(BellIcon, { key: "icon", className: "h-4 w-4" }),
+        "Notifications",
       ],
     },
   },

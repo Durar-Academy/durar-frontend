@@ -58,3 +58,24 @@ export async function addCard(payload: {
   const response = await axiosInstance.post(`/payment/initialize`, payload);
   return response.data;
 }
+
+export async function getNotifications(options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get("/notification/my", {
+    signal: options?.signal,
+  });
+  return response.data.data.data;
+}
+
+export async function getNotification(notificationId: string, options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get(`/notification/my/${notificationId}`, {
+    signal: options?.signal,
+  });
+  return response.data;
+}
+
+export async function markAsRead(notificationId: string, options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.patch(`/notification/${notificationId}/read`, {
+    signal: options?.signal,
+  });
+  return response.data;
+}
