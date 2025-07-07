@@ -1,16 +1,25 @@
 "use client";
 
+import { EditNotificationDialog } from "@/components/admin/edit-notification-dialog";
+import { getRecipientLabel } from "@/components/admin/notifications-table";
 import { TopBar } from "@/components/shared/top-bar";
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useCurrentUser } from "@/hooks/useAccount";
-import { markAsRead } from "@/lib/student";
-import axios from "axios";
+
 import { format } from "date-fns";
-import { CalendarIcon, CheckIcon, ChevronRight, EyeIcon, FileIcon } from "lucide-react";
+import {
+  CalendarIcon,
+  ChevronRight,
+  Edit,
+  EyeIcon,
+  FileIcon,
+  Trash2Icon,
+  UserIcon,
+} from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
 import { useState } from "react";
-import toast from "react-hot-toast";
+// import { useParams } from "next/navigation";
 
 const notification = {
   id: "cmce0j0ep0006v68wapwou4j9",
@@ -56,9 +65,9 @@ const notification = {
 };
 
 export default function SingleNotificationPage() {
-  const { notificationId } = useParams();
+  // const { notificationId } = useParams();
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
-  const [isMarking, setIsMarking] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
 
   // console.log(notificationId);
 
@@ -66,31 +75,6 @@ export default function SingleNotificationPage() {
   //   notificationId as string,
   // );
   // console.log(notification, "notification");
-
-  const onSubmit = async () => {
-    try {
-      setIsMarking(true);
-
-      const response = await markAsRead(notificationId as string);
-      console.log("Mark as Read", response.data);
-
-      toast.success(response?.message || "Marked as Read!");
-    } catch (error) {
-      console.error("Mark as Read", error);
-
-      let message = "Failed to mark as read. Please try again.";
-
-      if (axios.isAxiosError(error)) {
-        message = error.response?.data?.message || error.message || message;
-      } else if (error instanceof Error) {
-        message = error.message;
-      }
-
-      toast.error(message);
-    } finally {
-      setIsMarking(false);
-    }
-  };
 
   return (
     <section className="flex flex-col gap-5">
@@ -111,21 +95,39 @@ export default function SingleNotificationPage() {
           </TopBar>
         )}
       </div>
-      <div className="bg-white p-4 rounded-xl border border-shade-2  flex justify-between items-center">
-        <p className="flex items-center gap-1 text-low">
-          <CalendarIcon className="size-5 text-shade-3" />
-          Recieved on {format(new Date(notification.createdAt), "PPpp")}
-        </p>
 
-        <button
-          className="text-sm text-white bg-orange hover:bg-burnt  px-3 py-2 text-center w-fit font-medium rounded-xl flex gap-1"
-          disabled={isMarking}
-          onClick={onSubmit}
-        >
-          <CheckIcon className="size-5" />
-          Mark as Read
-        </button>
+      <div className="bg-white p-4 rounded-xl border border-shade-2  flex justify-between items-center">
+        <div className="flex flex-col gap-2">
+          <p className="flex items-center gap-1 text-low">
+            <CalendarIcon className="size-5 text-shade-3" />
+            Sent on {format(new Date(notification.createdAt), "PPpp")}
+          </p>
+          <p className="flex items-center gap-1 text-low">
+            <UserIcon className="size-5 text-shade-3" />
+            Sent to {getRecipientLabel(notification.notification.recipientType)}
+          </p>
+        </div>
+
+        <div className="flex gap-2">
+          <Button
+            variant={"_outline"}
+            className="text-danger bg-white rounded-xl py-2 px-4 h-10 hover:bg-offwhite"
+          >
+            <Trash2Icon className="w-5 h-5 text-inherit" />
+            <span>Delete</span>
+          </Button>
+
+          <Button
+            variant={"_outline"}
+            className="text-orange bg-white rounded-xl py-2 px-4 h-10 hover:bg-offwhite"
+            onClick={() => setEditOpen(true)}
+          >
+            <Edit className="w-5 h-5 text-inherit" />
+            <span>Edit</span>
+          </Button>
+        </div>
       </div>
+
       <div className="bg-white p-4 rounded-xl border border-shade-2 ">
         <h1 className="mb-4 font-medium text-base">Notification Content</h1>
 
@@ -143,6 +145,12 @@ export default function SingleNotificationPage() {
           <EyeIcon className="text-orange h-6 w-6" />
         </Link>
       </div>
+
+      <EditNotificationDialog
+        open={editOpen}
+        notification={notification.notification}
+        onOpenChange={() => setEditOpen(false)}
+      />
     </section>
   );
 }

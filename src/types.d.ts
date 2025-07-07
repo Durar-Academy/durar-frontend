@@ -1094,8 +1094,8 @@ type NotificationMedia = {
   alt: string | null;
   size: number;
   deletedAt: Date | null;
-  updatedAt: Date;
-  createdAt: Date;
+  updatedAt: Date | string;
+  createdAt: Date | string;
   tutorId: string;
 };
 
@@ -1106,16 +1106,16 @@ type NotificationCreator = {
   email: string;
 };
 
-type Notification = {
+type _Notification = {
   id: string;
   title: string;
   content: string;
   mediaId: string;
-  recipientType: RecipientType;
+  recipientType: RecipientType | string;
   createdById: string;
   deletedAt: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt: Date | string;
+  updatedAt: Date | string;
   media: NotificationMedia;
   createdBy: NotificationCreator;
 };
@@ -1127,7 +1127,14 @@ type UserNotification = {
   isRead: boolean;
   readAt: Date | null;
   deletedAt: Date | null;
-  createdAt: Date;
-  updatedAt: Date;
-  notification: Notification;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  notification: _Notification;
+};
+
+type NotificationMetrics = {
+  totalNotifications: number;
+
+  readRate: number;
+  activeRecipients: number;
 };

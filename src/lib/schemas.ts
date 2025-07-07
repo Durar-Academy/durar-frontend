@@ -161,3 +161,15 @@ export const updateFormSchema = z.object({
 
   profileImage: z.any().optional(),
 });
+
+export const notificationFormSchema = z.object({
+  title: z.string().min(1, { message: "Title is required." }),
+  content: z.string().min(1, { message: "Content is required." }),
+  recipientType: z
+    .enum(["all_students", "all_tutors", "selected_users", "users"])
+    .nullable()
+    .refine((val) => val !== null, {
+      message: "Please select a recipient type.",
+    }),
+  file: z.custom<File | null>().optional().nullable(),
+});
