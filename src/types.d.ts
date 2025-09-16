@@ -1030,7 +1030,7 @@ interface TutorActivityResponse {
   };
 }
 
-interface NotificationItem {
+interface ActivityNotificationItem {
   id: string;
   context: string;
   createdAt: string;
@@ -1072,4 +1072,248 @@ interface ActivityItem {
   id: string;
   context: string;
   createdAt: string;
+}
+
+interface TutorPaymentsResponse {
+  records: {
+    id: string;
+    amount: number;
+    currency: string;
+    provider: string;
+    reference: string;
+    refundReference: string | null;
+    chargeId: string;
+    status: string;
+    metadata: Record<string, unknown> | null;
+    deletedAt: string | null;
+    createdAt: string;
+    updatedAt: string;
+    charge: {
+      id: string;
+      userId: string;
+      amount: number;
+      debitType: string;
+      totalPaid: number;
+      amountRefunded: number;
+      processingAmount: number;
+      chargeAttempt: number;
+      dueAt: string;
+      isVoid: boolean;
+      billingPlanId: string | null;
+      memo: string;
+      deletedAt: string | null;
+      createdAt: string;
+      updatedAt: string;
+      user: {
+        id: string;
+        email: string;
+        title: string | null;
+        firstName: string | null;
+        lastName: string | null;
+        middleName: string | null;
+        gender: string;
+        phone: string | null;
+        country: string | null;
+        emailVerifiedAt: string | null;
+        status: string;
+        lastLoginAt: string | null;
+        role: string;
+        profilePictureId: string | null;
+        paypalCustomerId: string | null;
+        paypalCardCustomerId: string | null;
+        deletedAt: string | null;
+        createdAt: string;
+        updatedAt: string;
+      };
+    };
+  }[];
+  metaData: {
+    page: number;
+    perPage: number;
+    pageCount: number;
+    totalCount: number;
+    hasPreviousPages: boolean;
+    hasNextPages: boolean;
+    links: {
+      number: number;
+      url: string;
+    }[];
+  };
+}
+
+interface StudentNotesResponse {
+  records: {
+    id: string;
+    title: string;
+    content: string;
+    status: string;
+    createdById: string;
+    studentId: string;
+    updatedById: string;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: string | null;
+    createdBy: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+    };
+    updatedBy: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+    };
+  }[];
+  metaData: {
+    page: number;
+    perPage: number;
+    pageCount: number;
+    totalCount: number;
+    hasPreviousPages: boolean;
+    hasNextPages: boolean;
+    links: {
+      number: number;
+      url: string;
+    }[];
+  };
+}
+
+interface TutorNotificationsResponse {
+  data: {
+    id: string;
+    notificationId: string;
+    userId: string;
+    isRead: boolean;
+    readAt: string | null;
+    deletedAt: string | null;
+    createdAt: string;
+    updatedAt: string;
+    notification: {
+      id: string;
+      title: string;
+      content: string;
+      mediaId: string;
+      recipientType: string;
+      createdById: string;
+      deletedAt: string | null;
+      createdAt: string;
+      updatedAt: string;
+      media: {
+        id: string;
+        fileType: string;
+        fileName: string;
+        storageId: string;
+        src: string;
+        width: number;
+        height: number;
+        alt: string | null;
+        size: number;
+        deletedAt: string | null;
+        updatedAt: string;
+        createdAt: string;
+        tutorId: string | null;
+      };
+      createdBy: {
+        id: string;
+        firstName: string | null;
+        lastName: string | null;
+        email: string;
+      };
+    };
+  }[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+  };
+}
+
+interface TutorTimetableResponse {
+  records: {
+    id: string;
+    day: string;
+    start: string;
+    end: string;
+    courseId: string;
+    status: string;
+    userId: string;
+    studentId: string;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: string | null;
+    course: {
+      id: string;
+      title: string;
+      description: string;
+      thumbnailId: string | null;
+      status: string;
+      language: string | null;
+      category: string | null;
+      difficultyLevel: string | null;
+      enableCertification: boolean;
+      trackProgress: boolean;
+      enableComments: boolean;
+      additionalNotes: string | null;
+      prerequisites: any[];
+      createdById: string;
+      deletedAt: string | null;
+      createdAt: string;
+      updatedAt: string;
+    };
+    user: {
+      id: string;
+      email: string;
+      title: string;
+      firstName: string;
+      lastName: string;
+      middleName: string;
+      gender: string;
+      phone: string;
+      country: string;
+      emailVerifiedAt: string;
+      status: string;
+      lastLoginAt: string;
+      role: string;
+      profilePictureId: string | null;
+      paypalCustomerId: string | null;
+      paypalCardCustomerId: string | null;
+      deletedAt: string | null;
+      createdAt: string;
+      updatedAt: string;
+    };
+  }[];
+  metaData: {
+    page: number;
+    perPage: number;
+    pageCount: number;
+    totalCount: number;
+    hasPreviousPages: boolean;
+    hasNextPages: boolean;
+    links: {
+      number: number;
+      url: string;
+    }[];
+  };
+}
+
+interface TimetableEntry {
+  period: string;
+  schedule: {
+    [day: string]: {
+      teacher: string;
+      profileLink: string;
+    };
+  };
+}
+
+interface NotificationItem {
+  id: string;
+  title: string;
+  content: string;
+  date: string;
+  status: "Read" | "Unread";
+  sender: string;
+  mediaUrl?: string | null;
 }

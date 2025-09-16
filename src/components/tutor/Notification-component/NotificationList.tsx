@@ -2,20 +2,21 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import Link from "next/link";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import { EyeIcon } from "lucide-react";
 
 interface notification {
+  id: string;
   title: string;
-  allStudents: string;
+  content: string;
   date: string;
-  status: "Sent" | "Failed";
+  status: "Read" | "Unread";
+  sender: string;
+  mediaUrl?: string | null;
 }
 
 interface notificationTableProps {
@@ -26,41 +27,19 @@ export default function NotificaitionList({
   notifications,
 }: notificationTableProps) {
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"All" | "Sent" | "Failed">(
+  const [statusFilter, setStatusFilter] = useState<"All" | "Read" | "Unread">(
     "All"
   );
 
   const filterednotifications = notifications.filter((notification) => {
     const matchesSearch =
-      notification.title.toLowerCase().includes(search.toLowerCase()) ||
-      notification.date.toLowerCase().includes(search.toLowerCase());
+      notification.title?.toLowerCase().includes(search.toLowerCase()) ||
+      notification.content?.toLowerCase().includes(search.toLowerCase()) ||
+      notification.date?.toLowerCase().includes(search.toLowerCase());
     const matchesStatus =
       statusFilter === "All" || notification.status === statusFilter;
     return matchesSearch && matchesStatus;
   });
-
-  const exportToCSV = () => {
-    const headers = ["Title", "All Students", "Date", "Status"];
-    const rows = filterednotifications.map((notification) => [
-      notification.title,
-      notification.allStudents,
-      notification.date,
-      notification.status,
-    ]);
-
-    const csvContent = [headers, ...rows]
-      .map((e) => e.map((field) => `"${field}"`).join(","))
-      .join("\n");
-
-    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", "notification_list.csv");
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
 
   return (
     <div className="space-y-4">
@@ -93,26 +72,14 @@ export default function NotificaitionList({
             <DropdownMenuItem onClick={() => setStatusFilter("All")}>
               All
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setStatusFilter("Sent")}>
-              Sent
+            <DropdownMenuItem onClick={() => setStatusFilter("Read")}>
+              Read
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setStatusFilter("Failed")}>
-              Missed
+            <DropdownMenuItem onClick={() => setStatusFilter("Unread")}>
+              Unread
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
-        <button
-          onClick={exportToCSV}
-          className="flex gap-3 text-sm text-orange border-[1px] border-orange p-3 rounded-lg justify-center items-center"
-        >
-          Export Report
-          <Image
-            src={"/SVGs/exportImg.svg"}
-            alt="export icon"
-            width={16}
-            height={16}
-          />
-        </button>
       </div>
 
       <div className="overflow-x-auto">
@@ -120,50 +87,40 @@ export default function NotificaitionList({
           <thead>
             <tr className="text-low text-sm text-left">
               <th className="py-3 px-4 font-semibold">Title</th>
-              <th className="py-3 px-4 font-semibold">All Students</th>
+              <th className="py-3 px-4 font-semibold">Content</th>
+              <th className="py-3 px-4 font-semibold">Sender</th>
               <th className="py-3 px-4 font-semibold">Date</th>
               <th className="py-3 px-4 font-semibold">Status</th>
-              <th className="py-3 px-4 font-semibold">Action</th>
             </tr>
           </thead>
           <tbody>
             {filterednotifications.map((notification, index) => (
               <tr
-                key={index}
+                key={notification.id}
                 className="border-[1px] bg-[#F8F8FA] border-[#D2D4E0] mt-3"
               >
                 <td className="text-sm py-4 pl-3 border-[1px] border-[#D2D4E0] rounded-l-xl border-r-0">
                   {notification.title}
                 </td>
+                <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0] max-w-xs truncate">
+                  {notification.content}
+                </td>
                 <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0]">
-                  {notification.allStudents}
+                  {notification.sender}
                 </td>
                 <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0]">
                   {notification.date}
                 </td>
-                <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0]">
+                <td className="text-sm py-4 border-[1px] border-[#D2D4E0] border-l-0 rounded-r-xl">
                   <span
                     className={
-                      notification.status === "Sent"
+                      notification.status === "Read"
                         ? "text-light-green"
-                        : "text-red-500"
+                        : "text-orange"
                     }
                   >
                     {notification.status}
                   </span>
-                </td>
-
-                <td className="flex items-center text-sm py-4 border-[1px] border-[#D2D4E0] border-l-0 rounded-r-xl text-orange cursor-pointer hover:underline">
-                  <Link href="/tutor/notification/notification-details">
-                    <EyeIcon />
-                  </Link>
-                  <Image
-                    className="ml-2"
-                    src={"/SVGs/delete.svg"}
-                    alt="Eye Icon"
-                    height={24}
-                    width={24}
-                  />
                 </td>
               </tr>
             ))}

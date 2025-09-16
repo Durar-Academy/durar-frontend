@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation } from "@tanstack/react-query";
 import { tutorApi } from "@/api/tutorApi";
 
 export const useTutorMetrics = () => {
@@ -66,6 +66,45 @@ export const useStudentActivity = ({
     queryKey: ["student-activity", userId, page],
     queryFn: () => tutorApi.getStudentActivity({ userId, page }),
     enabled: !!userId,
+    placeholderData: (prev) => prev,
+  });
+};
+
+export const useTutorPayments = ({ page = 1 }: { page?: number }) => {
+  return useQuery({
+    queryKey: ["tutor-payments", page],
+    queryFn: () => tutorApi.getTutorPayments({ page }),
+    placeholderData: (prev) => prev,
+  });
+};
+
+export const useStudentNotes = ({ studentId, page = 1 }: { studentId: string; page?: number }) => {
+  return useQuery({
+    queryKey: ["student-notes", studentId, page],
+    queryFn: ({ signal }) => tutorApi.getStudentNotes({ studentId, page, signal }),
+    enabled: !!studentId,
+    placeholderData: (prev) => prev,
+  });
+};
+
+export const useAddStudentNote = () => {
+  return useMutation({
+    mutationFn: tutorApi.addStudentNote,
+  });
+};
+
+export const useTutorNotifications = ({ page = 1 }: { page?: number }) => {
+  return useQuery({
+    queryKey: ["tutor-notifications", page],
+    queryFn: () => tutorApi.getTutorNotifications({ page }),
+    placeholderData: (prev) => prev,
+  });
+};
+
+export const useTutorTimetable = ({ page = 1 }: { page?: number }) => {
+  return useQuery({
+    queryKey: ["tutor-timetable", page],
+    queryFn: () => tutorApi.getTutorTimetable({ page }),
     placeholderData: (prev) => prev,
   });
 };

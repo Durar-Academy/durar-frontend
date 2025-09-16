@@ -1,78 +1,19 @@
-import { useRef, useState, useEffect } from "react";
+import { useRef } from "react";
 import { toPng } from "html-to-image";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-
-type TimetableEntry = {
-  period: string;
-  schedule: {
-    [day: string]: {
-      teacher: string;
-      profileLink: string;
-    };
-  };
-};
+import { useTutorTimetable } from "@/hooks/tutorQueries";
+import { processTutorTimetable } from "@/utils/tutorProcessor";
 
 export default function QuranTimetable() {
   const tableRef = useRef<HTMLDivElement>(null);
 
-  const [timetable, setTimetable] = useState<TimetableEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const { data: timetableData, isLoading: loading, error: queryError } = useTutorTimetable({});
+  
+  const timetable = processTutorTimetable(timetableData);
+  const error = queryError ? "Failed to load timetable. Please try again." : "";
 
   const days = ["Monday", "Wednesday", "Friday", "Saturday", "Sunday"];
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-
-        // Simulate fetching data
-        const data: TimetableEntry[] = [
-          {
-            period: "7:00 - 8:00",
-            schedule: {
-              Monday: { teacher: "Akeem Adam", profileLink: "#" },
-              Wednesday: { teacher: "Akeem Adam", profileLink: "#" },
-              Friday: { teacher: "Akeem Adam", profileLink: "#" },
-              Saturday: { teacher: "Akeem Adam", profileLink: "#" },
-              Sunday: { teacher: "Akeem Adam", profileLink: "#" },
-            },
-          },
-          {
-            period: "8:00 - 9:00",
-            schedule: {
-              Monday: { teacher: "Akeem Adam", profileLink: "#" },
-              Wednesday: { teacher: "Akeem Adam", profileLink: "#" },
-              Friday: { teacher: "Akeem Adam", profileLink: "#" },
-              Saturday: { teacher: "Akeem Adam", profileLink: "#" },
-              Sunday: { teacher: "Akeem Adam", profileLink: "#" },
-            },
-          },
-          {
-            period: "9:00 - 10:00",
-            schedule: {
-              Monday: { teacher: "Akeem Adam", profileLink: "#" },
-              Wednesday: { teacher: "Akeem Adam", profileLink: "#" },
-              Friday: { teacher: "Akeem Adam", profileLink: "#" },
-              Saturday: { teacher: "Akeem Adam", profileLink: "#" },
-              Sunday: { teacher: "Akeem Adam", profileLink: "#" },
-            },
-          },
-        ];
-
-        setTimetable(data);
-        setError("");
-      } catch (err) {
-        console.error(err);
-        setError("Failed to load timetable. Please try again.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   const handleDownload = async () => {
     if (tableRef.current) {
