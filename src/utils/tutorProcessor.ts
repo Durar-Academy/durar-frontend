@@ -93,7 +93,7 @@ export const processUserProfile = (userData?: UserProfileResponse): UserProfile 
     };
 };
 
-export const processTutorActivity = (activityData?: TutorActivityResponse): NotificationItem[] => {
+export const processTutorActivity = (activityData?: TutorActivityResponse): ActivityNotificationItem[] => {
     if (!activityData?.records) return [];
 
     return activityData.records
@@ -116,6 +116,20 @@ export const processStudentActivity = (activityData?: StudentActivityResponse): 
       createdAt: format(new Date(record.createdAt), "MMM d, yyyy"),
     }))
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+};
+
+export const processTutorNotifications = (notificationsData?: TutorNotificationsResponse): NotificationItem[] => {
+  if (!notificationsData?.data) return [];
+
+  return notificationsData.data.map((item) => ({
+    id: item.id,
+    title: item.notification.title,
+    content: item.notification.content,
+    date: new Date(item.createdAt).toLocaleDateString(),
+    status: item.isRead ? "Read" : "Unread" as "Read" | "Unread",
+    sender: item.notification.createdBy.email,
+    mediaUrl: item.notification.media?.src || null,
+  }));
 };
 
 // Returns metrics: total, completed, pending, overdue assignments as OverviewCardProps[]
@@ -153,3 +167,30 @@ export function processTutorAssignmentMetrics(assignments: AssignmentItem[]): Ov
         },
     ];
 }
+
+export const processTutorTimetable = (timetableData?: TutorTimetableResponse): TimetableEntry[] => {
+    if (!timetableData?.records) return [];
+
+    // Group by time periods and days
+    const timeSlots: { [key: string]: { [day: string]: any } } = {};
+    
+    timetableData.records.forEach((record) => {
+        const timeSlot = `${record.start} - ${record.end}`;
+        const day = record.day.charAt(0).toUpperCase() + record.day.slice(1); // Capitalize day
+        
+        if (!timeSlots[timeSlot]) {
+            timeSlots[timeSlot] = {};
+        }
+        
+        timeSlots[timeSlot][day] = {
+            teacher: `${record.user.firstName} ${record.user.lastName}`,
+            profileLink: `/tutor/students/profile/${record.user.id}`,
+        };
+    });
+
+    // Convert to TimetableEntry format
+    return Object.entries(timeSlots).map(([period, schedule]) => ({
+        period,
+        schedule,
+    }));
+};

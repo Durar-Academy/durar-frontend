@@ -58,7 +58,7 @@ const Page = () => {
         ) : active === 2 ? (
           <Assignment />
         ) : (
-          <CommentsNotes />
+          <CommentsNotes studentId={id} />
         )}
       </section>
     </section>

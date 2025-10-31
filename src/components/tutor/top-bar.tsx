@@ -12,10 +12,10 @@ export function Top_Bar({ children, subtext, user }: TopBarProps) {
   useEffect(() => {
     if (!user || pathname === "/onboarding") return;
 
-    const firstName = user.firstName?.trim();
-    const lastName = user.lastName?.trim();
+    const firstName = typeof user.firstName === "string" ? user.firstName.trim() : "";
+    const lastName = typeof user.lastName === "string" ? user.lastName.trim() : "";
 
-    if (!firstName || !lastName) {
+    if (firstName.length === 0 || lastName.length === 0) {
       router.push("/onboarding");
     }
   }, [user, router, pathname]);
