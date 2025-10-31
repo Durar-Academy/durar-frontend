@@ -11,6 +11,7 @@ import {
   getCourses,
   getCoursesMetrics,
   getMetrics,
+  getNotifications,
   getPayment,
   getPayments,
   getPaymentsMetrics,
@@ -248,5 +249,10 @@ export function useStudentAssignmentFeedbacks(assignmentId: string) {
     queryKey: ["single-assignment-students-feedbacks", assignmentId],
     queryFn: () => getStudentAssignmentFeedbacks(assignmentId),
   });
+  return query;
+}
+
+export function useNotifications() {
+  const query = useQuery({ queryKey: ["all-student-notifications"], queryFn: getNotifications });
   return query;
 }

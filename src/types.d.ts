@@ -657,6 +657,19 @@ type Schedule = {
   user: Tutor;
 };
 
+type PaymentMethod = {
+  id: string;
+  userId: string;
+  last4: string;
+  cardType: string;
+  expMonth: number;
+  expYear: number;
+  preferred: boolean;
+  provider: string;
+  updatedAt: string;
+  createdAt: string;
+};
+
 type PaymentsPageTableProps = {
   id: string;
   firstName: string;
@@ -774,9 +787,6 @@ type CourseCardProps = {
   id: string;
 };
 
-
-
-
 // Tutor Types starts here
 interface TopBarProps {
   children: React.ReactNode;
@@ -829,7 +839,7 @@ type TutorsDashboard = {
     time: string;
     day: string;
   }[];
-}
+};
 
 interface ClassItem {
   day: string;
@@ -838,7 +848,6 @@ interface ClassItem {
   time: string;
   status: string;
 }
-
 
 interface TutorStudentsResponse {
   records: {
@@ -876,8 +885,6 @@ interface StudentTableProps {
   page: number;
   setPage: (page: number) => void;
 }
-
-
 
 interface TutorClassesResponse {
   records: {
@@ -1074,6 +1081,65 @@ interface ActivityItem {
   createdAt: string;
 }
 
+type RecipientType = "all_students" | "all_tutors" | "selected_users" | "users";
+
+type NotificationMedia = {
+  id: string;
+  fileType: string;
+  fileName: string;
+  storageId: string;
+  src: string;
+  width: number;
+  height: number;
+  alt: string | null;
+  size: number;
+  deletedAt: Date | string | null;
+  updatedAt: Date | string;
+  createdAt: Date | string;
+  tutorId: string | null;
+};
+
+type NotificationCreator = {
+  id: string;
+  firstName: string | null;
+  lastName: string | null;
+  email: string;
+};
+
+type _Notification = {
+  id: string;
+  title: string;
+  content: string;
+  mediaId: string;
+  recipientType: RecipientType | string;
+  createdById: string;
+  deletedAt: Date | string | null;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  media: NotificationMedia;
+  createdBy: NotificationCreator;
+};
+
+type UserNotification = {
+  id: string;
+  notificationId: string;
+  userId: string;
+  isRead: boolean;
+  readAt: Date | string | null;
+  deletedAt: Date | string | null;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  notification: _Notification;
+};
+
+type NotificationMetrics = {
+  totalNotifications: number;
+  readRate: number;
+  activeRecipients: number;
+};
+
+/* tutorScreens interfaces preserved and using the shared notification types */
+
 interface TutorPaymentsResponse {
   records: {
     id: string;
@@ -1180,49 +1246,9 @@ interface StudentNotesResponse {
   };
 }
 
+/** TutorNotificationsResponse uses the shared UserNotification wrapper */
 interface TutorNotificationsResponse {
-  data: {
-    id: string;
-    notificationId: string;
-    userId: string;
-    isRead: boolean;
-    readAt: string | null;
-    deletedAt: string | null;
-    createdAt: string;
-    updatedAt: string;
-    notification: {
-      id: string;
-      title: string;
-      content: string;
-      mediaId: string;
-      recipientType: string;
-      createdById: string;
-      deletedAt: string | null;
-      createdAt: string;
-      updatedAt: string;
-      media: {
-        id: string;
-        fileType: string;
-        fileName: string;
-        storageId: string;
-        src: string;
-        width: number;
-        height: number;
-        alt: string | null;
-        size: number;
-        deletedAt: string | null;
-        updatedAt: string;
-        createdAt: string;
-        tutorId: string | null;
-      };
-      createdBy: {
-        id: string;
-        firstName: string | null;
-        lastName: string | null;
-        email: string;
-      };
-    };
-  }[];
+  data: UserNotification[];
   meta: {
     total: number;
     page: number;

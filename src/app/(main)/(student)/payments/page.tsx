@@ -9,12 +9,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useCurrentUser } from "@/hooks/useAccount";
 import { processPayments } from "@/utils/processor";
 
-import { mockPayments } from "@/data/mockData";
+// import { mockPayments } from "@/data/mockData";
+import { usePayments } from "@/hooks/useStudent";
 
 export default function PaymentsPage() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
+  const { data: payments, isLoading: paymentsLoading } = usePayments();
 
-  const allPayments = processPayments(mockPayments);
+  const allPayments = processPayments(payments);
   const pendingPayments = allPayments.filter((payment) => payment.status === "pending");
 
   return (
@@ -36,11 +38,13 @@ export default function PaymentsPage() {
         )}
       </div>
 
-      <div>
-        {allPayments.length > 0 ? (
+      <div className="flex gap-3 overflow-x-scroll hide-scrollbar w-full">
+        {paymentsLoading ? (
+          <Skeleton className="w-full rounded-xl h-40" />
+        ) : allPayments && allPayments.length > 0 ? (
           <PaymentsTable payments={allPayments} />
         ) : (
-          <section className="bg-white rounded-xl border border-shade-2 flex items-center justify-center py-14">
+          <section className="bg-white rounded-xl border border-shade-2 flex items-center justify-center py-14 w-full">
             <div className="flex flex-col items-center">
               <Image
                 src="/empty-slate.svg"

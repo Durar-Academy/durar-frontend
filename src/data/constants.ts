@@ -1,16 +1,17 @@
 import { deleteCookie } from "cookies-next";
 import {
   Bell,
+  BellIcon,
   BookText,
   Columns2,
   Grid2X2,
+  Layers,
+  Layers2,
   LogOut,
+  PanelsTopLeft,
   Settings,
   Table2,
   Wallet,
-  Layers2,
-  PanelsTopLeft,
-  Layers,
 } from "lucide-react";
 import React from "react";
 
@@ -91,8 +92,8 @@ export const ADMIN_SIDEBAR_LINKS: ComponentConfig[] = [
     type: "link",
     component: LinkComponent,
     props: {
-      href: "/admin/notification",
-      children: [React.createElement(Bell, { key: "icon", className: "h-4 w-4" }), "Notification"],
+      href: "/admin/notifications",
+      children: [React.createElement(Bell, { key: "icon", className: "h-4 w-4" }), "Notifications"],
     },
   },
   {
@@ -403,6 +404,18 @@ export const STUDENT_SIDEBAR_LINKS: ComponentConfig[] = [
     type: "link",
     component: LinkComponent,
     props: {
+      href: "/notifications",
+      children: [
+        React.createElement(BellIcon, { key: "icon", className: "h-4 w-4" }),
+        "Notifications",
+      ],
+    },
+  },
+
+  {
+    type: "link",
+    component: LinkComponent,
+    props: {
       href: "/settings",
       children: [React.createElement(Settings, { key: "icon", className: "h-4 w-4" }), "Settings"],
     },
@@ -421,4 +434,18 @@ export const STUDENT_SIDEBAR_LINKS: ComponentConfig[] = [
       children: [React.createElement(LogOut, { key: "icon", className: "h-4 w-4" }), "Logout"],
     },
   },
+];
+
+export const recipientTypeMap: Record<RecipientType, string> = {
+  all_students: "All Students",
+  all_tutors: "All Tutors",
+  selected_users: "Selected Users",
+  users: "All Users",
+};
+
+export const recipientTypeOptions: { value: RecipientType; label: string }[] = [
+  { value: "all_students", label: "All Students" },
+  { value: "all_tutors", label: "All Tutors" },
+  { value: "selected_users", label: "Selected Users" },
+  { value: "users", label: "All Users" },
 ];
