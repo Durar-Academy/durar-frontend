@@ -6,6 +6,8 @@ const nextConfig = {
     serverActions: {
       bodySizeLimit: '2mb',
     },
+    // Explicitly disable PPR to avoid manifest issues
+    ppr: false,
   },
 };
 

@@ -699,8 +699,8 @@ export default function AddNewAssignmentPage() {
                   style={{
                     height: `${10 + ((index * 9 + (recordingStatus === "recording" ? recordingSeconds : 0)) % 36)}px`,
                     transition: "height 150ms ease-out",
-                  }}
-                />
+                }}
+              />
               ))}
             </div>
           </div>
