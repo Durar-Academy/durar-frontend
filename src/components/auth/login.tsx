@@ -5,9 +5,17 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import axios from "axios";
 
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { PasswordField } from "./password-field";
@@ -15,7 +23,12 @@ import { PasswordField } from "./password-field";
 import { loginFormSchema } from "@/lib/schemas";
 import { useLoginForm } from "@/hooks/useForm";
 import { decryptCredentials, encryptCredentials } from "@/lib/encryption";
-import { deleteCredentials, retrieveCredentials, storeAuthData, storeCredentials } from "@/lib/storage";
+import {
+  deleteCredentials,
+  retrieveCredentials,
+  storeAuthData,
+  storeCredentials,
+} from "@/lib/storage";
 import { loginUser } from "@/lib/auth";
 
 export function Login() {
@@ -45,7 +58,9 @@ export function Login() {
       console.log("Login Form Response Data", response);
 
       if (!response.data.isVerified) {
-        toast.error("Please verify your account to continue.\nCheck your email for the verification link.");
+        toast.error(
+          "Please verify your account to continue.\nCheck your email for the verification link.",
+        );
         router.push("/auth/request-verification");
         return;
       }
@@ -56,11 +71,26 @@ export function Login() {
       storeAuthData(accessToken, refreshToken, role);
 
       loginFormController.reset();
-      router.push(`/${role.toLowerCase()}`);
-    } catch (error) {
+      router.push("/");
+      // router.push(`/${role.toLowerCase()}`);
+    } catch (error: unknown) {
       console.log("Login Form Error", error);
 
-      toast.error("Invalid credentials. Please try again");
+      // Check if it's an Axios error
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status;
+
+        if (status === 500) {
+          toast.error("Server error. Please try again later.");
+        } else if (status === 401) {
+          toast.error("Invalid credentials. Please try again.");
+        } else {
+          toast.error("An error occurred. Please try again.");
+        }
+      } else {
+        // Handle non-Axios errors (e.g., network issues)
+        toast.error("Something went wrong. Please check your connection.");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -72,7 +102,9 @@ export function Login() {
         const retrievedCredentials = retrieveCredentials();
         if (!retrievedCredentials) return;
 
-        const decryptedCredentials = await decryptCredentials(retrievedCredentials as EncryptionPayload);
+        const decryptedCredentials = await decryptCredentials(
+          retrievedCredentials as EncryptionPayload,
+        );
         if (!decryptedCredentials) return;
 
         setValue("email", decryptedCredentials.email);
@@ -89,7 +121,10 @@ export function Login() {
       <h2 className="text-center text-high font-semibold text-xl mb-8">Log In</h2>
 
       <Form {...loginFormController}>
-        <form onSubmit={loginFormController.handleSubmit(handleSubmit)} className="flex flex-col gap-6">
+        <form
+          onSubmit={loginFormController.handleSubmit(handleSubmit)}
+          className="flex flex-col gap-6"
+        >
           <FormField
             control={loginFormController.control}
             name="email"
@@ -102,8 +137,8 @@ export function Login() {
                     placeholder="someone@example.com"
                     type="email"
                     className="shadow-none px-4 py-2 rounded-[10px] h-12 placeholder:text-low text-high text-sm
-                    
-                    
+
+
                     focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-2 focus-visible:border-orange"
                     {...field}
                   />
@@ -122,7 +157,9 @@ export function Login() {
                 id="remember-me"
                 className="h-5 w-5 border border-shade-1 shadow-none data-[state=checked]:bg-green data-[state=checked]:text-white"
                 checked={loginFormController.watch("rememberMe")}
-                onCheckedChange={(checked) => loginFormController.setValue("rememberMe", Boolean(checked))}
+                onCheckedChange={(checked) =>
+                  loginFormController.setValue("rememberMe", Boolean(checked))
+                }
               />
               <label
                 htmlFor="remember-me"
@@ -132,7 +169,10 @@ export function Login() {
               </label>
             </div>
 
-            <Link className="hover:underline text-orange text-sm font-semibold" href="/auth/forgot-password">
+            <Link
+              className="hover:underline text-orange text-sm font-semibold"
+              href="/auth/forgot-password"
+            >
               Forgot Password?
             </Link>
           </div>

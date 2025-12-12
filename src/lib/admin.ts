@@ -240,3 +240,10 @@ export async function getStudentAssignmentFeedbacks(
   });
   return response.data.data;
 }
+
+export async function getNotifications(options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get("/notification/my", {
+    signal: options?.signal,
+  });
+  return response.data.data.data;
+}

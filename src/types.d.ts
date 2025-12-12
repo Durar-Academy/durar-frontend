@@ -17,6 +17,38 @@ type CreateAccountPayload = {
   title: "Mr" | "Mrs" | "Ms" | "Dr";
 };
 
+type TutorOnboardingPayload = {
+  title?: string;
+  firstName?: string;
+  lastName?: string;
+  middleName?: string;
+  phone?: string;
+  gender?: "male" | "female";
+  country?: string;
+  dob?: string;
+  specializationAndSkill?: string;
+  language?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  paymentMode?: "BankTransfer" | "PayPal" | "Crypto";
+  bankAccountDetails?: string;
+  documents?: string[];
+};
+
+type UpdateAccountPayload = {
+  firstName: string;
+  lastName: string;
+  middleName: string;
+  email: string;
+  gender: string;
+  phone: string;
+  country: string;
+
+  // title: string;
+  // profilePic: string;
+};
+
 type AuthenticationContextProps = {
   loggedIn: boolean;
   authLoading: boolean;
@@ -52,11 +84,24 @@ type ComponentConfig = {
   };
 };
 
+type TutorData = {
+  id: string;
+  dob: Date | string | null;
+  specializationAndSkill: string | null;
+  language: string | null;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  paymentMode: "BankTransfer" | "PayPal" | "Crypto" | null;
+  bankAccountDetails: string | null;
+};
+
 type User = {
   id: string;
   email: string;
   firstName: string;
   lastName: string;
+  title: string;
   middleName?: string;
   gender: "male" | "female";
   phone: string;
@@ -348,6 +393,7 @@ type Lesson = {
   duration: number;
   isLocked: boolean;
   isCompleted: boolean;
+  progress: number;
   type: string;
   mediaId: string | null;
   courseId: string;
@@ -431,7 +477,7 @@ type StudentAssignmentsTableProps = {
   id: string;
   course: string;
   date: string;
-  score: number;
+  dueDate: string;
   status: string;
 }[];
 
@@ -450,6 +496,11 @@ type Assignment = {
   createdAt: Date;
   updatedAt: Date;
   deletedAt: Date | null;
+  randomnize: boolean;
+  autoGraded: boolean;
+  classAverage: number;
+  grade: number;
+  quizAverage: number;
   AssignmentSubmission: AssignmentSubmission[];
   QuizSubmission: QuizSubmission[];
   course: Course;
@@ -637,6 +688,19 @@ type Schedule = {
   user: Tutor;
 };
 
+type PaymentMethod = {
+  id: string;
+  userId: string;
+  last4: string;
+  cardType: string;
+  expMonth: number;
+  expYear: number;
+  preferred: boolean;
+  provider: string;
+  updatedAt: string;
+  createdAt: string;
+};
+
 type PaymentsPageTableProps = {
   id: string;
   firstName: string;
@@ -746,3 +810,567 @@ type Question = {
   options: Option[];
   correctAnswerId: number | null;
 };
+
+type CourseCardProps = {
+  name: string;
+  thumbnail: string;
+  progress: number;
+  id: string;
+};
+
+// Tutor Types starts here
+interface TopBarProps {
+  children: React.ReactNode;
+  subtext: string;
+  user: User | undefined;
+}
+
+interface TutorStatCardProps {
+  title: string;
+  value: string;
+  icon: React.ReactElement;
+}
+
+interface TutorsMetrics2 {
+  totalCourses: number;
+  totalStudents: number;
+  totalAssignments: number;
+  totalEarnings?: number;
+  pendingEarnings?: number;
+  avgCourseRating?: number;
+  totalStudentsTaught?: number;
+  totalClasses?: number;
+}
+type DashboardTutorsMetrics = {
+  pendingEarnings: number;
+  totalEarnings: number;
+
+  tutorsCount: number;
+  activeTutorsCount: number;
+  inActiveTutorsCount: number;
+
+  totalCourses: number;
+  totalAssignments: number;
+  totalCompletedClasses: number;
+
+  totalStudentsTaught: number;
+  totalStudents: number;
+  avgCourseRating: number;
+};
+type TutorsDashboard = {
+  totalStudents: number;
+  totalCourses: number;
+  totalAssignments: number;
+  upcomingClasses: {
+    studentId: string;
+    studentName: string;
+    category: string;
+    email: string;
+    status: string;
+    time: string;
+    day: string;
+  }[];
+};
+
+interface ClassItem {
+  day: string;
+  student: string;
+  category: string;
+  time: string;
+  status: string;
+}
+
+interface TutorStudentsResponse {
+  records: {
+    studentId: string;
+    studentName: string;
+    category: string;
+    email: string;
+    status: string;
+    time: string;
+    day: string;
+  }[];
+  metaData: {
+    page: number;
+    perPage: number;
+    pageCount: number;
+    totalCount: number;
+    hasPreviousPages: boolean;
+    hasNextPages: boolean;
+    links: {
+      number: number;
+      url: string;
+    }[];
+  };
+}
+
+interface Students {
+  id: string;
+  name: string;
+  category: string;
+  email: string;
+  status: Active | Inactive;
+}
+
+interface StudentTableProps {
+  page: number;
+  setPage: (page: number) => void;
+}
+
+interface TutorClassesResponse {
+  records: {
+    id: string;
+    day: string;
+    start: string;
+    end: string;
+    status: string;
+    courseId: string;
+    studentId: string;
+    createdAt: string;
+    updatedAt: string;
+    course: {
+      id: string;
+      title: string;
+      category: string;
+      thumbnailId: string;
+      thumbnail: {
+        id: string;
+        storageId: string;
+      };
+    };
+    student: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+    };
+  }[];
+  metaData: {
+    page: number;
+    perPage: number;
+    pageCount: number;
+    totalCount: number;
+    hasPreviousPages: boolean;
+    hasNextPages: boolean;
+    links: {
+      number: number;
+      url: string;
+    }[];
+  };
+}
+
+// Assignment types
+interface TutorAssignmentsResponse {
+  records: {
+    id: string;
+    title: string;
+    dueAt: string;
+    totalScore: number;
+    type: string;
+    courseId: string;
+    course: {
+      id: string;
+      title: string;
+      category: string;
+    };
+    _count: {
+      AssignmentSubmission: number;
+    };
+    state: string;
+    totalSubmissions: number;
+  }[];
+  metaData: {
+    page: number;
+    perPage: number;
+    pageCount: number;
+    totalCount: number;
+    hasPreviousPages: boolean;
+    hasNextPages: boolean;
+    links: {
+      number: number;
+      url: string;
+    }[];
+  };
+}
+
+interface AssignmentItem {
+  id: string;
+  title: string;
+  course: string;
+  status: "Completed" | "Pending";
+  dueDate: string;
+  submissions: number;
+}
+
+// Student profile
+interface UserProfileResponse {
+  id: string;
+  email: string;
+  title: string | null;
+  firstName: string;
+  lastName: string;
+  middleName: string | null;
+  gender: string | null;
+  phone: string | null;
+  country: string | null;
+  emailVerifiedAt: string | null;
+  status: string;
+  lastLoginAt: string | null;
+  role: string;
+  profilePictureId: string | null;
+  paypalCustomerId: string | null;
+  paypalCardCustomerId: string | null;
+  deletedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface UserProfile {
+  fullName: string;
+  email: string;
+  phone: string;
+  enrollmentDate: string;
+  status: string;
+  role: string;
+  profilePictureId: string | null;
+}
+
+interface TutorActivityResponse {
+  records: {
+    id: string;
+    userId: string;
+    action: string;
+    context: string;
+    contextId: string;
+    metadata: Record<string, unknown> | null;
+    deletedAt: string | null;
+    createdAt: string;
+    updatedAt: string;
+    user: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+      profilePicture: string | null;
+    };
+  }[];
+  metaData: {
+    page: number;
+    perPage: number;
+    pageCount: number;
+    totalCount: number;
+    hasPreviousPages: boolean;
+    hasNextPages: boolean;
+    links: {
+      number: number;
+      url: string;
+    }[];
+  };
+}
+
+interface ActivityNotificationItem {
+  id: string;
+  context: string;
+  createdAt: string;
+}
+
+interface StudentActivityResponse {
+  records: {
+    id: string;
+    action: string;
+    context: string;
+    contextId: string;
+    metadata: Record<string, unknown> | null;
+    createdAt: string;
+    updatedAt: string;
+  }[];
+  metaData: {
+    page: number;
+    perPage: number;
+    pageCount: number | null;
+    totalCount: {
+      id: number;
+      action: number;
+      context: number;
+      contextId: number;
+      metadata: number;
+      createdAt: number;
+      updatedAt: number;
+    };
+    hasPreviousPages: boolean;
+    hasNextPages: boolean;
+    links: {
+      number: number;
+      url: string;
+    }[];
+  };
+}
+
+interface ActivityItem {
+  id: string;
+  context: string;
+  createdAt: string;
+}
+
+type RecipientType = "all_students" | "all_tutors" | "selected_users" | "users";
+
+type NotificationMedia = {
+  id: string;
+  fileType: string;
+  fileName: string;
+  storageId: string;
+  src: string;
+  width: number;
+  height: number;
+  alt: string | null;
+  size: number;
+  deletedAt: Date | string | null;
+  updatedAt: Date | string;
+  createdAt: Date | string;
+  tutorId: string | null;
+};
+
+type NotificationCreator = {
+  id: string;
+  firstName: string | null;
+  lastName: string | null;
+  email: string;
+};
+
+type _Notification = {
+  id: string;
+  title: string;
+  content: string;
+  mediaId: string;
+  recipientType: RecipientType | string;
+  createdById: string;
+  deletedAt: Date | string | null;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  media: NotificationMedia;
+  createdBy: NotificationCreator;
+};
+
+type UserNotification = {
+  id: string;
+  notificationId: string;
+  userId: string;
+  isRead: boolean;
+  readAt: Date | string | null;
+  deletedAt: Date | string | null;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  notification: _Notification;
+};
+
+type NotificationMetrics = {
+  totalNotifications: number;
+  readRate: number;
+  activeRecipients: number;
+};
+
+/* tutorScreens interfaces preserved and using the shared notification types */
+
+interface TutorPaymentsResponse {
+  records: {
+    id: string;
+    amount: number;
+    currency: string;
+    provider: string;
+    reference: string;
+    refundReference: string | null;
+    chargeId: string;
+    status: string;
+    metadata: Record<string, unknown> | null;
+    deletedAt: string | null;
+    createdAt: string;
+    updatedAt: string;
+    charge: {
+      id: string;
+      userId: string;
+      amount: number;
+      debitType: string;
+      totalPaid: number;
+      amountRefunded: number;
+      processingAmount: number;
+      chargeAttempt: number;
+      dueAt: string;
+      isVoid: boolean;
+      billingPlanId: string | null;
+      memo: string;
+      deletedAt: string | null;
+      createdAt: string;
+      updatedAt: string;
+      user: {
+        id: string;
+        email: string;
+        title: string | null;
+        firstName: string | null;
+        lastName: string | null;
+        middleName: string | null;
+        gender: string;
+        phone: string | null;
+        country: string | null;
+        emailVerifiedAt: string | null;
+        status: string;
+        lastLoginAt: string | null;
+        role: string;
+        profilePictureId: string | null;
+        paypalCustomerId: string | null;
+        paypalCardCustomerId: string | null;
+        deletedAt: string | null;
+        createdAt: string;
+        updatedAt: string;
+      };
+    };
+  }[];
+  metaData: {
+    page: number;
+    perPage: number;
+    pageCount: number;
+    totalCount: number;
+    hasPreviousPages: boolean;
+    hasNextPages: boolean;
+    links: {
+      number: number;
+      url: string;
+    }[];
+  };
+}
+
+interface StudentNotesResponse {
+  records: {
+    id: string;
+    title: string;
+    content: string;
+    status: string;
+    createdById: string;
+    studentId: string;
+    updatedById: string;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: string | null;
+    createdBy: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+    };
+    updatedBy: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+    };
+  }[];
+  metaData: {
+    page: number;
+    perPage: number;
+    pageCount: number;
+    totalCount: number;
+    hasPreviousPages: boolean;
+    hasNextPages: boolean;
+    links: {
+      number: number;
+      url: string;
+    }[];
+  };
+}
+
+/** TutorNotificationsResponse uses the shared UserNotification wrapper */
+interface TutorNotificationsResponse {
+  data: UserNotification[];
+  meta: {
+    total: number;
+    page: number;
+    limit: number;
+  };
+}
+
+interface TutorTimetableResponse {
+  records: {
+    id: string;
+    day: string;
+    start: string;
+    end: string;
+    courseId: string;
+    status: string;
+    userId: string;
+    studentId: string;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: string | null;
+    course: {
+      id: string;
+      title: string;
+      description: string;
+      thumbnailId: string | null;
+      status: string;
+      language: string | null;
+      category: string | null;
+      difficultyLevel: string | null;
+      enableCertification: boolean;
+      trackProgress: boolean;
+      enableComments: boolean;
+      additionalNotes: string | null;
+      prerequisites: unknown[];
+      createdById: string;
+      deletedAt: string | null;
+      createdAt: string;
+      updatedAt: string;
+    };
+    user: {
+      id: string;
+      email: string;
+      title: string;
+      firstName: string;
+      lastName: string;
+      middleName: string;
+      gender: string;
+      phone: string;
+      country: string;
+      emailVerifiedAt: string;
+      status: string;
+      lastLoginAt: string;
+      role: string;
+      profilePictureId: string | null;
+      paypalCustomerId: string | null;
+      paypalCardCustomerId: string | null;
+      deletedAt: string | null;
+      createdAt: string;
+      updatedAt: string;
+    };
+  }[];
+  metaData: {
+    page: number;
+    perPage: number;
+    pageCount: number;
+    totalCount: number;
+    hasPreviousPages: boolean;
+    hasNextPages: boolean;
+    links: {
+      number: number;
+      url: string;
+    }[];
+  };
+}
+
+interface TimetableEntry {
+  period: string;
+  schedule: {
+    [day: string]: {
+      teacher: string;
+      profileLink: string;
+    };
+  };
+}
+
+interface NotificationItem {
+  id: string;
+  title: string;
+  content: string;
+  date: string;
+  status: "Read" | "Unread";
+  sender: string;
+  mediaUrl?: string | null;
+}

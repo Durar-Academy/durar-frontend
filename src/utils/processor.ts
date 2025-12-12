@@ -1,4 +1,4 @@
-import React from "react";
+import { format, parse } from "date-fns";
 import {
   CheckCircle,
   CircleDollarSign,
@@ -16,9 +16,9 @@ import {
   ScanFace,
   Users,
 } from "lucide-react";
-import { format, parse } from "date-fns";
+import React from "react";
 
-import { formatDateAndTime, formatAmount } from "@/utils/formatter";
+import { formatAmount, formatDateAndTime } from "@/utils/formatter";
 
 export function processSchedules(schedules: Schedule[]) {
   const extractedSchedulesDetails = schedules.map((schedule) => {
@@ -369,26 +369,48 @@ export const processStudentAssignments = (
 ): StudentAssignmentsTableProps => {
   const extractedAssignments = assignments.map((assignment) => {
     const id = assignment.id;
-    const course = assignment.title;
+    const course = assignment.course?.title || assignment.title;
     const date = format(new Date(assignment.createdAt), "PP");
+    const dueDate = format(new Date(assignment.dueAt), "PP");
     const status = assignment.status;
-
-    const score = assignment.AssignmentSubmission?.[0]?.grade
-      ? (assignment.AssignmentSubmission[0].grade / assignment.totalScore) * 100
-      : assignment.QuizSubmission?.[0]?.grade
-      ? (assignment.QuizSubmission[0].grade / assignment.totalScore) * 100
-      : 0;
 
     return {
       id,
       course,
       date,
-      score,
+      dueDate,
       status,
     };
   });
 
   return extractedAssignments;
+};
+
+export const processStudentAssignmentMetrics = (
+  assignments: Assignment[]
+): { title: string; value: string | number }[] => {
+  const total = assignments.length;
+  const completed = assignments.filter(
+    (a) => a.status === "graded"
+  ).length;
+  const pending = assignments.filter(
+    (a) => a.status === "pending" || a.status === "submitted"
+  ).length;
+
+  return [
+    {
+      title: "Total Assignment",
+      value: total,
+    },
+    {
+      title: "Completed",
+      value: completed,
+    },
+    {
+      title: "Pending",
+      value: pending,
+    },
+  ];
 };
 
 export const processTutorsMetrics = (tutorsMetrics: TutorsMetrics): OverviewCardProps[] => {
@@ -768,6 +790,44 @@ export const processAssignmentMetrics = (
         key: "icon",
         className: "w-6 h-6 text-danger",
       }),
+    },
+  ];
+};
+
+export function getCumulativeProgress(courses?: Course[]): number {
+  if (!courses || courses.length === 0) return 0;
+
+  const totalProgress = courses.reduce(
+    (sum, course) => sum + (course.UserCourse[0]?.progress || 0),
+    0,
+  );
+
+  return Math.round(totalProgress / courses.length);
+}
+
+export const processNotificationsMetrics = (
+  notificationMetrics: NotificationMetrics,
+): OverviewCardProps[] => {
+  return [
+    {
+      title: "Total Notifications",
+      figure: String(notificationMetrics.totalNotifications),
+      children: React.createElement(List, { key: "icon", className: "w-6 h-6 text-orange" }),
+    },
+
+    {
+      title: "Read Rate",
+      figure: `${String(notificationMetrics.readRate)}%`,
+      children: React.createElement(CheckCircle, {
+        key: "icon",
+        className: "w-6 h-6 text-success",
+      }),
+    },
+
+    {
+      title: "Active Recipients",
+      figure: String(notificationMetrics.activeRecipients),
+      children: React.createElement(Info, { key: "icon", className: "w-6 h-6 text-success" }),
     },
   ];
 };

@@ -64,11 +64,19 @@ export function AuthorizationRedirect({
         return;
       }
 
+      // if (pathname.startsWith("/admin") && userRole !== "admin") {
+      //   router.push(`/${userRole.toLowerCase()}`);
+      // } else if (pathname.startsWith("/tutor") && userRole !== "tutor") {
+      //   router.push(`/${userRole.toLowerCase()}`);
+      // } else if (pathname.startsWith("/student") && userRole !== "student") {
+      //   router.push(`/${userRole.toLowerCase()}`);
+      // }
+
       if (pathname.startsWith("/admin") && userRole !== "admin") {
-        router.push(`/${userRole.toLowerCase()}`);
+        router.push(userRole === "student" ? "/" : `/${userRole.toLowerCase()}`);
       } else if (pathname.startsWith("/tutor") && userRole !== "tutor") {
-        router.push(`/${userRole.toLowerCase()}`);
-      } else if (pathname.startsWith("/student") && userRole !== "student") {
+        router.push(userRole === "student" ? "/" : `/${userRole.toLowerCase()}`);
+      } else if ((pathname === "/" || pathname === "") && userRole !== "student") {
         router.push(`/${userRole.toLowerCase()}`);
       }
 

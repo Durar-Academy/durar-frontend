@@ -38,3 +38,20 @@ export function formatToReadableId(id: string, prefix: string): string {
   const lastFiveDigits = numbers.slice(-5).padStart(5, "0");
   return `${prefix}-${lastFiveDigits}`;
 }
+
+export function formatUserName(user?: User) {
+  if (!user) return { initials: "U", fullName: "Unknown", firstName: "Unknown" };
+
+  const role = user.role?.toLowerCase();
+
+  if (role === "admin") {
+    return { initials: "AA", fullName: "Admin", firstName: "Admin" };
+  }
+
+  const firstInitial = user.firstName ? user.firstName[0].toUpperCase() : "";
+  const lastInitial = user.lastName ? user.lastName[0].toUpperCase() : "";
+  const fullName = `${user.firstName || "Unknown"} ${user.lastName || ""}`.trim();
+  const firstName = user.firstName || "Unknown";
+
+  return { initials: `${firstInitial}${lastInitial}`.trim(), fullName, firstName };
+}

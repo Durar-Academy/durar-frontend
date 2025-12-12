@@ -16,3 +16,8 @@ export async function inviteTutor(payload: { email: string; courseIds?: string[]
   const response = await axiosInstance.post(`/user/invite-tutor`, payload);
   return response.data;
 }
+
+export async function updateUserInfo(payload: Partial<UpdateAccountPayload>, userId: string) {
+  const response = await axiosInstance.patch(`/user/${userId}`, payload);
+  return response.data;
+}

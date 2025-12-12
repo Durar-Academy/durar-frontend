@@ -17,7 +17,7 @@ axiosInstance.interceptors.request.use(
     config.headers["Authorization"] = `Bearer ${accessToken}`;
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => Promise.reject(error),
 );
 
 axiosInstance.interceptors.response.use(
@@ -77,7 +77,7 @@ axiosInstance.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 // axiosInstance.interceptors.response.use(
