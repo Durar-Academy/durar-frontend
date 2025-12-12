@@ -32,10 +32,10 @@ export async function decryptCredentials({
   key,
 }: EncryptionPayload): Promise<{ email: string; password: string } | null> {
   try {
-    const importedKey = await crypto.subtle.importKey("raw", key, { name: "AES-GCM", length: 256 }, true, ["decrypt"]);
+    const importedKey = await crypto.subtle.importKey("raw", key as unknown as BufferSource, { name: "AES-GCM", length: 256 }, true, ["decrypt"]);
 
-    const decryptedEmail = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, importedKey, encryptedEmail);
-    const decryptedPassword = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, importedKey, encryptedPassword);
+    const decryptedEmail = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv as unknown as BufferSource }, importedKey, encryptedEmail as unknown as BufferSource);
+    const decryptedPassword = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv as unknown as BufferSource }, importedKey, encryptedPassword as unknown as BufferSource);
 
     const decoder = new TextDecoder();
     return {

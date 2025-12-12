@@ -38,7 +38,7 @@ export function StudentAssignmentsTable({
               >
                 <TableCell className="capitalize">{assignment.course}</TableCell>
                 <TableCell>{assignment.date}</TableCell>
-                <TableCell>{assignment.score}%</TableCell>
+                <TableCell>{assignment.score !== undefined ? `${assignment.score}%` : "-"}</TableCell>
                 <TableCell
                   className={cn(
                     "capitalize",

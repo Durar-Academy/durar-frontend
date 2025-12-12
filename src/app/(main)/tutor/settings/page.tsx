@@ -31,7 +31,7 @@ export default function TutorSettingsPage() {
 
   useEffect(() => {
     if (user) {
-      const tutorData = (user as User & { tutor?: TutorData }).tutor || {};
+      const tutorData: TutorData | null = (user as User & { tutor?: TutorData }).tutor || null;
       setFormData({
         title: user.title || "",
         firstName: user.firstName || "",
@@ -40,14 +40,14 @@ export default function TutorSettingsPage() {
         phone: user.phone || "",
         gender: user.gender as "male" | "female" | undefined,
         country: user.country || "",
-        dob: tutorData.dob ? new Date(tutorData.dob).toISOString().split("T")[0] : "",
-        specializationAndSkill: tutorData.specializationAndSkill || "",
-        language: tutorData.language || "",
-        address: tutorData.address || "",
-        city: tutorData.city || "",
-        state: tutorData.state || "",
-        paymentMode: tutorData.paymentMode as "BankTransfer" | "PayPal" | "Crypto" | undefined,
-        bankAccountDetails: tutorData.bankAccountDetails || "",
+        dob: tutorData?.dob ? new Date(tutorData.dob).toISOString().split("T")[0] : "",
+        specializationAndSkill: tutorData?.specializationAndSkill || "",
+        language: tutorData?.language || "",
+        address: tutorData?.address || "",
+        city: tutorData?.city || "",
+        state: tutorData?.state || "",
+        paymentMode: tutorData?.paymentMode as "BankTransfer" | "PayPal" | "Crypto" | undefined,
+        bankAccountDetails: tutorData?.bankAccountDetails || "",
       });
     }
   }, [user]);
@@ -103,15 +103,15 @@ export default function TutorSettingsPage() {
     setIsSubmitting(true);
     try {
       // Only send fields that have values
-      const payload: TutorOnboardingPayload = {};
-      Object.keys(formData).forEach((key) => {
-        const value = formData[key as keyof TutorOnboardingPayload];
+      const payload: Partial<TutorOnboardingPayload> = {};
+      (Object.keys(formData) as Array<keyof TutorOnboardingPayload>).forEach((key) => {
+        const value = formData[key];
         if (value !== undefined && value !== "" && value !== null) {
-          payload[key as keyof TutorOnboardingPayload] = value;
+          (payload as Record<string, unknown>)[key] = value as unknown;
         }
       });
 
-      await updateTutorOnboarding(payload);
+      await updateTutorOnboarding(payload as TutorOnboardingPayload);
       toast.success("Profile updated successfully!");
     } catch (error: unknown) {
       console.error("Error updating profile:", error);
