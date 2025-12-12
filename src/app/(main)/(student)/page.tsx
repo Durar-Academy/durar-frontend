@@ -1,5 +1,8 @@
 "use client";
 
+// Force dynamic rendering to ensure manifest generation
+export const dynamic = 'force-dynamic';
+
 import Link from "next/link";
 
 import { Skeleton } from "@/components/ui/skeleton";
