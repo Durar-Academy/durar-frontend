@@ -83,7 +83,7 @@ export default function AddNewAssignmentPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
 
-  const setAudioFromFile = async (file: File, isUploaded = false) => {
+  const setAudioFromFile = async (file: File) => {
     if (!file.type.startsWith("audio/")) {
       toast.error("Please upload an audio file");
       return;
@@ -137,18 +137,18 @@ export default function AddNewAssignmentPage() {
     setIsPlaying(false);
   };
 
-  const handleFileInput = async (event: ChangeEvent<HTMLInputElement>) => {
+    const handleFileInput = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    await setAudioFromFile(file, true);
+    await setAudioFromFile(file);
   };
 
   const handleDrop = async (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     const file = event.dataTransfer.files?.[0];
     if (!file) return;
-    await setAudioFromFile(file, true);
+    await setAudioFromFile(file);
   };
 
   const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
@@ -211,7 +211,8 @@ export default function AddNewAssignmentPage() {
       reader.onload = async (e) => {
         try {
           const arrayBuffer = e.target?.result as ArrayBuffer;
-          const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+          const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+          const audioContext = new AudioContextClass();
           const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 
           // Convert AudioBuffer to WAV
@@ -322,7 +323,7 @@ export default function AddNewAssignmentPage() {
         
         // Convert WebM to WAV format (supported by Cloudinary/backend)
         try {
-          await setAudioFromFile(webmFile, false);
+          await setAudioFromFile(webmFile);
           toast.success("Recording completed and converted to WAV format");
         } catch (error) {
           console.error("Error converting recording:", error);
@@ -441,15 +442,16 @@ export default function AddNewAssignmentPage() {
       let fileResponse;
       try {
         fileResponse = await uploadFile(audioFile);
-      } catch (uploadError: any) {
+      } catch (uploadError: unknown) {
         console.error("Error uploading file", uploadError);
         
         // Check if it's a file type error from the backend
-        if (uploadError?.response?.data?.message?.toLowerCase().includes("unsupported file type")) {
+        const error = uploadError as { response?: { data?: { message?: string } }; code?: string };
+        if (error?.response?.data?.message?.toLowerCase().includes("unsupported file type")) {
           toast.error(
             "Unsupported audio format. Please use WAV, MP3, OGG, M4A, or AAC format."
           );
-        } else if (uploadError?.code === "ERR_NETWORK") {
+        } else if (error?.code === "ERR_NETWORK") {
           toast.error("Network error. Please check your internet connection and try again.");
         } else {
           toast.error("Failed to upload audio file. Please try again.");
@@ -475,12 +477,13 @@ export default function AddNewAssignmentPage() {
       toast.success("Assignment sent successfully");
       resetForm();
       router.push("/tutor/assignments");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error creating assignment", error);
       
-      if (error?.response?.data?.message) {
-        toast.error(error.response.data.message);
-      } else if (error?.code === "ERR_NETWORK") {
+      const err = error as { response?: { data?: { message?: string } }; code?: string };
+      if (err?.response?.data?.message) {
+        toast.error(err.response.data.message);
+      } else if (err?.code === "ERR_NETWORK") {
         toast.error("Network error. Please check your internet connection and try again.");
       } else {
         toast.error("Something went wrong while sending assignment");
