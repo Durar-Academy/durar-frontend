@@ -172,7 +172,7 @@ export const processTutorTimetable = (timetableData?: TutorTimetableResponse): T
     if (!timetableData?.records) return [];
 
     // Group by time periods and days
-    const timeSlots: { [key: string]: { [day: string]: TimetableEntry } } = {};
+    const timeSlots: { [key: string]: { [day: string]: { teacher: string; profileLink: string } } } = {};
     
     timetableData.records.forEach((record) => {
         const timeSlot = `${record.start} - ${record.end}`;

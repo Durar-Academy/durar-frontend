@@ -478,7 +478,8 @@ type StudentAssignmentsTableProps = {
   course: string;
   date: string;
   dueDate: string;
-  status: string;
+  status: AssignmentStatus;
+  score?: number;
 }[];
 
 type Assignment = {

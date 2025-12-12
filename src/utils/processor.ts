@@ -373,6 +373,7 @@ export const processStudentAssignments = (
     const date = format(new Date(assignment.createdAt), "PP");
     const dueDate = format(new Date(assignment.dueAt), "PP");
     const status = assignment.status;
+    const score = assignment.grade ?? undefined;
 
     return {
       id,
@@ -380,6 +381,7 @@ export const processStudentAssignments = (
       date,
       dueDate,
       status,
+      score,
     };
   });
 
