@@ -8,7 +8,7 @@ import { processTutorNotifications } from "@/utils/tutorProcessor";
 import { useState } from "react";
 
 const Page = () => {
-  const [page, setPage] = useState(1);
+  const [page] = useState(1);
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: notificationsData, isLoading: notificationsLoading } = useTutorNotifications({ page });
 

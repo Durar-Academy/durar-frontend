@@ -17,6 +17,25 @@ type CreateAccountPayload = {
   title: "Mr" | "Mrs" | "Ms" | "Dr";
 };
 
+type TutorOnboardingPayload = {
+  title?: string;
+  firstName?: string;
+  lastName?: string;
+  middleName?: string;
+  phone?: string;
+  gender?: "male" | "female";
+  country?: string;
+  dob?: string;
+  specializationAndSkill?: string;
+  language?: string;
+  address?: string;
+  city?: string;
+  state?: string;
+  paymentMode?: "BankTransfer" | "PayPal" | "Crypto";
+  bankAccountDetails?: string;
+  documents?: string[];
+};
+
 type UpdateAccountPayload = {
   firstName: string;
   lastName: string;
@@ -63,6 +82,18 @@ type ComponentConfig = {
     options?: { value: string; label: string }[];
     exact?: boolean;
   };
+};
+
+type TutorData = {
+  id: string;
+  dob: Date | string | null;
+  specializationAndSkill: string | null;
+  language: string | null;
+  address: string | null;
+  city: string | null;
+  state: string | null;
+  paymentMode: "BankTransfer" | "PayPal" | "Crypto" | null;
+  bankAccountDetails: string | null;
 };
 
 type User = {
@@ -446,7 +477,7 @@ type StudentAssignmentsTableProps = {
   id: string;
   course: string;
   date: string;
-  score: number;
+  dueDate: string;
   status: string;
 }[];
 
@@ -1282,7 +1313,7 @@ interface TutorTimetableResponse {
       trackProgress: boolean;
       enableComments: boolean;
       additionalNotes: string | null;
-      prerequisites: any[];
+      prerequisites: unknown[];
       createdById: string;
       deletedAt: string | null;
       createdAt: string;

@@ -94,7 +94,7 @@ export default function NotificaitionList({
             </tr>
           </thead>
           <tbody>
-            {filterednotifications.map((notification, index) => (
+            {filterednotifications.map((notification) => (
               <tr
                 key={notification.id}
                 className="border-[1px] bg-[#F8F8FA] border-[#D2D4E0] mt-3"

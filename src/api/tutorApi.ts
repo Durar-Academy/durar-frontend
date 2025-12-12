@@ -159,4 +159,64 @@ export const tutorApi = {
     });
     return response.data.data as TutorTimetableResponse;
   },
+
+  getStudentAssignments: async ({
+    userId,
+    limit = 1000,
+    page = 1,
+    signal,
+  }: {
+    userId: string;
+    limit?: number;
+    page?: number;
+    signal?: AbortSignal;
+  }) => {
+    const response = await axiosInstance.get("/assignment", {
+      params: { userId, limit, page },
+      signal,
+    });
+    return response.data.data as { 
+      records: Assignment[]; 
+      metaData: {
+        page: number;
+        perPage: number;
+        pageCount: number;
+        totalCount: number;
+        hasPreviousPages: boolean;
+        hasNextPages: boolean;
+        links: Array<{ number: number; url: string }>;
+      };
+    };
+  },
+
+  getStudentSubmissions: async ({
+    userId,
+    assignmentId,
+    limit = 1000,
+    page = 1,
+    signal,
+  }: {
+    userId?: string;
+    assignmentId?: string;
+    limit?: number;
+    page?: number;
+    signal?: AbortSignal;
+  }) => {
+    const response = await axiosInstance.get("/submission", {
+      params: { userId, assignmentId, limit, page },
+      signal,
+    });
+    return response.data.data as { 
+      rows: Array<{
+        id: string;
+        assignmentId: string;
+        userId: string;
+        grade: number | null;
+        gradedAt: Date | null;
+        createdAt: Date;
+        updatedAt: Date;
+      }>; 
+      count: number;
+    };
+  },
 };

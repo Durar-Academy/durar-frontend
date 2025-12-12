@@ -51,7 +51,7 @@ export const processTutorClasses = (classesData?: TutorClassesResponse): ClassIt
 
     return classesData.records.map((record) => ({
         day: record.day.charAt(0).toUpperCase() + record.day.slice(1),
-        student: `${record.student.firstName} ${record.student.lastName}`,
+        student: `${record.student?.firstName} ${record.student?.lastName}`,
         category: record.course.category || "Uncategorized",
         time: `${record.start} - ${record.end}`,
         status: record.status.charAt(0).toUpperCase() + record.status.slice(1),
@@ -172,7 +172,7 @@ export const processTutorTimetable = (timetableData?: TutorTimetableResponse): T
     if (!timetableData?.records) return [];
 
     // Group by time periods and days
-    const timeSlots: { [key: string]: { [day: string]: any } } = {};
+    const timeSlots: { [key: string]: { [day: string]: TimetableEntry } } = {};
     
     timetableData.records.forEach((record) => {
         const timeSlot = `${record.start} - ${record.end}`;
