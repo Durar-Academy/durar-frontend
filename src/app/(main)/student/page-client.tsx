@@ -50,7 +50,7 @@ export function StudentPageClient() {
             </p>
 
             <Link
-              href={"/courses"}
+              href={"/student/courses"}
               className="text-orange hover:underline text-balance leading-5 tracking-normal"
             >
               View All
@@ -116,7 +116,7 @@ export function StudentPageClient() {
           <p className="text-high text-base leading-5 tracking-normal">Time Table</p>
 
           <Link
-            href={"/timetable"}
+            href={"/student/timetable"}
             className="text-orange hover:underline text-balance leading-5 tracking-normal"
           >
             View All
