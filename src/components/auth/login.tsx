@@ -71,7 +71,24 @@ export function Login() {
       storeAuthData(accessToken, refreshToken, role);
 
       loginFormController.reset();
-      router.push("/");
+
+      const normalizedRole = role.toLowerCase();
+      console.log("Redirecting for role:", normalizedRole);
+
+      switch (normalizedRole) {
+        case "student":
+          router.push("/student");
+          break;
+        case "tutor":
+          router.push("/tutor");
+          break;
+        case "admin":
+          router.push("/admin");
+          break;
+        default:
+          console.warn("Unknown role, redirecting to home:", role);
+          router.push("/auth");
+      }
       // router.push(`/${role.toLowerCase()}`);
     } catch (error: unknown) {
       console.log("Login Form Error", error);
