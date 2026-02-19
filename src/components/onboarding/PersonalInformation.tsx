@@ -7,7 +7,6 @@ interface FormData {
   middleName: string;
   lastName: string;
   dob: string;
-  email: string;
   gender: string;
   phone: string;
   specializationAndSkill: string;
@@ -17,7 +16,6 @@ interface FormData {
   city: string;
   state: string;
   country: string;
-  password: string;
   paymentMode: string;
   bankAccountDetails: string;
   agreedToTerms: boolean;
@@ -60,7 +58,6 @@ const PersonalInformation = ({
     if (!formData.firstName) newErrors.firstName = "First name is required";
     if (!formData.lastName) newErrors.lastName = "Last name is required";
     if (!formData.dob) newErrors.dob = "Date of birth is required";
-    if (!formData.email) newErrors.email = "Email is required";
     if (!formData.gender) newErrors.gender = "Gender is required";
     if (!formData.phone) newErrors.phone = "Phone number is required";
 
@@ -167,23 +164,7 @@ const PersonalInformation = ({
           )}
         </div>
 
-        <div className="flex flex-col gap-2">
-          <label htmlFor="email">Email Address</label>
-          <input
-            placeholder="someone@example.com"
-            className={`pl-2 h-12 rounded-lg ${
-              errors.email ? "border-red-500" : "border-shade-3"
-            } border outline-orange`}
-            type="email"
-            name="email"
-            id="email"
-            value={formData.email}
-            onChange={handleChange}
-          />
-          {errors.email && (
-            <span className="text-xs text-red-500">{errors.email}</span>
-          )}
-        </div>
+
 
         <div className="flex flex-col gap-2">
           <label htmlFor="phone">Phone Number</label>

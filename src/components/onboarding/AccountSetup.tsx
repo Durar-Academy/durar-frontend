@@ -8,7 +8,6 @@ interface FormData {
   middleName: string;
   lastName: string;
   dob: string;
-  email: string;
   gender: string;
   phone: string;
   specializationAndSkill: string;
@@ -18,7 +17,6 @@ interface FormData {
   city: string;
   state: string;
   country: string;
-  password: string;
   paymentMode: string;
   bankAccountDetails: string;
   agreedToTerms: boolean;
@@ -66,7 +64,7 @@ const AccountSetup = ({
   const validateForm = () => {
     const newErrors: { [key: string]: string } = {};
 
-    if (!formData.password) newErrors.password = "Password is required";
+
     if (!formData.paymentMode)
       newErrors.paymentMode = "Payment mode is required";
     if (!formData.bankAccountDetails)
@@ -94,36 +92,7 @@ const AccountSetup = ({
           Account Setup
         </h2>
 
-        <div className="flex flex-col gap-2">
-          <label htmlFor="email">Email</label>
-          <input
-            placeholder="Enter email..."
-            className="pl-2 h-12 rounded-lg border-shade-3 border outline-orange bg-gray-100"
-            type="email"
-            name="email"
-            id="email"
-            value={formData.email}
-            disabled
-          />
-        </div>
 
-        <div className="flex flex-col gap-2">
-          <label htmlFor="password">Password</label>
-          <input
-            placeholder="Enter password..."
-            className={`pl-2 h-12 rounded-lg ${
-              errors.password ? "border-red-500" : "border-shade-3"
-            } border outline-orange`}
-            type="password"
-            name="password"
-            id="password"
-            value={formData.password}
-            onChange={handleChange}
-          />
-          {errors.password && (
-            <span className="text-xs text-red-500">{errors.password}</span>
-          )}
-        </div>
 
         <h2 className="text-sm font-medium text-high col-span-2">
           Payment Details
