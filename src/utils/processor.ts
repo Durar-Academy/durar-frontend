@@ -369,26 +369,50 @@ export const processStudentAssignments = (
 ): StudentAssignmentsTableProps => {
   const extractedAssignments = assignments.map((assignment) => {
     const id = assignment.id;
-    const course = assignment.title;
+    const course = assignment.course?.title || assignment.title;
     const date = format(new Date(assignment.createdAt), "PP");
+    const dueDate = format(new Date(assignment.dueAt), "PP");
     const status = assignment.status;
-
-    const score = assignment.AssignmentSubmission?.[0]?.grade
-      ? (assignment.AssignmentSubmission[0].grade / assignment.totalScore) * 100
-      : assignment.QuizSubmission?.[0]?.grade
-      ? (assignment.QuizSubmission[0].grade / assignment.totalScore) * 100
-      : 0;
+    const score = assignment.grade ?? undefined;
 
     return {
       id,
       course,
       date,
-      score,
+      dueDate,
       status,
+      score,
     };
   });
 
   return extractedAssignments;
+};
+
+export const processStudentAssignmentMetrics = (
+  assignments: Assignment[]
+): { title: string; value: string | number }[] => {
+  const total = assignments.length;
+  const completed = assignments.filter(
+    (a) => a.status === "graded"
+  ).length;
+  const pending = assignments.filter(
+    (a) => a.status === "pending" || a.status === "submitted"
+  ).length;
+
+  return [
+    {
+      title: "Total Assignment",
+      value: total,
+    },
+    {
+      title: "Completed",
+      value: completed,
+    },
+    {
+      title: "Pending",
+      value: pending,
+    },
+  ];
 };
 
 export const processTutorsMetrics = (tutorsMetrics: TutorsMetrics): OverviewCardProps[] => {

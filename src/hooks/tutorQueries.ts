@@ -108,3 +108,34 @@ export const useTutorTimetable = ({ page = 1 }: { page?: number }) => {
     placeholderData: (prev) => prev,
   });
 };
+
+export const useStudentAssignments = ({
+  userId,
+  page = 1,
+}: {
+  userId: string;
+  page?: number;
+}) => {
+  return useQuery({
+    queryKey: ["student-assignments", userId, page],
+    queryFn: ({ signal }) => tutorApi.getStudentAssignments({ userId, page, signal }),
+    enabled: !!userId,
+    placeholderData: (prev) => prev,
+  });
+};
+
+export const useStudentSubmissions = ({
+  userId,
+  assignmentId,
+  page = 1,
+}: {
+  userId?: string;
+  assignmentId?: string;
+  page?: number;
+}) => {
+  return useQuery({
+    queryKey: ["student-submissions", userId, assignmentId, page],
+    queryFn: ({ signal }) => tutorApi.getStudentSubmissions({ userId, assignmentId, page, signal }),
+    placeholderData: (prev) => prev,
+  });
+};

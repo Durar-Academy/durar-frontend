@@ -8,11 +8,14 @@ import {
     Wallet,
     PanelsTopLeft,
     Layers2,
+    Settings,
+    LogOut,
 } from "lucide-react";
 import React from "react";
 
-// import { ButtonComponent } from "@/components/admin/button-component";
+import { ButtonComponent } from "@/components/admin/button-component";
 import { LinkComponent } from "@/components/admin/link-component";
+import { deleteAuthData } from "@/lib/storage";
 // import { SelectComponent } from "@/components/admin/select-component";
 export const ADMIN_SIDEBAR_LINKS: ComponentConfig[] = [
     {
@@ -83,7 +86,25 @@ export const ADMIN_SIDEBAR_LINKS: ComponentConfig[] = [
             children: [React.createElement(Bell, { key: "icon", className: "h-4 w-4" }), "Notification"],
         },
     },
-
+    {
+        type: "link",
+        component: LinkComponent,
+        props: {
+            href: "/tutor/settings",
+            children: [React.createElement(Settings, { key: "icon", className: "h-4 w-4" }), "Settings"],
+        },
+    },
+    {
+        type: "button",
+        component: ButtonComponent,
+        props: {
+            href: "/auth",
+            onClick: () => {
+                deleteAuthData();
+            },
+            children: [React.createElement(LogOut, { key: "icon", className: "h-4 w-4" }), "Logout"],
+        },
+    },
 ];
 export const profileData = [
     {

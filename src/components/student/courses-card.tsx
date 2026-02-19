@@ -6,7 +6,7 @@ import { Progress } from "@/components/ui/progress";
 export function CourseCard({ name, thumbnail, progress, id }: CourseCardProps) {
   return (
     <Link
-      href={`/courses/${id}`}
+      href={`/student/courses/${id}`}
       className="rounded-xl bg-white p-3 flex flex-col justify-between gap-3 w-full max-w-60"
     >
       <Image

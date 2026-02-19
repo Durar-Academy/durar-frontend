@@ -1,5 +1,8 @@
 "use client";
 
+// Force dynamic rendering to ensure manifest generation
+export const dynamic = 'force-dynamic';
+
 import Link from "next/link";
 
 import { Skeleton } from "@/components/ui/skeleton";
@@ -18,7 +21,7 @@ import { useCourses, useSchedules } from "@/hooks/useAdmin";
 import { getCumulativeProgress } from "@/utils/processor";
 import { useAssignments } from "@/hooks/useStudent";
 
-export default function StudentPage() {
+export function StudentPageClient() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: schedules, isLoading: schedulesLoading } = useSchedules();
   const { data: courses, isLoading: coursesLoading } = useCourses({ status: "published" });
@@ -47,7 +50,7 @@ export default function StudentPage() {
             </p>
 
             <Link
-              href={"/courses"}
+              href={"/student/courses"}
               className="text-orange hover:underline text-balance leading-5 tracking-normal"
             >
               View All
@@ -113,7 +116,7 @@ export default function StudentPage() {
           <p className="text-high text-base leading-5 tracking-normal">Time Table</p>
 
           <Link
-            href={"/timetable"}
+            href={"/student/timetable"}
             className="text-orange hover:underline text-balance leading-5 tracking-normal"
           >
             View All

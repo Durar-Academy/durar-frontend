@@ -56,7 +56,7 @@ const Page = () => {
         ) : active === 1 ? (
           <ActivityLog userId={id} page={page} setPage={setPage} />
         ) : active === 2 ? (
-          <Assignment />
+          <Assignment studentId={id} />
         ) : (
           <CommentsNotes studentId={id} />
         )}

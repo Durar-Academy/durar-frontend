@@ -346,7 +346,7 @@ export const STUDENT_SIDEBAR_LINKS: ComponentConfig[] = [
     type: "link",
     component: LinkComponent,
     props: {
-      href: "/",
+      href: "/student",
       children: [React.createElement(Grid2X2, { key: "icon", className: "h-4 w-4" }), "Dashboard"],
       exact: true,
     },
@@ -356,7 +356,7 @@ export const STUDENT_SIDEBAR_LINKS: ComponentConfig[] = [
     type: "link",
     component: LinkComponent,
     props: {
-      href: "/courses",
+      href: "/student/courses",
       children: [React.createElement(BookText, { key: "icon", className: "h-4 w-4" }), "Courses"],
     },
   },
@@ -365,7 +365,7 @@ export const STUDENT_SIDEBAR_LINKS: ComponentConfig[] = [
     type: "link",
     component: LinkComponent,
     props: {
-      href: "/timetable",
+      href: "/student/timetable",
       children: [React.createElement(Columns2, { key: "icon", className: "h-4 w-4" }), "Timetable"],
     },
   },
@@ -374,7 +374,7 @@ export const STUDENT_SIDEBAR_LINKS: ComponentConfig[] = [
     type: "link",
     component: LinkComponent,
     props: {
-      href: "/assignments",
+      href: "/student/assignments",
       children: [React.createElement(Table2, { key: "icon", className: "h-4 w-4" }), "Assignment"],
     },
   },
@@ -383,7 +383,7 @@ export const STUDENT_SIDEBAR_LINKS: ComponentConfig[] = [
     type: "link",
     component: LinkComponent,
     props: {
-      href: "/result",
+      href: "/student/result",
       children: [React.createElement(Layers, { key: "icon", className: "h-4 w-4" }), "Result"],
     },
   },
@@ -392,7 +392,7 @@ export const STUDENT_SIDEBAR_LINKS: ComponentConfig[] = [
     type: "link",
     component: LinkComponent,
     props: {
-      href: "/payments",
+      href: "/student/payments",
       children: [
         React.createElement(Wallet, { key: "icon", className: "h-4 w-4" }),
         "Payment History",
@@ -404,7 +404,7 @@ export const STUDENT_SIDEBAR_LINKS: ComponentConfig[] = [
     type: "link",
     component: LinkComponent,
     props: {
-      href: "/notifications",
+      href: "/student/notifications",
       children: [
         React.createElement(BellIcon, { key: "icon", className: "h-4 w-4" }),
         "Notifications",
@@ -416,7 +416,7 @@ export const STUDENT_SIDEBAR_LINKS: ComponentConfig[] = [
     type: "link",
     component: LinkComponent,
     props: {
-      href: "/settings",
+      href: "/student/settings",
       children: [React.createElement(Settings, { key: "icon", className: "h-4 w-4" }), "Settings"],
     },
   },

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { axiosInstance } from "./axios";
 
 export async function createAccount(payload: CreateAccountPayload) {
   const response = await axios.post(
@@ -65,5 +66,10 @@ export async function refreshAccessToken(payload: { refreshToken: string; signal
 
 export async function loginUser(payload: { email: string; password: string }) {
   const response = await axios.post(`${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/login`, payload);
+  return response.data;
+}
+
+export async function updateTutorOnboarding(payload: TutorOnboardingPayload) {
+  const response = await axiosInstance.patch("/auth/onboard-tutor", payload);
   return response.data;
 }
