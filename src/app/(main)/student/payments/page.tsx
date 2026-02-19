@@ -1,8 +1,5 @@
 "use client";
 
-// Force dynamic rendering to prevent static generation issues
-export const dynamic = 'force-dynamic';
-
 import Image from "next/image";
 
 import { TopBar } from "@/components/shared/top-bar";

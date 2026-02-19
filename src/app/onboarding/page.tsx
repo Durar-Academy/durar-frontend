@@ -17,7 +17,6 @@ type FormData = {
   middleName: string;
   lastName: string;
   dob: string;
-  email: string;
   gender: string;
   phone: string;
   specializationAndSkill: string;
@@ -27,7 +26,6 @@ type FormData = {
   city: string;
   state: string;
   country: string;
-  password: string;
   paymentMode: string;
   bankAccountDetails: string;
   agreedToTerms: boolean;
@@ -45,7 +43,6 @@ const Page = () => {
     middleName: "",
     lastName: "",
     dob: "",
-    email: "",
     gender: "",
     phone: "",
     specializationAndSkill: "",
@@ -55,7 +52,6 @@ const Page = () => {
     city: "",
     state: "",
     country: "",
-    password: "",
     paymentMode: "",
     bankAccountDetails: "",
     agreedToTerms: false,
@@ -196,7 +192,6 @@ const Page = () => {
       middleName: "",
       lastName: "",
       dob: "",
-      email: "",
       gender: "",
       phone: "",
       specializationAndSkill: "",
@@ -206,7 +201,6 @@ const Page = () => {
       city: "",
       state: "",
       country: "",
-      password: "",
       paymentMode: "",
       bankAccountDetails: "",
       agreedToTerms: false,
