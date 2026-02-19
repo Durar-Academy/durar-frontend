@@ -32,7 +32,6 @@ interface FormData {
   middleName: string;
   lastName: string;
   dob: string;
-  email: string;
   gender: string;
   phone: string;
   specializationAndSkill: string;
@@ -42,7 +41,6 @@ interface FormData {
   city: string;
   state: string;
   country: string;
-  password: string;
   paymentMode: string;
   bankAccountDetails: string;
   agreedToTerms: boolean;
