@@ -9,6 +9,7 @@ import { axiosInstance } from "@/lib/axios";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 // Explicitly define FormData type
 type FormData = {
@@ -33,6 +34,7 @@ type FormData = {
 
 const Page = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [progress, setProgress] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -147,6 +149,13 @@ const Page = () => {
 
       if (response.data.success) {
         toast.success("Onboarding completed successfully!");
+        // Ensure the current user data is refreshed so components
+        // (like Top_Bar) don't see stale/partial profile data.
+        try {
+          queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+        } catch (e) {
+          console.warn("Failed to invalidate currentUser query:", e);
+        }
         // Redirect after successful submission
         router.push("/tutor");
       } else {
