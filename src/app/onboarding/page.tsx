@@ -7,7 +7,7 @@ import ProfessionalDetails from "@/components/onboarding/ProfessionalDetails";
 import { onboardingSidebarData } from "@/data2/constants";
 import { axiosInstance } from "@/lib/axios";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+// router not used in this component
 import { toast } from "react-hot-toast";
 
 // Explicitly define FormData type
@@ -32,7 +32,7 @@ type FormData = {
 };
 
 const Page = () => {
-  const router = useRouter();
+  
   const [progress, setProgress] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -152,7 +152,7 @@ const Page = () => {
         // when a QueryClientProvider is not available during prerender.
         try {
           localStorage.removeItem("tutor-onboarding-data");
-        } catch (e) {
+        } catch {
           /* ignore storage errors */
         }
         // Force a full reload to ensure fresh data is fetched after onboarding.
