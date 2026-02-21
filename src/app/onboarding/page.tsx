@@ -9,7 +9,6 @@ import { axiosInstance } from "@/lib/axios";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "react-hot-toast";
-import { useQueryClient } from "@tanstack/react-query";
 
 // Explicitly define FormData type
 type FormData = {
@@ -34,7 +33,6 @@ type FormData = {
 
 const Page = () => {
   const router = useRouter();
-  const queryClient = useQueryClient();
   const [progress, setProgress] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -149,15 +147,16 @@ const Page = () => {
 
       if (response.data.success) {
         toast.success("Onboarding completed successfully!");
-        // Ensure the current user data is refreshed so components
-        // (like Top_Bar) don't see stale/partial profile data.
+        // Clear any saved onboarding draft and navigate to tutor dashboard.
+        // We avoid calling react-query hooks here to prevent SSR build errors
+        // when a QueryClientProvider is not available during prerender.
         try {
-          queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+          localStorage.removeItem("tutor-onboarding-data");
         } catch (e) {
-          console.warn("Failed to invalidate currentUser query:", e);
+          /* ignore storage errors */
         }
-        // Redirect after successful submission
-        router.push("/tutor");
+        // Force a full reload to ensure fresh data is fetched after onboarding.
+        window.location.href = "/tutor";
       } else {
         toast.error(response.data.message || "Something went wrong");
       }
