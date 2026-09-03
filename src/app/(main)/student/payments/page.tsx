@@ -16,7 +16,9 @@ export default function PaymentsPage() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: payments, isLoading: paymentsLoading } = usePayments();
 
-  const allPayments = processPayments(payments);
+  // React Query has no data on the initial render (including static prerendering).
+  // Keep the processor and the table working with a predictable array shape.
+  const allPayments = processPayments(payments ?? []);
   const pendingPayments = allPayments.filter((payment) => payment.status === "pending");
 
   return (
