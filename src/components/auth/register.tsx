@@ -19,6 +19,8 @@ import { createAccount } from "@/lib/auth";
 import { extractDialingCode } from "@/lib/utils";
 import { STORE_EMAIL_KEY, storeItem } from "@/lib/storage";
 
+// Register Page
+
 export function Register() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const registrationFormController = useRegisterForm();
