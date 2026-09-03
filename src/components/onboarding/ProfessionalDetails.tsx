@@ -12,6 +12,7 @@ import {
 import { useEffect, useState, useCallback } from "react";
 import { toast } from "react-hot-toast";
 import { axiosInstance } from "@/lib/axios";
+import { uploadFile } from "@/lib/storage";
 
 // Define document types
 type Document = {
@@ -221,53 +222,36 @@ const ProfessionalDetails = ({
     );
 
     try {
-      const formData = new FormData();
-      formData.append("file", file);
+      const response = await uploadFile(file);
 
-      const response = await axiosInstance.post(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/file/upload`,
-        formData
-      );
+      const fileStorageId = response.storageId;
+      const fileUrl = response.url;
 
-      if (response.data.success) {
-        const storageId = response.data.data.storageId;
-        const fileUrl = response.data.data.url;
-
-        setDocuments((prev) =>
-          prev.map((doc) =>
-            doc.id === docId
-              ? {
-                  ...doc,
-                  storageId,
-                  fileUrl,
-                  fileName: file.name,
-                  uploaded: true,
-                  uploading: false,
-                }
-              : doc
-          )
-        );
-
-        toast.success(`${file.name} uploaded successfully`);
-      } else {
-        throw new Error(response.data.message || "Failed to upload file");
-      }
-    } catch (error: unknown) {
-      const errorMessage = error instanceof Error 
-        ? error.message 
-        : "Failed to upload file";
-      
-      console.error("File upload error:", error);
       setDocuments((prev) =>
         prev.map((doc) =>
           doc.id === docId
             ? {
                 ...doc,
+                storageId: fileStorageId,
+                fileUrl,
+                fileName: file.name,
+                uploaded: true,
                 uploading: false,
-                error: errorMessage,
               }
             : doc
         )
+      );
+
+      toast.success(`${file.name} uploaded successfully`);
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : "Upload failed. Please try again.";
+      setDocuments((prev) =>
+        prev.map((doc) =>
+          doc.id === docId
+            ? { ...doc, uploading: false, error: errorMessage }
+            : doc,
+        ),
       );
       toast.error(errorMessage);
     }

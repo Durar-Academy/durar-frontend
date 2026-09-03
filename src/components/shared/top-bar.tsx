@@ -12,9 +12,11 @@ export function TopBar({
 }: {
   children: React.ReactNode;
   subtext: string;
-  user: User;
+  user?: User;
 }) {
   const { initials, fullName } = formatUserName(user);
+  const profilePictureSrc = user?.profilePicture?.src ?? user?.profilePictureId ?? undefined;
+  const isStudent = user?.role === "student";
 
   return (
     <div className="bg-white border border-shade-2 py-5 px-6 rounded-xl flex justify-between items-center w-full">
@@ -25,7 +27,7 @@ export function TopBar({
       </div>
 
       <div className="flex items-center gap-3">
-        {user.role !== "student" && (
+        {!isStudent && (
           <Link
             href="/admin/notification"
             className="w-9 h-9 rounded-full flex items-center justify-center bg-orange hover:bg-burnt transition-colors"
@@ -35,7 +37,7 @@ export function TopBar({
         )}
 
         <Avatar className="h-9 w-9">
-          {user?.profilePictureId && <AvatarImage src={user.profilePictureId as string} />}
+          {profilePictureSrc && <AvatarImage src={profilePictureSrc} />}
           <AvatarFallback className="bg-shade-3 text-black">{initials}</AvatarFallback>
         </Avatar>
 
@@ -43,7 +45,7 @@ export function TopBar({
           <p className="text-sm text-high font-semibold">{fullName}</p>
 
           <Link
-            href={user.role === "student" ? "/settings" : "/admin/settings"}
+            href={isStudent ? "/student/settings" : "/admin/settings"}
             className="hover:underline text-low text-xs font-normal"
           >
             View Profile

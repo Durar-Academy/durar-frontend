@@ -10,20 +10,19 @@ import { TopBar } from "@/components/shared/top-bar";
 
 import { CourseCard } from "@/components/student/courses-card";
 import { AssignmentListItem } from "@/components/student/assignment-list-item";
-import { SingleDayFixedTimeSchedule } from "@/components/student/single-day-timetable";
+import { DashboardTimetable } from "@/components/student/dashboard-timetable";
+import { StudentWelcomeModal } from "@/components/student/welcome-modal";
 
 import { useCurrentUser } from "@/hooks/useAccount";
 import { formatUserName } from "@/utils/formatter";
-import { currentDay } from "@/utils/time";
 
 // import { studentAssignments } from "@/data/mockData";
-import { useCourses, useSchedules } from "@/hooks/useAdmin";
+import { useCourses } from "@/hooks/useAdmin";
 import { getCumulativeProgress } from "@/utils/processor";
 import { useAssignments } from "@/hooks/useStudent";
 
 export function StudentPageClient() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
-  const { data: schedules, isLoading: schedulesLoading } = useSchedules();
   const { data: courses, isLoading: coursesLoading } = useCourses({ status: "published" });
   const { data: assignments, isLoading: assignmentsLoading } = useAssignments();
 
@@ -66,7 +65,7 @@ export function StudentPageClient() {
                   <CourseCard
                     key={course.title + index}
                     name={course.title}
-                    thumbnail={course.thumbnailId ?? ""}
+                    thumbnailId={course.thumbnailId}
                     progress={course.UserCourse[0].progress}
                     id={course.id}
                   />
@@ -96,13 +95,13 @@ export function StudentPageClient() {
           ) : (
             <div className="overflow-y-auto max-h-40 hide-scrollbar">
               <div className="flex flex-col gap-3">
-                {assignments?.map((assignment: Assignment) => (
+                {assignments?.map((assignment: StudentAssignment) => (
                   <AssignmentListItem
                     key={assignment.id + assignment.title}
                     id={assignment.id}
                     title={assignment.title}
                     dueDate={assignment.dueAt}
-                    isChecked={assignment.status !== "pending"}
+                    isChecked={assignment.status ? assignment.status !== "pending" : false}
                   />
                 ))}
               </div>
@@ -111,24 +110,17 @@ export function StudentPageClient() {
         </div>
       </div>
 
-      <div className="bg-shade-1 rounded-xl p-6 pb-3">
-        <div className="flex justify-between items-center mb-6">
-          <p className="text-high text-base leading-5 tracking-normal">Time Table</p>
+      <DashboardTimetable />
 
-          <Link
-            href={"/student/timetable"}
-            className="text-orange hover:underline text-balance leading-5 tracking-normal"
-          >
-            View All
-          </Link>
-        </div>
-
-        {schedulesLoading ? (
-          <Skeleton className="rounded-xl w-full h-40" />
-        ) : (
-          <SingleDayFixedTimeSchedule schedules={schedules.records} selectedDay={currentDay} />
-        )}
+      <div className="flex justify-start">
+        <button
+          type="button"
+          className="w-[206px] h-10 px-8 py-2 rounded-xl border border-orange bg-orange text-white text-sm font-medium hover:bg-burnt hover:border-burnt transition-colors"
+        >
+          Make Payment Here
+        </button>
       </div>
+      <StudentWelcomeModal />
     </section>
   );
 }

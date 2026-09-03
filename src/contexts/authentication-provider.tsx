@@ -5,24 +5,29 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import axios from "axios";
 
-import { Loading } from "@/components/shared/loading";
-
 import { deleteAuthData, retrieveAuthData, storeAuthData } from "@/lib/storage";
 import { refreshAccessToken } from "@/lib/auth";
 
 export const AuthenticationContext = createContext<AuthenticationContextProps | undefined>(undefined);
 
 export function AuthenticationProvider({ children }: { children: React.ReactNode }) {
-  const [loggedIn, setLoggedIn] = useState(false);
+  // Render the application shell immediately. The effect below redirects an
+  // invalid session, while API requests still enforce authentication.
+  const [loggedIn, setLoggedIn] = useState(true);
   const [authLoading, setAuthLoading] = useState(false);
   const router = useRouter();
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const fetchAuth = useCallback(() => {
     (async function () {
-      setAuthLoading(true);
+      const [accessToken, refreshToken] = retrieveAuthData();
 
-      const [, refreshToken] = retrieveAuthData();
+      // A valid access token lets the application render immediately. The
+      // axios interceptor refreshes it only if an API request returns 401.
+      if (accessToken) {
+        setLoggedIn(true);
+        return;
+      }
 
       if (!refreshToken) {
         console.error("No local refresh token");
@@ -33,6 +38,7 @@ export function AuthenticationProvider({ children }: { children: React.ReactNode
         return;
       }
 
+      setAuthLoading(true);
       abortControllerRef.current = new AbortController();
 
       try {
@@ -70,11 +76,6 @@ export function AuthenticationProvider({ children }: { children: React.ReactNode
       if (abortControllerRef.current) abortControllerRef.current.abort();
     };
   }, [fetchAuth]);
-
-  if (authLoading) return <Loading />;
-
-  // During the transition to login page (safeguard)
-  if (!loggedIn && !authLoading) return <Loading />;
 
   return (
     <AuthenticationContext.Provider value={{ loggedIn, setLoggedIn, authLoading, setAuthLoading }}>

@@ -1,10 +1,10 @@
 "use client";
 
 import { Camera, Check, User, X } from "lucide-react";
-import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { z } from "zod";
 import toast from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { TopBar } from "@/components/shared/top-bar";
 import { Label } from "@/components/ui/label";
@@ -33,22 +33,112 @@ import { useCurrentUser } from "@/hooks/useAccount";
 import { useUpdateForm } from "@/hooks/useForm";
 import { updateUserInfo } from "@/lib/account";
 import { updateFormSchema } from "@/lib/schemas";
+import { deleteFileByStorageId, uploadFile } from "@/lib/storage";
 import { extractDialingCode } from "@/lib/utils";
+
+function getPrefilledDialingData(phone?: string | null) {
+  if (!phone) {
+    return {
+      dialingCode: "",
+      phoneNumber: "",
+    };
+  }
+
+  const matchingDialingCode = DAILING_CODES.find((dialingCode) =>
+    phone.startsWith(extractDialingCode(dialingCode)),
+  );
+
+  if (!matchingDialingCode) {
+    return {
+      dialingCode: "",
+      phoneNumber: phone,
+    };
+  }
+
+  const parsedDialingCode = extractDialingCode(matchingDialingCode);
+
+  return {
+    dialingCode: matchingDialingCode,
+    phoneNumber: phone.slice(parsedDialingCode.length),
+  };
+}
+
+function normalizeTitle(title?: string | null) {
+  if (!title) return undefined;
+
+  return TITLES.find((option) => option === title || `${option}.` === title);
+}
+
+function normalizeGender(gender?: string | null) {
+  if (!gender) return undefined;
+
+  return GENDERS.find((option) => option.toLowerCase() === gender.toLowerCase());
+}
 
 export default function SettingsPage() {
   const updateFormController = useUpdateForm();
+  const queryClient = useQueryClient();
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [removeProfileImage, setRemoveProfileImage] = useState(false);
 
-  const [imagePreview, setImagePreview] = useState<string | null>(user?.profilePictureId || null);
+  const updateImagePreview = (nextPreview: string | null) => {
+    setImagePreview((previousPreview) => {
+      if (previousPreview?.startsWith("blob:")) {
+        URL.revokeObjectURL(previousPreview);
+      }
+
+      return nextPreview;
+    });
+  };
+
+  const syncFormWithUser = (nextUser: User) => {
+    const { dialingCode, phoneNumber } = getPrefilledDialingData(nextUser.phone);
+
+    updateFormController.reset({
+      title: normalizeTitle(nextUser.title),
+      firstName: nextUser.firstName || "",
+      middleName: nextUser.middleName || "",
+      lastName: nextUser.lastName || "",
+      gender: normalizeGender(nextUser.gender),
+      dialingCode,
+      phoneNumber,
+      country: nextUser.country || "",
+      email: nextUser.email || "",
+      profileImage: undefined,
+    });
+
+    updateImagePreview(nextUser.profilePicture?.url ?? null);
+    setRemoveProfileImage(false);
+  };
+
+  useEffect(() => {
+    if (!user) return;
+
+    syncFormWithUser(user);
+  }, [updateFormController, user]);
+
+  useEffect(() => {
+    return () => {
+      if (imagePreview?.startsWith("blob:")) URL.revokeObjectURL(imagePreview);
+    };
+  }, [imagePreview]);
 
   const handleSubmit = async (values: z.infer<typeof updateFormSchema>) => {
+    if (!user) {
+      toast.error("Unable to load your profile. Please refresh and try again.");
+      return;
+    }
+
     setIsSubmitting(true);
-    console.log("Update Form Values: ", values);
+    const payload: Partial<UpdateAccountPayload> = {};
+    const currentProfilePictureStorageId = user.profilePicture?.id ?? null;
+    let uploadedProfilePictureStorageId: string | null = null;
+    let uploadedFileUrl: string | null = null;
 
-    const payload: Record<string, string> = {};
-
-    if (values.email) payload.email = values.email;
+    if (values.title) payload.title = values.title;
+    if (values.email) payload.email = values.email.trim().toLowerCase();
     if (values.firstName) payload.firstName = values.firstName;
     if (values.lastName) payload.lastName = values.lastName;
     if (values.middleName) payload.middleName = values.middleName;
@@ -58,17 +148,60 @@ export default function SettingsPage() {
       payload.phone = `${extractDialingCode(values.dialingCode)}${values.phoneNumber}`;
     }
 
-    // if (values.title) payload.title = values.title;
-    // if (values.profileImage) payload.profileImage = values.profileImage;
-
     try {
-      const response = await updateUserInfo(payload, user?.id ?? "");
-      console.log("Update Form Response Data", response);
+      if (values.profileImage instanceof File) {
+        const uploadedFile = await uploadFile(values.profileImage);
+        uploadedProfilePictureStorageId = uploadedFile.id ?? null;
+        uploadedFileUrl = uploadedFile.url ?? null;
+        
+        payload.profilePictureId = uploadedFile.id;
+      } else if (removeProfileImage) {
+        payload.profilePictureId = null;
+      }
 
-      if (response.success) toast.success("Account updated successfully!");
-      updateFormController.reset();
-    } catch (error) {
-      console.error("Update Form Error", error);
+      const response = await updateUserInfo(payload, user.id);
+
+      if (response.success) {
+        const updatedUser = response.data as User | undefined;
+
+        toast.success("Account updated successfully!");
+
+        if (updatedUser) {
+          queryClient.setQueryData(["currentUser"], updatedUser);
+          
+          // Sync form with updated user data
+          // If a new image was uploaded, ensure it has the correct url
+          let userToSync = updatedUser;
+          if (uploadedFileUrl && updatedUser.profilePicture && !updatedUser.profilePicture.url) {
+            userToSync = {
+              ...updatedUser,
+              profilePicture: {
+                ...updatedUser.profilePicture,
+                url: uploadedFileUrl,
+              },
+            };
+          }
+          
+          syncFormWithUser(userToSync);
+        }
+
+        await queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+
+        if (currentProfilePictureStorageId && (uploadedProfilePictureStorageId || removeProfileImage)) {
+          deleteFileByStorageId(currentProfilePictureStorageId).catch((deleteError) => {
+            console.error("Failed to delete the previous profile picture:", deleteError);
+          });
+        }
+
+        setRemoveProfileImage(false);
+      }
+    } catch {
+      if (uploadedProfilePictureStorageId) {
+        deleteFileByStorageId(uploadedProfilePictureStorageId).catch((deleteError) => {
+          console.error("Failed to rollback the uploaded profile picture:", deleteError);
+        });
+      }
+
       toast.error("Unable to update your account. Please try again later.");
     } finally {
       setIsSubmitting(false);
@@ -103,11 +236,10 @@ export default function SettingsPage() {
                   <FormItem className="hidden shrink-0 w-full max-w-80 rounded-xl border border-shade-2 bg-white p-4 xl:flex flex-col gap-3 items-center">
                     <div className="w-full relative h-64 rounded-xl bg-gray-100 flex items-center justify-center overflow-hidden">
                       {imagePreview ? (
-                        <Image
+                        <img
                           src={imagePreview}
-                          fill
                           alt="User Profile Picture"
-                          className="object-cover object-center"
+                          className="h-full w-full object-cover object-center"
                         />
                       ) : (
                         <div className="flex flex-col items-center justify-center text-gray-500">
@@ -138,9 +270,10 @@ export default function SettingsPage() {
                               const file = e.target.files?.[0];
                               if (file) {
                                 field.onChange(file);
+                                setRemoveProfileImage(false);
 
                                 const url = URL.createObjectURL(file);
-                                setImagePreview(url);
+                                updateImagePreview(url);
                               }
                             }}
                           />
@@ -149,15 +282,16 @@ export default function SettingsPage() {
                         {imagePreview && (
                           <button
                             type="button"
-                            className="text-danger flex items-center gap-2 text-base font-medium"
-                            onClick={() => {
-                              field.onChange(undefined);
-                              setImagePreview(null);
-                            }}
-                          >
-                            <span>Remove</span>
-                            <X className="w-5 h-5" />
-                          </button>
+                          className="text-danger flex items-center gap-2 text-base font-medium"
+                          onClick={() => {
+                            field.onChange(undefined);
+                            updateImagePreview(null);
+                            setRemoveProfileImage(true);
+                          }}
+                        >
+                          <span>Remove</span>
+                          <X className="w-5 h-5" />
+                        </button>
                         )}
                       </div>
                     </FormControl>
@@ -185,7 +319,16 @@ export default function SettingsPage() {
 
                     <button
                       className="text-danger flex items-center gap-2 text-base font-medium hover:underline"
-                      onClick={() => updateFormController.reset()}
+                      onClick={() => {
+                        if (!user) {
+                          updateFormController.reset();
+                          updateImagePreview(null);
+                          setRemoveProfileImage(false);
+                          return;
+                        }
+
+                        syncFormWithUser(user);
+                      }}
                       type="button"
                     >
                       <X className="w-5 h-5 " />
@@ -206,7 +349,7 @@ export default function SettingsPage() {
                           </FormLabel>
 
                           <FormControl>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select onValueChange={field.onChange} value={field.value || undefined}>
                               <SelectTrigger className="shadow-none px-4 py-2 rounded-xl h-12 placeholder:text-low text-high text-sm focus:ring-0 focus:outline-0 focus:ring-offset-0 focus:border-2 focus:border-orange">
                                 <SelectValue placeholder="Select Title" />
                               </SelectTrigger>
@@ -310,7 +453,7 @@ export default function SettingsPage() {
                           </FormLabel>
 
                           <FormControl>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select onValueChange={field.onChange} value={field.value || undefined}>
                               <SelectTrigger className="shadow-none px-4 py-2 rounded-xl h-12 placeholder:text-low text-high text-sm focus:ring-0 focus:outline-0 focus:ring-offset-0 focus:border-2 focus:border-orange">
                                 <SelectValue placeholder="Select Country" />
                               </SelectTrigger>
@@ -417,7 +560,7 @@ export default function SettingsPage() {
                           </FormLabel>
 
                           <FormControl>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select onValueChange={field.onChange} value={field.value || undefined}>
                               <SelectTrigger className="shadow-none px-4 py-2 rounded-xl h-12 placeholder:text-low text-high text-sm focus:ring-0 focus:outline-0 focus:ring-offset-0 focus:border-2 focus:border-orange">
                                 <SelectValue placeholder="Select Dailing Code" />
                               </SelectTrigger>

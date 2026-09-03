@@ -26,7 +26,7 @@ export default function NotificationPage() {
       </div>
 
       {notificationsLoading ? (
-        <Skeleton className="rounded-xl w-full h-screen" />
+        <Skeleton className="rounded-xl w-full h-64" />
       ) : (
         <NotificationsTable notifications={notifications} />
       )}

@@ -41,6 +41,7 @@ export const tutorApi = {
       params: { limit, page },
       signal,
     });
+    console.log(response.data.data, "RESPONSE DATA NEW");
     return response.data.data as TutorClassesResponse;
   },
   getTutorAssignments: async ({

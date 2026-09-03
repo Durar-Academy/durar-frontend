@@ -12,6 +12,7 @@ import { processPaymentsMetrics, processPaymentsPage } from "@/utils/processor";
 export default function PaymentsPage() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: paymentsMetrics, isLoading: paymentsMetricsLoading } = usePaymentsMetrics();
+  console.log("Payments Metrics:", paymentsMetrics);
   const { data: payments, isLoading: paymentsLoading } = usePayments();
 
   const allPaymentsMetrics = processPaymentsMetrics(paymentsMetrics ?? []);

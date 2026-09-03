@@ -48,14 +48,15 @@ export const processTutorStudents = (studentsData?: TutorStudentsResponse): Stud
 
 export const processTutorClasses = (classesData?: TutorClassesResponse): ClassItem[] => {
     if (!classesData?.records) return [];
-
-    return classesData.records.map((record) => ({
+    const tutorClasses = classesData.records.map((record) => ({
         day: record.day.charAt(0).toUpperCase() + record.day.slice(1),
         student: `${record.student?.firstName} ${record.student?.lastName}`,
         category: record.course.category || "Uncategorized",
         time: `${record.start} - ${record.end}`,
         status: record.status.charAt(0).toUpperCase() + record.status.slice(1),
+        link: record.link,
     }));
+    return tutorClasses;
 };
 
 export const processTutorAssignments = (assignmentsData?: TutorAssignmentsResponse): AssignmentItem[] => {
@@ -90,6 +91,7 @@ export const processUserProfile = (userData?: UserProfileResponse): UserProfile 
         status: userData.status.charAt(0).toUpperCase() + userData.status.slice(1),
         role: userData.role.charAt(0).toUpperCase() + userData.role.slice(1),
         profilePictureId: userData.profilePictureId,
+        profilePicture: userData.profilePicture ?? null,
     };
 };
 
@@ -172,19 +174,22 @@ export const processTutorTimetable = (timetableData?: TutorTimetableResponse): T
     if (!timetableData?.records) return [];
 
     // Group by time periods and days
-    const timeSlots: { [key: string]: { [day: string]: { teacher: string; profileLink: string } } } = {};
-    
+    const timeSlots: { [key: string]: { [day: string]: { id: string; studentName: string; link?: string | null } } } = {};
+
     timetableData.records.forEach((record) => {
         const timeSlot = `${record.start} - ${record.end}`;
         const day = record.day.charAt(0).toUpperCase() + record.day.slice(1); // Capitalize day
-        
+
         if (!timeSlots[timeSlot]) {
             timeSlots[timeSlot] = {};
         }
-        
+
         timeSlots[timeSlot][day] = {
-            teacher: `${record.user.firstName} ${record.user.lastName}`,
-            profileLink: `/tutor/students/profile/${record.user.id}`,
+            id: record.id,
+            studentName: record.student
+                ? `${record.student.firstName} ${record.student.lastName}`
+                : "Unassigned student",
+            link: record.link,
         };
     });
 

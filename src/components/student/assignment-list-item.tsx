@@ -3,31 +3,28 @@
 import { useState } from "react";
 import { format } from "date-fns";
 
-import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
 import { formatAssignmentDueDate } from "@/utils/time";
 
 type AssignmentItemProps = {
   id: string;
   title: string;
-  dueDate: Date;
+  dueDate: Date | string;
   isChecked: boolean;
 };
 
 export function AssignmentListItem({ id, title, dueDate, isChecked }: AssignmentItemProps) {
   const [checked] = useState(isChecked);
+  const parsedDueDate = new Date(dueDate);
 
-  // const handleCheck = () => {
-  //   setChecked(!checked);
-  // };
-
-  const { text: relativeDateText, color: relativeDateColor } = formatAssignmentDueDate(dueDate);
+  const { text: relativeDateText, color: relativeDateColor } =
+    formatAssignmentDueDate(parsedDueDate);
 
   return (
     <div className="flex items-start gap-2">
       <Checkbox
         checked={checked}
-        // onCheckedChange={handleCheck}
         className="h-5 w-5 border-shade-3 bg-white shadow-none
           data-[state=checked]:bg-orange data-[state=checked]:text-white data-[state=checked]:border-0 disabled:opacity-100"
         id={String(id)}
@@ -44,7 +41,7 @@ export function AssignmentListItem({ id, title, dueDate, isChecked }: Assignment
 
         {!checked && (
           <span className="text-sm text-low leading-4">
-            {format(dueDate, "MMM d")} •{" "}
+            {format(parsedDueDate, "MMM d")} -{" "}
             <span className={relativeDateColor}>{relativeDateText}</span>
           </span>
         )}

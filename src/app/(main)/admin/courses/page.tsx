@@ -1,8 +1,8 @@
 "use client";
 
-import { Plus } from "lucide-react";
+import { GraduationCap, Plus } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { OverviewCard } from "@/components/admin/overview-card";
 import { TopBar } from "@/components/shared/top-bar";
@@ -20,8 +20,16 @@ export default function CoursesManagementPage() {
 
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: coursesMetrics, isLoading: coursesMetricsLoading } = useCoursesMetrics();
-  const { data: courses, isLoading: coursesLoading } = useCourses();
-  const { data: course, isLoading: courseLoading } = useCourse(selectedCourseId);
+  const { data: courses, isLoading: coursesLoading, isError: coursesError } = useCourses();
+  const { data: course, isLoading: courseLoading, isError: courseError } = useCourse(selectedCourseId);
+
+  // Keep a course selected once the list loads so the course-specific actions
+  // (including enrolment) have a valid destination immediately.
+  useEffect(() => {
+    if (!selectedCourseId && courses?.length) {
+      setSelectedCourseId(courses[0].id);
+    }
+  }, [courses, selectedCourseId]);
 
   const allCoursesMetrics = processCoursesMetrics(coursesMetrics ?? []);
 
@@ -43,12 +51,24 @@ export default function CoursesManagementPage() {
         <div className="flex justify-between items-center">
           <h3 className="text-low font-medium text-xl">Courses Overview</h3>
 
-          <Link href={"/admin/courses/new"}>
-            <Button variant={"_default"} className="bg-orange hover:bg-burnt px-4 py-2 h-10">
+          <div className="flex items-center gap-3">
+            <Link href={selectedCourseId ? `/admin/courses/${selectedCourseId}/enroll` : "#"}>
+              <Button
+                variant={"_default"}
+                className="bg-green hover:bg-dark-green px-4 py-2 h-10"
+                disabled={!selectedCourseId}
+              >
+                <GraduationCap className="w-5 h-5" />
+                <span>Enrol Student</span>
+              </Button>
+            </Link>
+            <Link href={"/admin/courses/new"}>
+              <Button variant={"_default"} className="bg-orange hover:bg-burnt px-4 py-2 h-10">
               <Plus className="w-6 h-6" strokeWidth={3} />
               <span>Add Course</span>
-            </Button>
-          </Link>
+              </Button>
+            </Link>
+          </div>
         </div>
 
         <div className="courses-overview-cards">
@@ -67,10 +87,14 @@ export default function CoursesManagementPage() {
       <div className="w-full flex gap-3 h-[600px]">
         {coursesLoading ? (
           <Skeleton className="w-full rounded-xl h-full" />
+        ) : coursesError ? (
+          <div className="w-full rounded-xl border border-destructive/20 bg-destructive/5 p-6 text-sm text-destructive">
+            Unable to load courses. Please refresh and try again.
+          </div>
         ) : (
           <>
             <CourseList
-              courses={courses!}
+              courses={courses ?? []}
               courseId={selectedCourseId}
               setCourseId={setSelectedCourseId}
             />
@@ -78,10 +102,12 @@ export default function CoursesManagementPage() {
             <div className="w-full rounded-xl p-6 border border-shade-2 bg-white">
               {courseLoading ? (
                 <Skeleton className="w-full rounded-xl h-full" />
-              ) : selectedCourseId ? (
-                <CourseDetails course={course!} />
+              ) : selectedCourseId && course ? (
+                <CourseDetails course={course} />
               ) : (
-                <p className="text-low text-sm mt-3">No course selected.</p>
+                <p className="text-low text-sm mt-3">
+                  {courseError ? "Unable to load the selected course." : "No course selected."}
+                </p>
               )}
             </div>
           </>

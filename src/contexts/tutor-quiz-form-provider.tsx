@@ -36,12 +36,16 @@ export function QuizFormProvider({ children }: { children: React.ReactNode }) {
         courseId: formData.courseId,
         type: "quiz",
         totalScore: formData.totalScore,
-        dueAt: formData.dueAt,
+        dueAt: formData.dueAt
+          ? formData.dueAt instanceof Date
+            ? formData.dueAt.toISOString().split("T")[0]
+            : formData.dueAt
+          : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
         description: formData.description,
         allowLate: formData.allowLate,
         randomnize: formData.randomnize,
         duration: formData.duration * 60 * 1_000,
-        autograded: formData.autograded,
+        autoGraded: formData.autoGraded,
       };
       console.log("ASSIGNMENT PAYLOAD", assignmentPayload);
 

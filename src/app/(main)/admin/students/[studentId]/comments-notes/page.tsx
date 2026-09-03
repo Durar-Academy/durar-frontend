@@ -1,13 +1,23 @@
+"use client";
+
+import { useParams } from "next/navigation";
 import { Search } from "lucide-react";
 
-import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { DisplayList } from "@/components/admin/display-list";
 import { AddNoteDialog } from "@/components/admin/add-note-dialog";
 
-import { studentNotes } from "@/data/mockData";
+import { useStudentNotes } from "@/hooks/useAdmin";
+
+type StudentNote = { id: string; title?: string; content: string; createdAt: string };
 
 export default function StudentManagementCommentPage() {
+  const { studentId } = useParams<{ studentId: string }>();
+  const { data: notesResponse, isLoading } = useStudentNotes(studentId);
+
+  const notes: StudentNote[] = notesResponse?.records ?? [];
+
   return (
     <div className="p-6 rounded-xl bg-white border border-shade-2">
       <div className="flex justify-between items-center mb-6">
@@ -26,21 +36,29 @@ export default function StudentManagementCommentPage() {
           </div>
 
           <div>
-            <DatePicker />
-          </div>
-
-          <div>
-            <div>
-              <AddNoteDialog />
-            </div>
+            <AddNoteDialog studentId={studentId} />
           </div>
         </div>
       </div>
 
       <div className="flex flex-col gap-3">
-        {studentNotes.map((note, index) => (
-          <DisplayList key={index} text={note.text} date={note.date as unknown as Date} />
-        ))}
+        {isLoading ? (
+          <div className="flex flex-col gap-3">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <Skeleton key={i} className="h-14 w-full rounded-xl" />
+            ))}
+          </div>
+        ) : notes.length > 0 ? (
+          notes.map((note) => (
+            <DisplayList
+              key={note.id}
+              text={note.title ? `${note.title}: ${note.content}` : note.content}
+              date={new Date(note.createdAt)}
+            />
+          ))
+        ) : (
+          <p className="text-sm text-low text-center py-8">No notes yet.</p>
+        )}
       </div>
     </div>
   );

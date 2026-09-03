@@ -40,15 +40,16 @@ export function Login() {
 
   async function handleSubmit(values: z.infer<typeof loginFormSchema>) {
     console.log("Login Form Values: ", values);
+    const email = values.email.trim().toLowerCase();
 
     if (values.rememberMe) {
-      const encryptedCredentials = await encryptCredentials(values.email, values.password);
+      const encryptedCredentials = await encryptCredentials(email, values.password);
 
       storeCredentials(encryptedCredentials as EncryptionPayload);
     } else deleteCredentials();
 
     const payload = {
-      email: values.email,
+      email,
       password: values.password,
     };
 
@@ -99,7 +100,7 @@ export function Login() {
 
         if (status === 500) {
           toast.error("Server error. Please try again later.");
-        } else if (status === 401) {
+        } else if (status === 401 || status === 400 || status === 404) {
           toast.error("Invalid credentials. Please try again.");
         } else {
           toast.error("An error occurred. Please try again.");

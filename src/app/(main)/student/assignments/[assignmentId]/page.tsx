@@ -76,7 +76,7 @@ export default function Assignment() {
         ) : (
           <TopBar subtext={"Assignment - Name"} user={user as User}>
             <p className="flex items-center gap-1">
-              <Link href={"/assignments"} className="hover:underline">
+              <Link href={"/student/assignments"} className="hover:underline">
                 Assignments
               </Link>
 

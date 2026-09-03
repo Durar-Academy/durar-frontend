@@ -11,7 +11,7 @@ export function CourseList({
   courseId,
   setCourseId,
 }: {
-  courses: Course[];
+  courses?: Course[];
   courseId: string;
   setCourseId: Dispatch<SetStateAction<string>>;
 }) {
@@ -51,8 +51,8 @@ export function CourseList({
           className="h-full overflow-y-scroll hide-scrollbar flex flex-col gap-3"
           onClick={handleListClick}
         >
-          {courses.length > 0 ? (
-            courses.map((course, index: number) => (
+          {(courses ?? []).length > 0 ? (
+            (courses ?? []).map((course, index: number) => (
               <div
                 key={course.id + course.title}
                 data-course-id={course.id}

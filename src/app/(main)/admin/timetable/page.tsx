@@ -1,6 +1,7 @@
 "use client";
 
-import { Download, Edit3Icon } from "lucide-react";
+import { useEffect } from "react";
+import { Download, Edit3Icon, Plus } from "lucide-react";
 import Link from "next/link";
 
 import { FixedTimeSchedule } from "@/components/admin/quran-timetable";
@@ -9,13 +10,17 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { useCurrentUser } from "@/hooks/useAccount";
-import { useSchedules } from "@/hooks/useAdmin";
+import { useTimetable } from "@/hooks/useAdmin";
 
 export default function ViewTimetable() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
-  const { data: schedules, isLoading: schedulesLoading } = useSchedules();
+  const { data: timetable, isLoading: timetableLoading } = useTimetable();
 
-  console.log("SCHDEULES", schedules);
+  useEffect(() => {
+    if (!timetable) return;
+
+    console.log("[Admin timetable] schedules:", timetable);
+  }, [timetable]);
 
   return (
     <section className="flex flex-col gap-5">
@@ -34,6 +39,13 @@ export default function ViewTimetable() {
           <h3 className="text-low font-medium text-xl">Quran Timetable</h3>
 
           <div className="flex gap-2 items-center">
+            <Link href="/admin/timetable/add">
+              <Button variant={"_default"} className="px-4 py-2 h-10">
+                <Plus className="w-6 h-6" strokeWidth={3} />
+                <span>Add Class</span>
+              </Button>
+            </Link>
+
             <Link href="/admin/timetable/edit">
               <Button variant={"_outline"} className="text-orange hover:text-burnt px-4 py-2 h-10">
                 <Edit3Icon className="w-6 h-6" strokeWidth={3} />
@@ -49,10 +61,10 @@ export default function ViewTimetable() {
         </div>
 
         <div className="h-[1024px] overflow-y-scroll hide-scrollbar">
-          {schedulesLoading ? (
+          {timetableLoading ? (
             <Skeleton className="rounded-xl h-full" />
           ) : (
-            <FixedTimeSchedule schedules={schedules.records} />
+            <FixedTimeSchedule schedules={timetable ?? {}} />
           )}
         </div>
       </div>

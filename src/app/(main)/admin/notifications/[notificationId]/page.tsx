@@ -19,72 +19,47 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-// import { useParams } from "next/navigation";
-
-const notification = {
-  id: "cmce0j0ep0006v68wapwou4j9",
-  notificationId: "cmce0j0d70002v68w2lkjz55v",
-  userId: "cma69yynv0000v6lkqeo1nded",
-  isRead: false,
-  readAt: null,
-  deletedAt: null,
-  createdAt: "2025-06-26T23:26:51.601Z",
-  updatedAt: "2025-06-26T23:26:51.601Z",
-  notification: {
-    id: "cmce0j0d70002v68w2lkjz55v",
-    title: "the inevitable",
-    content: "this is to notify all users",
-    mediaId: "cm9msmidf0004v6ukm1zkv0y8",
-    recipientType: "users",
-    createdById: "cm9ef7z420000v6y0v36rz8c8",
-    deletedAt: null,
-    createdAt: "2025-06-26T23:26:51.546Z",
-    updatedAt: "2025-06-26T23:26:51.546Z",
-    media: {
-      id: "cm9msmidf0004v6ukm1zkv0y8",
-      fileType: "image",
-      fileName: "1b278070-d5a5-4b59-8dd5-11aa9f5797be.JPG",
-      storageId: "wkxqycuexuss4p9il212",
-      src: "https://res.cloudinary.com/dotwljrqk/image/upload/v1744980986/image/wkxqycuexuss4p9il212.jpg",
-      width: 1920,
-      height: 2560,
-      alt: null,
-      size: 493481,
-      deletedAt: null,
-      updatedAt: "2025-04-18T13:53:02.568Z",
-      createdAt: "2025-04-18T12:56:26.499Z",
-      tutorId: "cm9mtmjjc0001v6f87ncdk1yg",
-    },
-    createdBy: {
-      id: "cm9ef7z420000v6y0v36rz8c8",
-      firstName: null,
-      lastName: null,
-      email: "adexsquare4192@gmail.com",
-    },
-  },
-};
+import { useNotification, useDeleteNotification } from "@/hooks/useAdmin";
+import { useParams, useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function SingleNotificationPage() {
-  // const { notificationId } = useParams();
+  const { notificationId } = useParams();
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const [editOpen, setEditOpen] = useState(false);
+  const router = useRouter();
 
-  // console.log(notificationId);
+  const { data: notification, isLoading: notificationLoading } = useNotification(
+    notificationId as string,
+  );
 
-  // const { data: notification, isLoading: notificationLoading } = useNotification(
-  //   notificationId as string,
-  // );
-  // console.log(notification, "notification");
+  const deleteNotificationMutation = useDeleteNotification();
+
+  const handleDelete = () => {
+    if (!notification) return;
+    deleteNotificationMutation.mutate(notification.id, {
+      onSuccess: () => {
+        toast.success("Notification deleted successfully");
+        router.push("/admin/notifications");
+      },
+      onError: (error) => {
+        console.error("Failed to delete notification:", error);
+        toast.error("Failed to delete notification");
+      },
+    });
+  };
+
+  const isDeleting = deleteNotificationMutation.isPending;
 
   return (
     <section className="flex flex-col gap-5">
       <div className="top-bar">
-        {currentUserLoading ? (
+        {currentUserLoading || notificationLoading ? (
           <Skeleton className="w-full rounded-xl h-[80px] " />
         ) : (
-          <TopBar subtext={notification.notification.title ?? "Notication"} user={user as User}>
+          <TopBar subtext={notification?.title ?? "Notification"} user={user as User}>
             <p className="flex items-center gap-1">
-              <Link href={`/notifications`} className="hover:underline">
+              <Link href={`/admin/notifications`} className="hover:underline">
                 Notifications
               </Link>
 
@@ -96,61 +71,77 @@ export default function SingleNotificationPage() {
         )}
       </div>
 
-      <div className="bg-white p-4 rounded-xl border border-shade-2  flex justify-between items-center">
-        <div className="flex flex-col gap-2">
-          <p className="flex items-center gap-1 text-low">
-            <CalendarIcon className="size-5 text-shade-3" />
-            Sent on {format(new Date(notification.createdAt), "PPpp")}
-          </p>
-          <p className="flex items-center gap-1 text-low">
-            <UserIcon className="size-5 text-shade-3" />
-            Sent to {getRecipientLabel(notification.notification.recipientType)}
-          </p>
+      {notificationLoading ? (
+        <Skeleton className="w-full rounded-xl h-40" />
+      ) : notification ? (
+        <>
+          <div className="bg-white p-4 rounded-xl border border-shade-2  flex justify-between items-center">
+            <div className="flex flex-col gap-2">
+              <p className="flex items-center gap-1 text-low">
+                <CalendarIcon className="size-5 text-shade-3" />
+                Sent on {format(new Date(notification.createdAt), "PPpp")}
+              </p>
+              <p className="flex items-center gap-1 text-low">
+                <UserIcon className="size-5 text-shade-3" />
+                Sent to {getRecipientLabel(notification.recipientType as RecipientType)}
+              </p>
+            </div>
+
+            <div className="flex gap-2">
+              <Button
+                variant={"_outline"}
+                className="text-danger bg-white rounded-xl py-2 px-4 h-10 hover:bg-offwhite"
+                onClick={handleDelete}
+                disabled={isDeleting}
+              >
+                <Trash2Icon className="w-5 h-5 text-inherit" />
+                <span>{isDeleting ? "Deleting..." : "Delete"}</span>
+              </Button>
+
+              <Button
+                variant={"_outline"}
+                className="text-orange bg-white rounded-xl py-2 px-4 h-10 hover:bg-offwhite"
+                onClick={() => setEditOpen(true)}
+              >
+                <Edit className="w-5 h-5 text-inherit" />
+                <span>Edit</span>
+              </Button>
+            </div>
+          </div>
+
+          <div className="bg-white p-4 rounded-xl border border-shade-2 ">
+            <h1 className="mb-4 font-medium text-base">Notification Content</h1>
+
+            <div className="text-high text-sm whitespace-pre-wrap break-words">
+              {notification.content}
+            </div>
+          </div>
+
+          {notification.media && (
+            <div className="bg-white py-2 px-3 rounded-xl border border-shade-2 w-80 flex items-center gap-2">
+              <FileIcon className="size-6 text-low" />
+
+              <p className="text-high text-sm truncate max-w-[200px]">
+                {notification.media.fileName ?? "Attachment"}
+              </p>
+
+              <Link href={notification.media.url ?? notification.media.src ?? "#"} target="_blank">
+                <EyeIcon className="text-orange h-6 w-6 shrink-0" />
+              </Link>
+            </div>
+          )}
+
+          <EditNotificationDialog
+            open={editOpen}
+            notification={notification}
+            onOpenChange={() => setEditOpen(false)}
+          />
+        </>
+      ) : (
+        <div className="flex items-center justify-center p-12 bg-white rounded-xl border border-shade-2">
+          <p className="text-low text-sm">Notification not found</p>
         </div>
-
-        <div className="flex gap-2">
-          <Button
-            variant={"_outline"}
-            className="text-danger bg-white rounded-xl py-2 px-4 h-10 hover:bg-offwhite"
-          >
-            <Trash2Icon className="w-5 h-5 text-inherit" />
-            <span>Delete</span>
-          </Button>
-
-          <Button
-            variant={"_outline"}
-            className="text-orange bg-white rounded-xl py-2 px-4 h-10 hover:bg-offwhite"
-            onClick={() => setEditOpen(true)}
-          >
-            <Edit className="w-5 h-5 text-inherit" />
-            <span>Edit</span>
-          </Button>
-        </div>
-      </div>
-
-      <div className="bg-white p-4 rounded-xl border border-shade-2 ">
-        <h1 className="mb-4 font-medium text-base">Notification Content</h1>
-
-        <div className="text-high text-sm whitespace-pre-wrap break-words">
-          {notification.notification.content}
-        </div>
-      </div>
-
-      <div className="bg-white py-2 px-3 rounded-xl border border-shade-2 w-80 flex items-center gap-2">
-        <FileIcon className="size-6 text-low" />
-
-        <p className="text-high text-sm ">{notification.notification.media.fileName}</p>
-
-        <Link href={notification.notification.media.src} target="_blank">
-          <EyeIcon className="text-orange h-6 w-6" />
-        </Link>
-      </div>
-
-      <EditNotificationDialog
-        open={editOpen}
-        notification={notification.notification}
-        onOpenChange={() => setEditOpen(false)}
-      />
+      )}
     </section>
   );
 }

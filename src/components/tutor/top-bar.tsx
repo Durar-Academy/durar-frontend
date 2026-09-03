@@ -33,6 +33,7 @@ export function Top_Bar({ children, subtext, user }: TopBarProps) {
     user.firstName && user.lastName
       ? `${user?.firstName[0].toUpperCase()} ${user?.lastName[0].toUpperCase()}`
       : "TU";
+  const profilePictureSrc = user.profilePicture?.src ?? user.profilePictureId ?? undefined;
       
   return (
     <div className="bg-white border border-shade-2 py-5 px-6 rounded-xl flex justify-between items-center w-full">
@@ -62,9 +63,7 @@ export function Top_Bar({ children, subtext, user }: TopBarProps) {
         <div>
           <div className="flex justify-center items-center gap-2">
             <Avatar className="h-9 w-9">
-              {user?.profilePictureId && (
-                <AvatarImage src={user.profilePictureId as string} />
-              )}
+              {profilePictureSrc && <AvatarImage src={profilePictureSrc} />}
               <AvatarFallback className="bg-shade-3 text-black">
                 {userInitials}
               </AvatarFallback>

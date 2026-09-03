@@ -70,14 +70,15 @@ export const useUpdateForm = () =>
   useForm<z.infer<typeof updateFormSchema>>({
     resolver: zodResolver(updateFormSchema),
     defaultValues: {
+      title: undefined,
       firstName: "",
       middleName: "",
       lastName: "",
+      gender: undefined,
       dialingCode: "",
       phoneNumber: "",
       country: "",
       email: "",
-
-      // profileImage: undefined,
+      profileImage: undefined,
     },
   });

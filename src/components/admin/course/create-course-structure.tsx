@@ -15,10 +15,8 @@ export function CreateCourseStructure() {
   const { formData, updateFormData } = useCreateCourseFormProvider();
 
   const addLesson = () => {
-    const maxId = formData.Lesson.reduce((max, lesson) => (lesson.id > max ? lesson.id : max), 0);
-    const newId = maxId + 1;
+    const newId = Date.now();
     updateFormData({
-      ...formData,
       Lesson: [
         ...formData.Lesson,
         { name: "", video: null, id: newId, type: "video", isLocked: true },
@@ -28,7 +26,7 @@ export function CreateCourseStructure() {
 
   const removeLesson = (id: number) => {
     const filteredLessons = formData.Lesson.filter((lesson) => lesson.id !== id);
-    updateFormData({ ...formData, Lesson: filteredLessons });
+    updateFormData({ Lesson: filteredLessons });
   };
 
   const handleInputChange = (event: ChangeEvent<HTMLInputElement>, index: number) => {
@@ -37,10 +35,7 @@ export function CreateCourseStructure() {
 
     if (name === "name") newLessons[index][name] = value;
 
-    updateFormData({
-      ...formData,
-      Lesson: newLessons,
-    });
+    updateFormData({ Lesson: newLessons });
   };
 
   const handleVideoUpload = (file: FileDropValue, index: number) => {
@@ -48,10 +43,7 @@ export function CreateCourseStructure() {
 
     newLessons[index].video = file;
 
-    updateFormData({
-      ...formData,
-      Lesson: newLessons,
-    });
+    updateFormData({ Lesson: newLessons });
   };
 
   const handleLessonStatus = (checked: boolean, index: number) => {
@@ -59,10 +51,7 @@ export function CreateCourseStructure() {
 
     newLessons[index].isLocked = checked;
 
-    updateFormData({
-      ...formData,
-      Lesson: newLessons,
-    });
+    updateFormData({ Lesson: newLessons });
   };
 
   return (
@@ -71,8 +60,9 @@ export function CreateCourseStructure() {
         {formData.Lesson.map((lesson, index) => (
           <div className="lesson-field relative" key={lesson.id}>
             <button
+              type="button"
               className="text-xs absolute top-2 right-0 text-danger underline"
-              onClick={() => removeLesson(lesson.id)}
+              onClick={() => removeLesson(Number(lesson.id))}
             >
               Remove Lesson
             </button>
@@ -130,6 +120,7 @@ export function CreateCourseStructure() {
                 <VideoDropzone
                   value={lesson.video}
                   onFileDrop={(file) => handleVideoUpload(file, index)}
+                  onClear={() => handleVideoUpload(null, index)}
                 />
               </div>
             </div>
@@ -139,6 +130,7 @@ export function CreateCourseStructure() {
 
       <div className="add-new-lesson-button">
         <button
+          type="button"
           className="gap-2 transition-colors p-6 rounded-xl border-2 border-dashed border-shade-3 flex items-center justify-center bg-white hover:bg-offwhite w-full"
           onClick={addLesson}
         >

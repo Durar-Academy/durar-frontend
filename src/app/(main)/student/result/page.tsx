@@ -16,7 +16,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ResultsTable } from "@/components/student/result-table";
 
 import { useCurrentUser } from "@/hooks/useAccount";
-import { mockResults } from "@/data/mockData";
+import { mockResults } from "@/data2/mockData";
 
 export default function ResultPage() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();

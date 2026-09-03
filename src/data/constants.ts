@@ -199,6 +199,7 @@ export const defaultCreateFormValues = {
   trackProgress: false,
   enableComments: false,
   additionalNotes: "",
+  prerequisites: [],
   status: "published" as CourseStatus,
 };
 
@@ -324,7 +325,7 @@ export const createQuizDefaultValues: CreateQuiz = {
   totalScore: 10,
   randomnize: false,
   duration: 0,
-  autograded: false,
+  autoGraded: false,
 
   questions: [
     {

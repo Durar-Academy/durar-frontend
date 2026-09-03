@@ -1,8 +1,22 @@
-import Select, { MultiValue } from "react-select";
+"use client";
 
-import { daysOfWeek, QURAN_ID, timeSlots } from "@/data/constants";
-import { deleteSchedule } from "@/lib/admin";
-import toast from "react-hot-toast";
+import { useCallback, useMemo } from "react";
+import Select from "react-select";
+import { GraduationCap, Link2, Plus, Trash2, UserRound } from "lucide-react";
+
+import { daysOfWeek, timeSlots } from "@/data/constants";
+import { Button } from "@/components/ui/button";
+
+/** Compute the hourly grid slot for a schedule based on its start hour. */
+function getTimeSlotForSchedule(s: { start: string }): string {
+  const startHour = s.start.split(":")[0];
+  return `${startHour.padStart(2, "0")}:00 - ${(parseInt(startHour) + 1).toString().padStart(2, "0")}:00`;
+}
+
+/** Capitalise the first letter of a day string. */
+function capitaliseDay(day: string): string {
+  return day.charAt(0).toUpperCase() + day.slice(1);
+}
 
 type ProcessedData = {
   [day: string]: {
@@ -10,263 +24,229 @@ type ProcessedData = {
   };
 };
 
-type TutorOption = {
+type SelectOption = {
   value: string;
   label: string;
+};
+
+const statusColor: Record<string, string> = {
+  scheduled: "bg-success",
+  cancelled: "bg-destructive",
+  completed: "bg-low",
+  in_progress: "bg-orange",
 };
 
 export function EditTimeSchedule({
   schedules,
   tutors,
+  students,
+  courses,
   onSave,
 }: {
   schedules: Schedule[];
   tutors: Tutor[];
+  students: Student[];
+  courses: Course[];
   onSave: (schedules: Schedule[]) => void;
 }) {
-  console.log("CLASS SCHEDULE", schedules);
+  const processSchedules = useCallback(
+    (schedulesData: Schedule[] | Record<string, Schedule[]> | null | undefined): ProcessedData => {
+      const processedData: ProcessedData = {};
 
-  const processSchedules = (schedules: Schedule[]): ProcessedData => {
-    const processedData: ProcessedData = {};
+      daysOfWeek.forEach((day) => {
+        processedData[day] = {};
+        timeSlots().forEach((slot) => (processedData[day][slot] = []));
+      });
 
-    daysOfWeek.forEach((day) => {
-      processedData[day] = {};
-      timeSlots().forEach((slot) => (processedData[day][slot] = []));
-    });
+      if (!schedulesData) return processedData;
 
-    schedules.forEach((_class) => {
-      const day = _class.day.charAt(0).toUpperCase() + _class.day.slice(1);
+      const processClass = (_class: Schedule) => {
+        if (!_class?.day || !_class?.start || !_class?.end) return;
 
-      // const startHour = new Date(_class.startTime).getHours();
-      // const endHour = new Date(_class.endTime).getHours();
-      const startHour = _class.start.split(":")[0];
-      const endHour = _class.end.split(":")[0];
+        const day =
+          _class.day.charAt(0).toUpperCase() + _class.day.slice(1);
+        const timeSlot = getTimeSlotForSchedule(_class);
 
-      const timeSlot = `${startHour.toString().padStart(2, "0")}:00 - ${endHour
-        .toString()
-        .padStart(2, "0")}:00`;
-
-      if (processedData[day]?.[timeSlot]) {
-        processedData[day][timeSlot].push(_class);
-      }
-    });
-
-    return processedData;
-  };
-
-  const classData = processSchedules(schedules);
-  console.log(classData);
-
-  const tutorOptions: TutorOption[] = tutors.map((tutor) => ({
-    value: tutor.id,
-    label: `${tutor.firstName} ${tutor.lastName}`,
-  }));
-
-  // const handleTutorChange = (
-  //   day: string,
-  //   timeSlot: string,
-  //   selectedOptions: MultiValue<TutorOption>,
-  // ) => {
-  //   // Filter out all existing schedules for the current day and time slot
-  //   let updatedSchedules = schedules.filter((schedule) => {
-  //     const scheduleDay = schedule.day.charAt(0).toUpperCase() + schedule.day.slice(1);
-  //     if (scheduleDay !== day) return true;
-
-  //     // const startHour = new Date(schedule.startTime).getHours();
-  //     // const endHour = new Date(schedule.endTime).getHours();
-  //     const startHour = schedule.start.split(":")[0];
-  //     const endHour = schedule.end.split(":")[0];
-  //     const scheduleTimeSlot = `${startHour.toString().padStart(2, "0")}:00 - ${endHour
-  //       .toString()
-  //       .padStart(2, "0")}:00`;
-
-  //     return scheduleTimeSlot !== timeSlot;
-  //   });
-
-  //   // Add new schedules for each selected tutor
-  //   selectedOptions.forEach((option) => {
-  //     const tutor = tutors.find((t) => t.id === option.value);
-  //     if (!tutor) return;
-
-  //     const currentSchedule = schedules.find((sch) => sch.userId === option.value);
-
-  //     const [start, end] = timeSlot.split(" - ");
-  //     // const startHour = parseInt(start.split(":")[0]);
-  //     // const endHour = parseInt(end.split(":")[0]);
-
-  //     // const now = new Date();
-  //     // const currentYear = now.getFullYear();
-  //     // const currentMonth = now.getMonth();
-  //     // const currentDay = now.getDate();
-
-  //     // const startTime = new Date(
-  //     //   Date.UTC(currentYear, currentMonth, currentDay, startHour - 1, 0, 0),
-  //     // ).toISOString();
-  //     // const endTime = new Date(
-  //     //   Date.UTC(currentYear, currentMonth, currentDay, endHour - 1, 0, 0),
-  //     // ).toISOString();
-
-  //     const newSchedule: Schedule = {
-  //       id: currentSchedule?.id ?? tutor.id,
-  //       day: day.toLowerCase(),
-  //       start,
-  //       end,
-  //       userId: tutor.id,
-  //       user: tutor,
-  //       courseId: currentSchedule?.courseId ?? QURAN_ID,
-  //       // Include other necessary Schedule properties with appropriate defaults or values
-  //       status: currentSchedule?.status ?? "",
-  //       createdAt: currentSchedule?.createdAt ?? "",
-  //       updatedAt: currentSchedule?.updatedAt ?? "",
-  //       deletedAt: currentSchedule?.deletedAt ?? null,
-  //       course: currentSchedule?.course ?? {
-  //         id: "",
-  //         title: "",
-  //         description: "",
-  //         thumbnailId: null,
-  //         status: "published",
-  //         language: null,
-  //         category: null,
-  //         difficultyLevel: null,
-  //         enableCertification: false,
-  //         trackProgress: false,
-  //         enableComments: false,
-  //         additionalNotes: null,
-  //         prerequisites: [],
-  //         createdById: "",
-  //         deletedAt: null,
-  //         createdAt: "",
-  //         updatedAt: "",
-  //         Lesson: [],
-  //         UserCourse: [],
-  //         averageRating: 0,
-  //         CourseRating: [],
-  //         completionRate: 0,
-  //       },
-  //     };
-
-  //     updatedSchedules = [...updatedSchedules, newSchedule];
-  //   });
-
-  //   onSave(updatedSchedules);
-  // };
-
-  const handleTutorChange = async (
-    day: string,
-    timeSlot: string,
-    selectedOptions: MultiValue<TutorOption>,
-  ) => {
-    // Get the current schedules for this day and time slot
-    const currentSchedules = classData[day][timeSlot] || [];
-
-    // Identify deselected tutors
-    const deselectedTutors = currentSchedules.filter(
-      (schedule) => !selectedOptions.some((option) => option.value === schedule.user.id),
-    );
-
-    // Delete schedules for deselected tutors (if they have an ID)
-    const deletePromises = deselectedTutors
-      .filter((schedule) => schedule.id) // Only schedules with IDs
-      .map((schedule) => deleteSchedule(schedule.id));
-
-    // Wait for all deletions to complete
-    if (deletePromises.length > 0) {
-      try {
-        await Promise.all(deletePromises);
-        console.log("Deleted schedules successfully");
-      } catch (error) {
-        console.error("Error deleting schedules:", error);
-        toast.error("Unable to delete some schedules. Please try again.");
-        return; // Stop further processing if deletion fails
-      }
-    }
-
-    // Filter out existing schedules for the current day and time slot
-    let updatedSchedules = schedules.filter((schedule) => {
-      const scheduleDay = schedule.day.charAt(0).toUpperCase() + schedule.day.slice(1);
-      if (scheduleDay !== day) return true;
-
-      const startHour = schedule.start.split(":")[0];
-      const endHour = schedule.end.split(":")[0];
-      const scheduleTimeSlot = `${startHour.padStart(2, "0")}:00 - ${endHour.padStart(2, "0")}:00`;
-
-      return scheduleTimeSlot !== timeSlot;
-    });
-
-    // Process each selected tutor
-    selectedOptions.forEach((option) => {
-      const tutor = tutors.find((t) => t.id === option.value);
-      if (!tutor) return;
-
-      const [start, end] = timeSlot.split(" - ");
-      // Check for existing schedule matching tutor, day, and time
-      const existingSchedule = schedules.find(
-        (sch) =>
-          sch.userId === tutor.id &&
-          sch.day.toLowerCase() === day.toLowerCase() &&
-          sch.start === start &&
-          sch.end === end,
-      );
-
-      console.log(existingSchedule, "existingSchedule");
-
-      const newSchedule: Schedule = {
-        id: existingSchedule?.id ?? "", // Preserve ID if exists; new ones will have empty (handled by backend)
-        day: day.toLowerCase(),
-        start,
-        end,
-        userId: tutor.id,
-        user: tutor,
-        courseId: existingSchedule?.courseId ?? QURAN_ID,
-        status: existingSchedule?.status ?? "scheduled",
-        createdAt: existingSchedule?.createdAt ?? "",
-        updatedAt: existingSchedule?.updatedAt ?? "",
-        deletedAt: existingSchedule?.deletedAt ?? null,
-        course: existingSchedule?.course ?? {
-          id: "",
-          title: "",
-          description: "",
-          thumbnailId: null,
-          status: "published",
-          language: null,
-          category: null,
-          difficultyLevel: null,
-          enableCertification: false,
-          trackProgress: false,
-          enableComments: false,
-          additionalNotes: null,
-          prerequisites: [],
-          createdById: "",
-          deletedAt: null,
-          createdAt: "",
-          updatedAt: "",
-          Lesson: [],
-          UserCourse: [],
-          averageRating: 0,
-          CourseRating: [],
-          completionRate: 0,
-        },
+        if (processedData[day]?.[timeSlot]) {
+          processedData[day][timeSlot].push(_class);
+        }
       };
 
-      updatedSchedules = [...updatedSchedules, newSchedule];
+      if (Array.isArray(schedulesData)) {
+        schedulesData.forEach(processClass);
+      } else if (typeof schedulesData === "object") {
+        Object.values(schedulesData).forEach((dayArray: unknown) => {
+          if (Array.isArray(dayArray)) {
+            dayArray.forEach(processClass);
+          }
+        });
+      }
+
+      return processedData;
+    },
+    [],
+  );
+
+  const classData = useMemo(
+    () => processSchedules(schedules),
+    [schedules, processSchedules],
+  );
+
+  const tutorOptions: SelectOption[] = useMemo(
+    () =>
+      tutors.map((tutor) => ({
+        value: tutor.id,
+        label: `${tutor.firstName} ${tutor.lastName}`,
+      })),
+    [tutors],
+  );
+
+  const studentOptions: SelectOption[] = useMemo(
+    () =>
+      students.map((student) => ({
+        value: student.id,
+        label: `${student.firstName} ${student.lastName}`,
+      })),
+    [students],
+  );
+
+  const courseOptions: SelectOption[] = useMemo(
+    () =>
+      courses.map((course) => ({
+        value: course.id,
+        label: course.title,
+      })),
+    [courses],
+  );
+
+  const handleUpdateEntry = (
+    day: string,
+    timeSlot: string,
+    entryIndex: number,
+    field: "userId" | "studentId" | "courseId" | "link",
+    value: string,
+  ) => {
+    const updatedSchedules = schedules.map((schedule) => {
+      if (capitaliseDay(schedule.day) !== day) return schedule;
+      if (getTimeSlotForSchedule(schedule) !== timeSlot) return schedule;
+
+      // Match the specific entry by index within this cell
+      const cellEntries = classData[day][timeSlot];
+      const targetEntry = cellEntries[entryIndex];
+      if (schedule.id !== targetEntry?.id) return schedule;
+
+      return { ...schedule, [field]: value };
     });
 
     onSave(updatedSchedules);
   };
+
+  const handleRemoveEntry = (day: string, timeSlot: string, entryIndex: number) => {
+    const cellEntries = classData[day][timeSlot];
+    const targetEntry = cellEntries[entryIndex];
+
+    // Filter out the removed entry by matching its id
+    const updatedSchedules = schedules.filter((schedule) => {
+      if (capitaliseDay(schedule.day) !== day) return true;
+      if (getTimeSlotForSchedule(schedule) !== timeSlot) return true;
+
+      return schedule.id !== targetEntry?.id;
+    });
+
+    onSave(updatedSchedules);
+  };
+
+  const handleAddEntry = (day: string, timeSlot: string) => {
+    const [start, end] = timeSlot.split(" - ");
+
+    const newSchedule: Schedule = {
+      id: `new-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+      day: day.toLowerCase(),
+      start,
+      end,
+      userId: "",
+      studentId: "",
+      link: "",
+      courseId: "",
+      status: "scheduled",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      deletedAt: null,
+      course: courses[0] ?? {
+        id: "",
+        title: "",
+        description: "",
+        thumbnailId: null,
+        status: "published",
+        language: null,
+        category: null,
+        difficultyLevel: null,
+        enableCertification: false,
+        trackProgress: false,
+        enableComments: false,
+        additionalNotes: null,
+        prerequisites: [],
+        createdById: "",
+        deletedAt: null,
+        createdAt: "",
+        updatedAt: "",
+        Lesson: [],
+        UserCourse: [],
+        averageRating: 0,
+        CourseRating: [],
+        completionRate: 0,
+      },
+      user: tutors[0] ?? {
+        id: "",
+        email: "",
+        firstName: "",
+        lastName: "",
+        gender: "male",
+        phone: "",
+        country: "",
+        emailVerifiedAt: null,
+        status: "active",
+        lastLoginAt: null,
+        role: "tutor",
+        profilePictureId: null,
+        deletedAt: null,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        paypalCustomerId: null,
+        paypalCardCustomerId: null,
+      },
+    };
+
+    onSave([...schedules, newSchedule]);
+  };
+
+  const getEntryCourse = (entry: Schedule) => {
+    return courses.find((c) => c.id === entry.courseId);
+  };
+
+  const getEntryTutor = (entry: Schedule) => {
+    return tutors.find((t) => t.id === entry.userId);
+  };
+
+  const getEntryStudent = (entry: Schedule) => {
+    if (entry.student) return entry.student;
+    return students.find((s) => s.id === entry.studentId);
+  };
+
   return (
     <div className="w-full mx-auto">
       <div className="overflow-x-auto">
         <table className="w-full border-collapse">
           <thead>
             <tr>
-              <th className="border text-high font-semibold text-base leading-5 p-6 bg-offwhite">
+              <th className="border text-high font-semibold text-sm leading-5 p-4 bg-offwhite min-w-[100px]">
                 PERIOD
               </th>
 
               {daysOfWeek.map((day) => (
                 <th
                   key={day}
-                  className="border p-6 text-high font-semibold text-base leading-5 bg-white"
+                  className="border p-4 text-high font-semibold text-sm leading-5 bg-white min-w-[240px]"
                 >
                   {day.toUpperCase()}
                 </th>
@@ -277,40 +257,234 @@ export function EditTimeSchedule({
           <tbody>
             {timeSlots().map((timeSlot, index) => (
               <tr key={timeSlot + index}>
-                <td className="border p-6 font-medium">{timeSlot}</td>
-                {daysOfWeek.map((day, index) => {
-                  const selectedTutors = classData[day][timeSlot] || [];
+                <td className="border p-4 text-xs font-medium text-low whitespace-nowrap">
+                  {timeSlot}
+                </td>
 
-                  const selectedOptions = selectedTutors.map((schedule) => ({
-                    value: schedule.user.id,
-                    label: `${schedule.user.firstName} ${schedule.user.lastName}`,
-                  }));
+                {daysOfWeek.map((day, dayIdx) => {
+                  const entries = classData[day]?.[timeSlot] ?? [];
 
                   return (
-                    <td key={`${day}-${timeSlot}-${index}`} className="border p-6">
-                      <Select
-                        isMulti
-                        options={tutorOptions}
-                        value={selectedOptions}
-                        onChange={(selected) => handleTutorChange(day, timeSlot, selected || [])}
-                        placeholder="Select Tutors..."
-                        className="react-select-container mb-2 text-high"
-                        classNamePrefix="react-select"
-                      />
+                    <td
+                      key={`${day}-${timeSlot}-${dayIdx}`}
+                      className="border p-2 align-top"
+                    >
+                      <div className="flex flex-col gap-2">
+                        {entries.map((entry, entryIdx) => {
+                          const entryCourse = getEntryCourse(entry);
+                          const entryTutor = getEntryTutor(entry);
+                          const entryStudent = getEntryStudent(entry);
 
-                      {classData[day] &&
-                      classData[day][timeSlot] &&
-                      classData[day][timeSlot].length > 0
-                        ? classData[day][timeSlot].map((record, index) => (
+                          return (
                             <div
-                              key={record.id + index}
-                              className="text-center bg-offwhite rounded-lg text-high p-3 mb-2"
+                              key={entry.id + entryIdx}
+                              className="rounded-lg border border-shade-2 bg-offwhite p-3 flex flex-col gap-2"
                             >
-                              {record.user?.firstName ?? "Tutor"} {record.user?.lastName ?? "Tutor"}
-                              {/* <div className="text-sm text-gray-600">{record.course.title}</div> */}
+                              {/* Status indicator + Course select */}
+                              <div className="flex items-center gap-2">
+                                <span
+                                  className={`w-2 h-2 rounded-full shrink-0 ${
+                                    statusColor[entry.status] ?? "bg-low"
+                                  }`}
+                                />
+                                <div className="flex-1 min-w-0">
+                                  <Select
+                                    options={courseOptions}
+                                    value={
+                                      entryCourse
+                                        ? {
+                                            value: entryCourse.id,
+                                            label: entryCourse.title,
+                                          }
+                                        : null
+                                    }
+                                    onChange={(option) =>
+                                      option &&
+                                      handleUpdateEntry(
+                                        day,
+                                        timeSlot,
+                                        entryIdx,
+                                        "courseId",
+                                        option.value,
+                                      )
+                                    }
+                                    placeholder="Select course..."
+                                    className="react-select-container text-xs"
+                                    classNamePrefix="react-select"
+                                    isSearchable
+                                    menuPortalTarget={
+                                      typeof document !== "undefined"
+                                        ? document.body
+                                        : undefined
+                                    }
+                                    styles={{
+                                      control: (base) => ({
+                                        ...base,
+                                        minHeight: "28px",
+                                        fontSize: "12px",
+                                      }),
+                                      menu: (base) => ({
+                                        ...base,
+                                        fontSize: "12px",
+                                      }),
+                                      valueContainer: (base) => ({
+                                        ...base,
+                                        padding: "0 4px",
+                                      }),
+                                    }}
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Tutor select */}
+                              <div className="flex items-center gap-1.5">
+                                <GraduationCap className="w-3.5 h-3.5 shrink-0 text-low" />
+                                <div className="flex-1 min-w-0">
+                                  <Select
+                                    options={tutorOptions}
+                                    value={
+                                      entryTutor
+                                        ? {
+                                            value: entryTutor.id,
+                                            label: `${entryTutor.firstName} ${entryTutor.lastName}`,
+                                          }
+                                        : null
+                                    }
+                                    onChange={(option) =>
+                                      option &&
+                                      handleUpdateEntry(
+                                        day,
+                                        timeSlot,
+                                        entryIdx,
+                                        "userId",
+                                        option.value,
+                                      )
+                                    }
+                                    placeholder="Select tutor..."
+                                    className="react-select-container text-xs"
+                                    classNamePrefix="react-select"
+                                    isSearchable
+                                    menuPortalTarget={
+                                      typeof document !== "undefined"
+                                        ? document.body
+                                        : undefined
+                                    }
+                                    styles={{
+                                      control: (base) => ({
+                                        ...base,
+                                        minHeight: "28px",
+                                        fontSize: "12px",
+                                      }),
+                                      menu: (base) => ({
+                                        ...base,
+                                        fontSize: "12px",
+                                      }),
+                                      valueContainer: (base) => ({
+                                        ...base,
+                                        padding: "0 4px",
+                                      }),
+                                    }}
+                                  />
+                                </div>
+                              </div>
+
+                              {/* Student select + Remove button */}
+                              <div className="flex items-center gap-1.5">
+                                <UserRound className="w-3.5 h-3.5 shrink-0 text-low" />
+                                <div className="flex-1 min-w-0">
+                                  <Select
+                                    options={studentOptions}
+                                    value={
+                                      entryStudent
+                                        ? {
+                                            value: entryStudent.id,
+                                            label: `${entryStudent.firstName} ${entryStudent.lastName}`,
+                                          }
+                                        : null
+                                    }
+                                    onChange={(option) =>
+                                      option &&
+                                      handleUpdateEntry(
+                                        day,
+                                        timeSlot,
+                                        entryIdx,
+                                        "studentId",
+                                        option.value,
+                                      )
+                                    }
+                                    placeholder="Select student..."
+                                    className="react-select-container text-xs"
+                                    classNamePrefix="react-select"
+                                    isSearchable
+                                    menuPortalTarget={
+                                      typeof document !== "undefined"
+                                        ? document.body
+                                        : undefined
+                                    }
+                                    styles={{
+                                      control: (base) => ({
+                                        ...base,
+                                        minHeight: "28px",
+                                        fontSize: "12px",
+                                      }),
+                                      menu: (base) => ({
+                                        ...base,
+                                        fontSize: "12px",
+                                      }),
+                                      valueContainer: (base) => ({
+                                        ...base,
+                                        padding: "0 4px",
+                                      }),
+                                    }}
+                                  />
+                                </div>
+
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    handleRemoveEntry(day, timeSlot, entryIdx)
+                                  }
+                                  className="shrink-0 p-1 rounded-md text-low hover:text-destructive hover:bg-destructive/10 transition-colors"
+                                  title="Remove entry"
+                                >
+                                  <Trash2 className="w-3.5 h-3.5" />
+                                </button>
+                              </div>
+
+                              {/* Meeting link */}
+                              <div className="flex items-center gap-1.5">
+                                <Link2 className="w-3.5 h-3.5 shrink-0 text-low" />
+                                <input
+                                  type="url"
+                                  value={entry.link ?? ""}
+                                  onChange={(event) =>
+                                    handleUpdateEntry(
+                                      day,
+                                      timeSlot,
+                                      entryIdx,
+                                      "link",
+                                      event.target.value,
+                                    )
+                                  }
+                                  placeholder="Meeting link..."
+                                  className="min-w-0 flex-1 rounded-md border border-shade-2 bg-white px-2 py-1 text-xs text-high placeholder:text-low focus:border-orange focus:outline-none"
+                                />
+                              </div>
                             </div>
-                          ))
-                        : null}
+                          );
+                        })}
+
+                        {/* Add button */}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleAddEntry(day, timeSlot)}
+                          className="flex items-center gap-1 text-xs text-low hover:text-orange w-full border border-dashed border-shade-2 rounded-lg"
+                        >
+                          <Plus className="w-3.5 h-3.5" />
+                          Add
+                        </Button>
+                      </div>
                     </td>
                   );
                 })}

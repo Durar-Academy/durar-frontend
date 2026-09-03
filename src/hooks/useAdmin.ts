@@ -1,8 +1,18 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+
+import { registerStudent } from "@/lib/auth";
 
 import {
+  createAssignment,
+  createNotification,
+  createSchedules,
+  deleteAssignment,
+  deleteCourse,
+  deleteNotification,
+  deleteSchedule,
   downloadTransactions,
   getActivities,
+  getAllNotifications,
   getAssignment,
   getAssignmentMetrics,
   getAssignments,
@@ -11,17 +21,20 @@ import {
   getCourses,
   getCoursesMetrics,
   getMetrics,
+  getNotification,
   getNotifications,
   getPayment,
   getPayments,
   getPaymentsMetrics,
   getSchedules,
+  getTimetable,
   getStudentAssignmentFeedbacks,
   getStudentAssignments,
   getStudentCourses,
   getStudentMetrics,
   getStudents,
   getStudentsMetrics,
+  enrollStudent,
   getTutorCourses,
   getTutorMetrics,
   getTutors,
@@ -29,230 +42,474 @@ import {
   getUser,
   getUserActivities,
   getUserPayments,
+  updateAssignment,
+  updateCourse,
+  updateNotification,
+  updateSchedules,
+  createNote,
+  getStudentNotes,
 } from "@/lib/admin";
 
+// ─── Dashboard Queries ────────────────────────────────────────────────────────
+
 export function useMetrics() {
-  const query = useQuery({ queryKey: ["dashboard-metrics"], queryFn: getMetrics });
-  return query;
+  return useQuery({ queryKey: ["dashboard-metrics"], queryFn: getMetrics });
 }
 
 export function useSchedules() {
-  const query = useQuery({ queryKey: ["all-schedules"], queryFn: getSchedules });
-  return query;
+  return useQuery<any, Error, Schedule[]>({
+    queryKey: ["all-schedules"],
+    queryFn: getSchedules,
+    select: (data) => {
+      if (Array.isArray(data)) return data;
+      if (data?.records && Array.isArray(data.records)) return data.records;
+      if (typeof data === "object") {
+        return Object.values(data).flatMap((dayArray: unknown) =>
+          Array.isArray(dayArray) ? dayArray : [],
+        );
+      }
+      return [];
+    },
+  });
+}
+
+export function useTimetable() {
+  return useQuery({ queryKey: ["timetable"], queryFn: getTimetable });
 }
 
 export function useActivities() {
-  const query = useQuery({ queryKey: ["all-activities"], queryFn: getActivities });
-  return query;
+  return useQuery({ queryKey: ["all-activities"], queryFn: getActivities });
 }
 
-export function usePayments() {
-  const query = useQuery({ queryKey: ["all-payments"], queryFn: getPayments });
-  return query;
+export function usePayments(filters?: PaymentFilters) {
+  return useQuery({
+    queryKey: ["all-payments", filters],
+    queryFn: () => getPayments({ filters }),
+  });
 }
+
+// ─── Student Queries ──────────────────────────────────────────────────────────
 
 export function useStudentsMetrics() {
-  const query = useQuery({ queryKey: ["all-students-metrics"], queryFn: getStudentsMetrics });
-  return query;
+  return useQuery({ queryKey: ["all-students-metrics"], queryFn: getStudentsMetrics });
 }
 
 export function useStudents(filters?: SearchFilters) {
-  const query = useQuery({
+  return useQuery({
     queryKey: ["all-students", filters],
     queryFn: () => getStudents({ filters }),
   });
-  return query;
 }
 
 export function useStudent(studentId: string) {
-  const query = useQuery({ queryKey: ["student", studentId], queryFn: () => getUser(studentId) });
-  return query;
+  return useQuery({
+    queryKey: ["student", studentId],
+    queryFn: () => getUser(studentId),
+    enabled: !!studentId,
+  });
 }
 
 export function useStudentMetrics(studentId: string) {
-  const query = useQuery({
+  return useQuery({
     queryKey: ["student-metrics", studentId],
     queryFn: () => getStudentMetrics(studentId),
+    enabled: !!studentId,
   });
-  return query;
 }
 
 export function useStudentCourses(studentId: string) {
-  const query = useQuery({
+  return useQuery({
     queryKey: ["student-courses", studentId],
     queryFn: () => getStudentCourses(studentId),
+    enabled: !!studentId,
   });
-  return query;
 }
 
 export function useStudentActivities(studentId: string) {
-  const query = useQuery({
+  return useQuery({
     queryKey: ["student-activities", studentId],
     queryFn: () => getUserActivities(studentId),
+    enabled: !!studentId,
   });
-  return query;
 }
 
 export function useStudentPaymentOverview(studentId: string) {
-  const query = useQuery({
+  return useQuery({
     queryKey: ["student-payment-overview", studentId],
     queryFn: () => getStudentMetrics(studentId),
+    enabled: !!studentId,
   });
-  return query;
 }
 
 export function useStudentPayments(studentId: string) {
-  const query = useQuery({
+  return useQuery({
     queryKey: ["student-payments", studentId],
     queryFn: () => getUserPayments(studentId),
+    enabled: !!studentId,
   });
-  return query;
 }
 
 export function useStudentAssignments(studentId: string) {
-  const query = useQuery({
+  return useQuery({
     queryKey: ["student-assignment", studentId],
     queryFn: () => getStudentAssignments(studentId),
+    enabled: !!studentId,
   });
-  return query;
 }
 
+// ─── Tutor Queries ────────────────────────────────────────────────────────────
+
 export function useTutorsMetrics() {
-  const query = useQuery({ queryKey: ["all-tutors-metrics"], queryFn: getTutorsMetrics });
-  return query;
+  return useQuery({ queryKey: ["all-tutors-metrics"], queryFn: getTutorsMetrics });
 }
 
 export function useTutors(filters?: SearchFilters) {
-  const query = useQuery({
+  return useQuery({
     queryKey: ["all-tutors", filters],
     queryFn: () => getTutors({ filters }),
   });
-  return query;
 }
 
 export function useTutor(tutorId: string) {
-  const query = useQuery({ queryKey: ["tutor", tutorId], queryFn: () => getUser(tutorId) });
-  return query;
+  return useQuery({
+    queryKey: ["tutor", tutorId],
+    queryFn: () => getUser(tutorId),
+    enabled: !!tutorId,
+  });
 }
 
 export function useTutorMetrics(tutorId: string) {
-  const query = useQuery({
+  return useQuery({
     queryKey: ["tutor-metrics", tutorId],
     queryFn: () => getTutorMetrics(tutorId),
+    enabled: !!tutorId,
   });
-  return query;
 }
 
 export function useTutorCourses(tutorId: string) {
-  const query = useQuery({
+  return useQuery({
     queryKey: ["tutor-courses", tutorId],
     queryFn: () => getTutorCourses(tutorId),
+    enabled: !!tutorId,
   });
-  return query;
 }
 
 export function useTutorPaymentOverview(tutorId: string) {
-  const query = useQuery({
+  return useQuery({
     queryKey: ["tutor-payment-overview", tutorId],
     queryFn: () => getTutorMetrics(tutorId),
+    enabled: !!tutorId,
   });
-  return query;
 }
 
 export function useTutorPayments(tutorId: string) {
-  const query = useQuery({
+  return useQuery({
     queryKey: ["tutor-payments", tutorId],
     queryFn: () => getUserPayments(tutorId),
+    enabled: !!tutorId,
   });
-  return query;
 }
 
 export function useTutorActivities(tutorId: string) {
-  const query = useQuery({
+  return useQuery({
     queryKey: ["tutor-activities", tutorId],
     queryFn: () => getUserActivities(tutorId),
+    enabled: !!tutorId,
   });
-  return query;
 }
 
+// ─── Course Queries ───────────────────────────────────────────────────────────
+
 export function useCoursesMetrics() {
-  const query = useQuery({ queryKey: ["all-courses-metrics"], queryFn: getCoursesMetrics });
-  return query;
+  return useQuery({ queryKey: ["all-courses-metrics"], queryFn: getCoursesMetrics });
+}
+
+export function useCourses(filters?: SearchFilters) {
+  return useQuery<Course[]>({
+    queryKey: ["all-courses", filters],
+    queryFn: () => getCourses({ filters }),
+  });
 }
 
 export function useCourse(courseId: string) {
-  const query = useQuery<Course>({
+  return useQuery<Course>({
     queryKey: ["course", courseId],
     queryFn: () => getCourse(courseId),
+    enabled: !!courseId,
   });
-  return query;
 }
 
+// ─── Payment Queries ──────────────────────────────────────────────────────────
+
 export function usePaymentsMetrics() {
-  const query = useQuery({ queryKey: ["all-payments-metrics"], queryFn: getPaymentsMetrics });
-  return query;
+  return useQuery({ queryKey: ["all-payments-metrics"], queryFn: getPaymentsMetrics });
 }
 
 export function useDownloadTransactions() {
-  const query = useQuery({
+  return useQuery({
     queryKey: ["download-transactions"],
     queryFn: downloadTransactions,
     enabled: false,
   });
-  return query;
 }
 
 export function usePayment(paymentId: string) {
-  const query = useQuery<Payment>({
+  return useQuery<Payment>({
     queryKey: ["payment", paymentId],
     queryFn: () => getPayment(paymentId),
+    enabled: !!paymentId,
   });
-  return query;
 }
 
-export function useCourses(filters?: SearchFilters) {
-  const query = useQuery<Course[]>({
-    queryKey: ["all-courses", filters],
-    queryFn: () => getCourses({ filters }),
-  });
-  return query;
-}
+// ─── Assignment Queries ───────────────────────────────────────────────────────
 
 export function useAssignmentsMetrics() {
-  const query = useQuery({ queryKey: ["all-assignment-metrics"], queryFn: getAssignmentsMetrics });
-  return query;
+  return useQuery({ queryKey: ["all-assignment-metrics"], queryFn: getAssignmentsMetrics });
 }
 
-export function useAssignments() {
-  const query = useQuery({ queryKey: ["all-assignments"], queryFn: getAssignments });
-  return query;
+export function useAssignments(filters?: AssignmentFilters) {
+  return useQuery({
+    queryKey: ["all-assignments", filters],
+    queryFn: () => getAssignments({ filters }),
+  });
 }
 
 export function useAssignmentMetrics(assignmentId: string) {
-  const query = useQuery({
+  return useQuery({
     queryKey: ["single-assignment-metrics", assignmentId],
     queryFn: () => getAssignmentMetrics(assignmentId),
+    enabled: !!assignmentId,
   });
-  return query;
 }
 
 export function useAssignment(assignmentId: string) {
-  const query = useQuery<Assignment>({
+  return useQuery<Assignment>({
     queryKey: ["single-assignment", assignmentId],
     queryFn: () => getAssignment(assignmentId),
+    enabled: !!assignmentId,
   });
-  return query;
 }
 
 export function useStudentAssignmentFeedbacks(assignmentId: string) {
-  const query = useQuery<StudentFeedback[]>({
+  return useQuery<StudentFeedback[]>({
     queryKey: ["single-assignment-students-feedbacks", assignmentId],
     queryFn: () => getStudentAssignmentFeedbacks(assignmentId),
+    enabled: !!assignmentId,
   });
-  return query;
 }
 
+// ─── Notification Queries ─────────────────────────────────────────────────────
+
 export function useNotifications() {
-  const query = useQuery({ queryKey: ["all-student-notifications"], queryFn: getNotifications });
-  return query;
+  return useQuery({ queryKey: ["all-student-notifications"], queryFn: getNotifications });
+}
+
+export function useAllNotifications(options?: { page?: number; limit?: number }) {
+  return useQuery<_Notification[]>({
+    queryKey: ["all-notifications", options?.page, options?.limit],
+    queryFn: () => getAllNotifications({ page: options?.page, limit: options?.limit }),
+  });
+}
+
+export function useNotification(notificationId: string) {
+  return useQuery({
+    queryKey: ["notification", notificationId],
+    queryFn: () => getNotification(notificationId),
+    enabled: !!notificationId,
+  });
+}
+
+// ─── Notes Queries ────────────────────────────────────────────────────────────
+
+export function useStudentNotes(studentId: string) {
+  return useQuery({
+    queryKey: ["student-notes", studentId],
+    queryFn: () => getStudentNotes(studentId),
+    enabled: !!studentId,
+  });
+}
+
+export function useCreateNote() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: { title?: string; content: string; studentId: string }) =>
+      createNote(payload),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["student-notes", variables.studentId] });
+    },
+  });
+}
+
+// ─── Student Mutations ────────────────────────────────────────────────────────
+
+export function useRegisterStudent() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: RegisterStudentPayload) => registerStudent(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-students"] });
+      queryClient.invalidateQueries({ queryKey: ["all-students-metrics"] });
+    },
+  });
+}
+
+// ─── Course Mutations ─────────────────────────────────────────────────────────
+
+export function useUpdateCourse() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ courseId, payload }: { courseId: string; payload: UpdateCoursePayload }) =>
+      updateCourse(courseId, payload),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["all-courses"] });
+      queryClient.invalidateQueries({ queryKey: ["all-courses-metrics"] });
+      queryClient.invalidateQueries({ queryKey: ["course", variables.courseId] });
+    },
+  });
+}
+
+export function useDeleteCourse() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (courseId: string) => deleteCourse(courseId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-courses"] });
+      queryClient.invalidateQueries({ queryKey: ["all-courses-metrics"] });
+    },
+  });
+}
+
+export function useEnrollStudent() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ courseId, userId }: { courseId: string; userId: string }) =>
+      enrollStudent(courseId, userId),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["course", variables.courseId] });
+      queryClient.invalidateQueries({ queryKey: ["all-courses"] });
+      queryClient.invalidateQueries({ queryKey: ["all-courses-metrics"] });
+    },
+  });
+}
+
+// ─── Schedule Mutations ───────────────────────────────────────────────────────
+
+export function useCreateSchedules() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (args: { classes: CreateSchedule | CreateSchedule[]; courseId: string }) =>
+      createSchedules(args),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-schedules"] });
+      queryClient.invalidateQueries({ queryKey: ["timetable"] });
+    },
+  });
+}
+
+export function useUpdateSchedules() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (args: { classes: CreateSchedule | CreateSchedule[] }) => updateSchedules(args),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-schedules"] });
+      queryClient.invalidateQueries({ queryKey: ["timetable"] });
+    },
+  });
+}
+
+export function useDeleteSchedule() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (scheduleId: string) => deleteSchedule(scheduleId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-schedules"] });
+      queryClient.invalidateQueries({ queryKey: ["timetable"] });
+    },
+  });
+}
+
+// ─── Assignment Mutations ─────────────────────────────────────────────────────
+
+export function useCreateAssignment() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: CreateAssignmentPayload) => createAssignment(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-assignments"] });
+      queryClient.invalidateQueries({ queryKey: ["all-assignment-metrics"] });
+    },
+  });
+}
+
+export function useUpdateAssignment() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      assignmentId,
+      payload,
+    }: {
+      assignmentId: string;
+      payload: UpdateAssignmentPayload;
+    }) => updateAssignment(assignmentId, payload),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["all-assignments"] });
+      queryClient.invalidateQueries({ queryKey: ["all-assignment-metrics"] });
+      queryClient.invalidateQueries({ queryKey: ["single-assignment", variables.assignmentId] });
+      queryClient.invalidateQueries({
+        queryKey: ["single-assignment-metrics", variables.assignmentId],
+      });
+    },
+  });
+}
+
+export function useDeleteAssignment() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (assignmentId: string) => deleteAssignment(assignmentId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-assignments"] });
+      queryClient.invalidateQueries({ queryKey: ["all-assignment-metrics"] });
+    },
+  });
+}
+
+// ─── Notification Mutations ───────────────────────────────────────────────────
+
+export function useCreateNotification() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (payload: CreateNotificationPayload) => createNotification(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["all-student-notifications"] });
+    },
+  });
+}
+
+export function useUpdateNotification() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      notificationId,
+      payload,
+    }: {
+      notificationId: string;
+      payload: UpdateNotificationPayload;
+    }) => updateNotification(notificationId, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["all-student-notifications"] });
+    },
+  });
+}
+
+export function useDeleteNotification() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (notificationId: string) => deleteNotification(notificationId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["all-notifications"] });
+      queryClient.invalidateQueries({ queryKey: ["all-student-notifications"] });
+    },
+  });
 }

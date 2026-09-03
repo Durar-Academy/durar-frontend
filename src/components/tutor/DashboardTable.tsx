@@ -1,87 +1,23 @@
-// "use client";
-// import Table from "./Table";
-
-// // if you are on Next.js 13+ App Router
-
-// interface ClassItem {
-//   date: string;
-//   student: string;
-//   category: string;
-//   time: string;
-// }
-
-// const classData: ClassItem[] = [
-//   {
-//     date: "Feb 12",
-//     student: "Lawal Wahab Babatunde",
-//     category: "Thanawiyah",
-//     time: "3:00 PM",
-//   },
-//   {
-//     date: "Feb 14",
-//     student: "Lawal Wahab Babatunde",
-//     category: "Idaadiyah",
-//     time: "3:00 PM",
-//   },
-//   {
-//     date: "Feb 14",
-//     student: "Lawal Wahab Babatunde",
-//     category: "Awal temhidi",
-//     time: "3:00 PM",
-//   },
-//   {
-//     date: "Feb 14",
-//     student: "Lawal Wahab Babatunde",
-//     category: "Idaadiyah",
-//     time: "3:00 PM",
-//   },
-// ];
-
-// export default function UpcomingClasses() {
-//   return (
-//     <section>
-//       <h1 className="text-xl mb-0">Upcoming Classes</h1>
-//       <Table
-//         headers={["Date", "Student", "Category", "Time", "Action"]}
-//         data={classData}
-//         renderRow={(item, index) => (
-//           <tr
-//             key={index}
-//             className="border-[1px] bg-[#F8F8FA] border-[#D2D4E0] mt-3"
-//           >
-//             <td className="text-sm py-4 pl-3 border-[1px] border-[#D2D4E0] rounded-l-xl border-r-0">
-//               {item.date}
-//             </td>
-//             <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0]">
-//               {item.student}
-//             </td>
-//             <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0]">
-//               {item.category}
-//             </td>
-//             <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0]">
-//               {item.time}
-//             </td>
-//             <td className="text-sm py-4 border-[1px] border-[#D2D4E0] border-l-0 rounded-r-xl">
-//               <button className="text-orange-400 font-semibold hover:underline text-sm text-orange">
-//                 Start Class
-//               </button>
-//             </td>
-//           </tr>
-//         )}
-//       />
-//     </section>
-//   );
-// }
-
 "use client";
 import Table from "./Table";
-import { useTutorDashboard } from "@/hooks/tutorQueries";
-import { processUpcomingClasses } from "@/utils/tutorProcessor";
+import { useTutorClasses } from "@/hooks/tutorQueries";
+import { processTutorClasses } from "@/utils/tutorProcessor";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useState } from "react";
+
+function getMeetingUrl(link?: string | null) {
+  const value = link?.trim();
+  if (!value) return null;
+
+  const markdownLink = value.match(/^\[[^\]]+\]\((https?:\/\/[^\s)]+)\)$/);
+  return markdownLink ? markdownLink[1] : value;
+}
 
 export default function UpcomingClasses() {
-  const { data: dashboardData, isLoading } = useTutorDashboard();
-  const classData = processUpcomingClasses(dashboardData);
+  const [page, setPage] = useState(1);
+  const { data: classesData, isLoading } = useTutorClasses({ page });
+
+  const classData = processTutorClasses(classesData);
   return (
     <section>
       <h1 className="text-xl mb-4 font-semibold">Upcoming Classes</h1>
@@ -93,7 +29,10 @@ export default function UpcomingClasses() {
         <Table
           headers={["Day", "Student", "Category", "Time", "Action"]}
           data={classData}
-          renderRow={(item, index) => (
+          renderRow={(item, index) => {
+            const meetingUrl = getMeetingUrl(item.link);
+
+            return (
             <tr
               key={index}
               className="border-[1px] bg-[#F8F8FA] border-[#D2D4E0] mt-3"
@@ -111,12 +50,22 @@ export default function UpcomingClasses() {
                 {item.time}
               </td>
               <td className="text-sm py-4 border-[1px] border-[#D2D4E0] border-l-0 rounded-r-xl">
-                <button className="text-orange font-semibold hover:underline text-sm">
-                  Start Class
-                </button>
+                {meetingUrl ? (
+                  <a
+                    href={meetingUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-orange font-semibold hover:underline text-sm"
+                  >
+                    Start Class
+                  </a>
+                ) : (
+                  <span className="text-low text-sm">No link</span>
+                )}
               </td>
             </tr>
-          )}
+            );
+          }}
         />
       )}
     </section>

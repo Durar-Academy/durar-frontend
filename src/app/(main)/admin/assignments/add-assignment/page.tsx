@@ -79,7 +79,7 @@ export default function AddNewAssignmentPage() {
         type: "assignment",
         description: assignment.description,
         allowLate: assignment.allowLate,
-        storageId: thumbnailResponse ? thumbnailResponse.storageId : null,
+        storageId: thumbnailResponse?.storageId ?? null,
         totalScore: assignment.totalScore,
       };
 

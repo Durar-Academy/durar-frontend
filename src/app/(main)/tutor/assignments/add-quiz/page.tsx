@@ -238,9 +238,9 @@ export default function AddNewQuizPage() {
                 aria-readonly
                 className="disabled:opacity-100"
                 id="autoGrade"
-                checked={formData.autograded}
+                checked={formData.autoGraded}
                 onCheckedChange={(checked) =>
-                  updateFormData({ ...formData, autograded: checked })
+                  updateFormData({ ...formData, autoGraded: checked })
                 }
               />
             </div>

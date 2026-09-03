@@ -12,7 +12,7 @@ import { ReviewList } from "@/components/admin/review-list";
 
 import { useTutorMetrics } from "@/hooks/useAdmin";
 import { processTutorPeformance } from "@/utils/processor";
-import { tutorReviews } from "@/data/mockData";
+import { tutorReviews } from "@/data2/mockData";
 
 export default function TutorManangementPerformaceMetricsPage() {
   const { tutorId } = useParams();

@@ -73,3 +73,8 @@ export async function updateTutorOnboarding(payload: TutorOnboardingPayload) {
   const response = await axiosInstance.patch("/auth/onboard-tutor", payload);
   return response.data;
 }
+
+export async function registerStudent(payload: RegisterStudentPayload) {
+  const response = await axiosInstance.post("/auth/register-student", payload);
+  return response.data;
+}

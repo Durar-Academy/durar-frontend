@@ -1,4 +1,7 @@
-// import { timeSlots } from "@/data/constants";
+import { useState } from "react";
+
+import { timeSlots as getAllTimeSlots } from "@/data/constants";
+import { StudentScheduleDetailModal } from "@/components/student/schedule-detail-modal";
 
 type ProcessedData = {
   [timeSlot: string]: Schedule[];
@@ -11,18 +14,35 @@ export function SingleDayFixedTimeSchedule({
   schedules: Schedule[];
   selectedDay: string;
 }) {
-  const processSchedules = (schedules: Schedule[]): ProcessedData => {
+  const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null);
+
+  const hasClassesOnDay = schedules.some((_class) => {
+    const day = _class?.day?.charAt(0).toUpperCase() + _class?.day?.slice(1);
+    return day === selectedDay;
+  });
+
+  if (!hasClassesOnDay) {
+    return (
+      <div className="w-full rounded-xl border border-shade-3 bg-offwhite flex items-center justify-center h-[143px]">
+        <p className="text-low text-sm font-medium">No classes available for {selectedDay}</p>
+      </div>
+    );
+  }
+
+  const processSchedules = (schedulesData: Schedule[]): ProcessedData => {
     const processedData: ProcessedData = {};
 
-    schedules.forEach((_class) => {
+    if (!schedulesData) return processedData;
+
+    schedulesData.forEach((_class) => {
+      if (!_class?.day || !_class?.start || !_class?.end) return;
+
       const day = _class.day.charAt(0).toUpperCase() + _class.day.slice(1);
       if (day !== selectedDay) return;
 
       const startHour = _class.start.split(":")[0];
       const endHour = _class.end.split(":")[0];
-      const timeSlot = `${startHour.toString().padStart(2, "0")}:00 - ${endHour
-        .toString()
-        .padStart(2, "0")}:00`;
+      const timeSlot = `${startHour.padStart(2, "0")}:00 - ${endHour.padStart(2, "0")}:00`;
 
       if (!processedData[timeSlot]) {
         processedData[timeSlot] = [];
@@ -34,55 +54,83 @@ export function SingleDayFixedTimeSchedule({
   };
 
   const classData = processSchedules(schedules);
+  const timeSlots = getAllTimeSlots();
+
+  const COLUMN_WIDTH = 130;
 
   return (
-    <div className="w-full mx-auto">
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse">
-          <thead>
-            <tr>
-              <th className="border text-high font-semibold text-base leading-5 p-6 bg-offwhite">
-                PERIOD
-              </th>
+    <div className="w-full rounded-xl border border-shade-3 overflow-hidden">
+      {/* ── Top row: PERIOD header + time slots ── */}
+      <div className="flex flex-row h-[59px] shrink-0">
+        {/* Sticky header cell */}
+        <div className="sticky left-0 z-10 w-[137px] min-w-[137px] h-full bg-low flex items-center pl-[14px] shrink-0">
+          <span className="text-[13px] font-semibold tracking-wide text-white">PERIOD</span>
+        </div>
 
-              {Object.keys(classData).map((timeSlot, index) => (
-                <th className="border p-6 font-medium" key={timeSlot + index}>
-                  {timeSlot}
-                </th>
-              ))}
-            </tr>
-          </thead>
-
-          <tbody>
-            {Object.keys(classData).length > 0 ? (
-              <tr>
-                <td className="border p-6 text-high font-semibold text-base leading-5 bg-white">
-                  {selectedDay.toUpperCase()}
-                </td>
-
-                {Object.keys(classData).map((timeSlot, index) => (
-                  <td className="border p-6" key={timeSlot + index}>
-                    {classData[timeSlot].map((record, index) => (
-                      <div
-                        key={record.id + index}
-                        className="text-center bg-offwhite rounded-lg text-high p-3 mb-2"
-                      >
-                        {record.user?.firstName ?? "Tutor"} {record.user?.lastName ?? "Tutor"}
-                      </div>
-                    ))}
-                  </td>
-                ))}
-              </tr>
-            ) : (
-              <tr>
-                <td colSpan={2} className="text-center text-gray-500 p-6">
-                  No classes available for {selectedDay}
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+        {/* Scrollable time slots */}
+        <div className="flex flex-row overflow-x-auto hide-scrollbar">
+          {timeSlots.map((timeSlot, i) => (
+            <div
+              key={timeSlot + i}
+              className={`h-full bg-offwhite flex items-center justify-center shrink-0 border-t-0 border-b-0 border-shade-3 ${
+                i === timeSlots.length - 1 ? "border-r border-shade-3" : "border-r-0"
+              } ${i % 2 === 0 ? "bg-offwhite" : "bg-white"}`}
+              style={{ width: COLUMN_WIDTH, minWidth: COLUMN_WIDTH }}
+            >
+              <span className="text-[11px] text-low font-normal whitespace-nowrap">{timeSlot}</span>
+            </div>
+          ))}
+        </div>
       </div>
+
+      {/* ── Bottom row: day label + schedule cards ── */}
+      <div className="flex flex-row h-[84px] shrink-0 border-t border-shade-3">
+        {/* Sticky day label cell */}
+        <div className="sticky left-0 z-10 w-[137px] min-w-[137px] h-full bg-offwhite flex items-center justify-center shrink-0 border-r border-shade-3">
+          <span className="text-[12px] font-bold text-[#222222] tracking-wide">
+            {selectedDay.toUpperCase()}
+          </span>
+        </div>
+
+        {/* Scrollable schedule cells */}
+        <div className="flex flex-row overflow-x-auto hide-scrollbar">
+          {timeSlots.map((timeSlot, i) => (
+            <div
+              key={timeSlot + i}
+              className={`h-full flex items-center justify-center shrink-0 ${
+                i === timeSlots.length - 1 ? "border-r border-shade-3" : "border-r-0"
+              } ${i % 2 === 0 ? "bg-offwhite" : "bg-white"}`}
+              style={{ width: COLUMN_WIDTH, minWidth: COLUMN_WIDTH }}
+            >
+              {classData[timeSlot]?.length ? (
+                classData[timeSlot].map((record, idx) => (
+                  <button
+                    key={record.id + idx}
+                    type="button"
+                    onClick={() => setSelectedSchedule(record)}
+                    className="w-[118px] bg-white border border-shade-1 rounded-lg flex flex-col items-start justify-center px-2.5 py-2 gap-0.5 cursor-pointer hover:border-orange hover:shadow-sm transition-all text-left"
+                  >
+                    <span className="text-xs font-semibold text-high leading-tight truncate max-w-full">
+                      {record.course?.title ?? "Course"}
+                    </span>
+                    <span className="text-[10px] font-normal text-low leading-tight truncate max-w-full">
+                      {record.user?.firstName ?? "Tutor"} {record.user?.lastName ?? ""}
+                    </span>
+                  </button>
+                ))
+              ) : (
+                <span className="text-shade-3 text-sm font-medium">—</span>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <StudentScheduleDetailModal
+        open={!!selectedSchedule}
+        onClose={() => setSelectedSchedule(null)}
+        schedule={selectedSchedule}
+      />
     </div>
   );
 }

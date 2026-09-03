@@ -7,9 +7,11 @@ import { Input } from "@/components/ui/input";
 import { DisplayList } from "@/components/admin/display-list";
 import { AddNoteDialog } from "@/components/admin/add-note-dialog";
 
-import { tutorNotes } from "@/data/mockData";
+import { tutorNotes } from "@/data2/mockData";
+import { useParams } from "next/navigation";
 
 export default function TutorManagementCommentPage() {
+  const { tutorId } = useParams<{ tutorId: string }>();
   return (
     <div className="p-6 rounded-xl bg-white border border-shade-2">
       <div className="flex justify-between items-center mb-6">
@@ -32,7 +34,7 @@ export default function TutorManagementCommentPage() {
           </div>
 
           <div>
-            <AddNoteDialog />
+            <AddNoteDialog studentId={tutorId} />
           </div>
         </div>
       </div>

@@ -1,4 +1,7 @@
+import { useState } from "react";
+
 import { daysOfWeek, timeSlots } from "@/data/constants";
+import { StudentScheduleDetailModal } from "@/components/student/schedule-detail-modal";
 
 type ProcessedData = {
   [day: string]: {
@@ -7,10 +10,15 @@ type ProcessedData = {
 };
 
 export function FullTimeSchedule({ schedules }: { schedules: Schedule[] }) {
-  const processSchedules = (schedules: Schedule[]): ProcessedData => {
+  const [selectedSchedule, setSelectedSchedule] = useState<Schedule | null>(null);
+  const processSchedules = (schedulesData: any): ProcessedData => {
     const processedData: ProcessedData = {};
 
-    schedules.forEach((_class) => {
+    if (!schedulesData) return processedData;
+
+    const processClass = (_class: any) => {
+      if (!_class?.day || !_class?.start || !_class?.end) return;
+
       const day = _class.day.charAt(0).toUpperCase() + _class.day.slice(1);
 
       const startHour = _class.start.split(":")[0];
@@ -22,7 +30,17 @@ export function FullTimeSchedule({ schedules }: { schedules: Schedule[] }) {
       if (!processedData[day][timeSlot]) processedData[day][timeSlot] = [];
 
       processedData[day][timeSlot].push(_class);
-    });
+    };
+
+    if (Array.isArray(schedulesData)) {
+      schedulesData.forEach(processClass);
+    } else if (typeof schedulesData === "object") {
+      Object.values(schedulesData).forEach((dayArray: any) => {
+        if (Array.isArray(dayArray)) {
+          dayArray.forEach(processClass);
+        }
+      });
+    }
 
     return processedData;
   };
@@ -62,12 +80,14 @@ export function FullTimeSchedule({ schedules }: { schedules: Schedule[] }) {
                   <td key={`${day}-${timeSlot}-${index}`} className="border p-6">
                     {classData[day] && classData[day][timeSlot] ? (
                       classData[day][timeSlot].map((record, index) => (
-                        <div
+                        <button
                           key={record.id + index}
-                          className="text-center bg-offwhite rounded-lg text-high p-3 mb-2"
+                          type="button"
+                          onClick={() => setSelectedSchedule(record)}
+                          className="w-full text-center bg-offwhite rounded-lg text-high p-3 mb-2 cursor-pointer hover:border hover:border-orange hover:shadow-sm transition-all"
                         >
-                          {record.user?.firstName ?? "Tutor"} {record.user?.lastName ?? "Tutor"}
-                        </div>
+                          {record.course?.title ?? "Course"}
+                        </button>
                       ))
                     ) : (
                       <p className="text-low text-sm font-medium text-center">No class</p>
@@ -79,6 +99,12 @@ export function FullTimeSchedule({ schedules }: { schedules: Schedule[] }) {
           </tbody>
         </table>
       </div>
+
+      <StudentScheduleDetailModal
+        open={!!selectedSchedule}
+        onClose={() => setSelectedSchedule(null)}
+        schedule={selectedSchedule}
+      />
     </div>
   );
 }

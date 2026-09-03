@@ -83,49 +83,67 @@ export default function NotificaitionList({
       </div>
 
       <div className="overflow-x-auto">
-        <table className="text-sm min-w-full bg-white border-none border-separate border-spacing-y-3">
-          <thead>
-            <tr className="text-low text-sm text-left">
-              <th className="py-3 px-4 font-semibold">Title</th>
-              <th className="py-3 px-4 font-semibold">Content</th>
-              <th className="py-3 px-4 font-semibold">Sender</th>
-              <th className="py-3 px-4 font-semibold">Date</th>
-              <th className="py-3 px-4 font-semibold">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filterednotifications.map((notification) => (
-              <tr
-                key={notification.id}
-                className="border-[1px] bg-[#F8F8FA] border-[#D2D4E0] mt-3"
-              >
-                <td className="text-sm py-4 pl-3 border-[1px] border-[#D2D4E0] rounded-l-xl border-r-0">
-                  {notification.title}
-                </td>
-                <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0] max-w-xs truncate">
-                  {notification.content}
-                </td>
-                <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0]">
-                  {notification.sender}
-                </td>
-                <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0]">
-                  {notification.date}
-                </td>
-                <td className="text-sm py-4 border-[1px] border-[#D2D4E0] border-l-0 rounded-r-xl">
-                  <span
-                    className={
-                      notification.status === "Read"
-                        ? "text-light-green"
-                        : "text-orange"
-                    }
-                  >
-                    {notification.status}
-                  </span>
-                </td>
+        {filterednotifications.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 text-gray-400">
+            <Image
+              src="/SVGs/bell.svg"
+              alt="No notifications"
+              width={48}
+              height={48}
+              className="mb-4 opacity-50"
+            />
+            <p className="text-lg font-medium">No Notifications</p>
+            <p className="text-sm mt-1">
+              {notifications.length === 0
+                ? "You don't have any notifications yet."
+                : "No notifications match your search or filter."}
+            </p>
+          </div>
+        ) : (
+          <table className="text-sm min-w-full bg-white border-none border-separate border-spacing-y-3">
+            <thead>
+              <tr className="text-low text-sm text-left">
+                <th className="py-3 px-4 font-semibold">Title</th>
+                <th className="py-3 px-4 font-semibold">Content</th>
+                <th className="py-3 px-4 font-semibold">Sender</th>
+                <th className="py-3 px-4 font-semibold">Date</th>
+                <th className="py-3 px-4 font-semibold">Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {filterednotifications.map((notification) => (
+                <tr
+                  key={notification.id}
+                  className="border-[1px] bg-[#F8F8FA] border-[#D2D4E0] mt-3"
+                >
+                  <td className="text-sm py-4 pl-3 border-[1px] border-[#D2D4E0] rounded-l-xl border-r-0">
+                    {notification.title}
+                  </td>
+                  <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0] max-w-xs truncate">
+                    {notification.content}
+                  </td>
+                  <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0]">
+                    {notification.sender}
+                  </td>
+                  <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0]">
+                    {notification.date}
+                  </td>
+                  <td className="text-sm py-4 border-[1px] border-[#D2D4E0] border-l-0 rounded-r-xl">
+                    <span
+                      className={
+                        notification.status === "Read"
+                          ? "text-light-green"
+                          : "text-orange"
+                      }
+                    >
+                      {notification.status}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
     </div>
   );

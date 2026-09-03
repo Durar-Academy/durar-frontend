@@ -1,14 +1,13 @@
 "use client";
 
 import axios from "axios";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import toast from "react-hot-toast";
 
 import { deleteAuthData, retrieveAuthData, storeAuthData } from "@/lib/storage";
 import { useAuth } from "@/hooks/useAuth";
 import { getCurrentUser } from "@/lib/account";
-import { Loading } from "@/components/shared/loading";
 
 export function AuthorizationRedirect({
   children,
@@ -17,16 +16,12 @@ export function AuthorizationRedirect({
 }>) {
   const router = useRouter();
   const pathname = usePathname();
-  const [authLoading, setAuthLoading] = useState(false);
   const { loggedIn } = useAuth();
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const checkRole = useCallback(() => {
     (async function () {
-      setAuthLoading(true);
-
       if (!loggedIn) {
-        setAuthLoading(false);
         deleteAuthData();
         router.push("/auth");
         return;
@@ -39,8 +34,8 @@ export function AuthorizationRedirect({
       if (!userRole) {
         try {
           console.log("Attempting to refresh user role");
-          const response = await getCurrentUser({ signal: abortControllerRef.current.signal });
-          storeAuthData(undefined, undefined, response.data.role);
+          const user = await getCurrentUser({ signal: abortControllerRef.current.signal });
+          storeAuthData(undefined, undefined, user.role);
 
           [, , userRole] = retrieveAuthData();
           console.log("Successfully refreshed user role");
@@ -52,7 +47,6 @@ export function AuthorizationRedirect({
 
           deleteAuthData();
           router.push("/auth");
-          setAuthLoading(false);
           return;
         }
       }
@@ -60,7 +54,6 @@ export function AuthorizationRedirect({
       if (!userRole) {
         deleteAuthData();
         router.push("/auth");
-        setAuthLoading(false);
         return;
       }
 
@@ -76,11 +69,10 @@ export function AuthorizationRedirect({
         router.push(userRole === "student" ? "/" : `/${userRole.toLowerCase()}`);
       } else if (pathname.startsWith("/tutor") && userRole !== "tutor") {
         router.push(userRole === "student" ? "/" : `/${userRole.toLowerCase()}`);
-      } else if ((pathname === "/" || pathname === "") && userRole !== "student") {
+      } else if (pathname === "/" || pathname === "") {
         router.push(`/${userRole.toLowerCase()}`);
       }
 
-      setAuthLoading(false);
     })();
   }, [loggedIn, pathname, router]);
 
@@ -91,8 +83,6 @@ export function AuthorizationRedirect({
       if (abortControllerRef.current) abortControllerRef.current.abort();
     };
   }, [checkRole]);
-
-  if (authLoading) return <Loading />;
 
   return <>{children}</>;
 }

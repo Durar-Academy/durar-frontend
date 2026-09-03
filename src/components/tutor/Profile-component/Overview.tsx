@@ -100,13 +100,21 @@ const Overview = ({ userId }: OverviewProps) => {
       </header>
 
       <section className="rounded-lg p-6 border border-shade-3 flex bg-white gap-4">
-        <Image
-          src={user.profilePictureId ? `/api/images/${user.profilePictureId}` : "/SVGs/default.svg"}
-          height={154}
-          width={188}
-          alt={`${user.fullName}'s profile image`}
-          className="rounded-xl"
-        />
+        {user.profilePicture?.src ? (
+          <img
+            src={user.profilePicture.src}
+            alt={`${user.fullName}'s profile image`}
+            className="h-[154px] w-[188px] rounded-xl object-cover object-center"
+          />
+        ) : (
+          <Image
+            src="/SVGs/default.svg"
+            height={154}
+            width={188}
+            alt={`${user.fullName}'s profile image`}
+            className="rounded-xl"
+          />
+        )}
 
         <aside className="flex flex-col gap-4">
           <p className="text-sm text-low">

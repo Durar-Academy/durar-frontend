@@ -23,7 +23,7 @@ export default function AdminPage() {
   const { data: payments, isLoading: paymentsLoading } = usePayments();
 
   const dashboardMetrics = processDashboardMetrics(metrics) ?? [];
-  const tutorsClasses = processSchedules(schedules?.records ?? []);
+  const tutorsClasses = processSchedules(schedules ?? []);
   const recentActivities = processActivities(activities?.records ?? []);
   const dashboardPayments = processPayments(payments?.records ?? []);
 

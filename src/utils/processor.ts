@@ -20,8 +20,24 @@ import React from "react";
 
 import { formatAmount, formatDateAndTime } from "@/utils/formatter";
 
-export function processSchedules(schedules: Schedule[]) {
-  const extractedSchedulesDetails = schedules.map((schedule) => {
+export function processSchedules(schedulesData: any) {
+  let flatSchedules: Schedule[] = [];
+
+  if (!schedulesData) return [];
+
+  if (Array.isArray(schedulesData)) {
+    flatSchedules = schedulesData;
+  } else if (schedulesData.records && Array.isArray(schedulesData.records)) {
+    flatSchedules = schedulesData.records;
+  } else if (typeof schedulesData === "object") {
+    Object.values(schedulesData).forEach((dayArray: any) => {
+      if (Array.isArray(dayArray)) {
+        flatSchedules = [...flatSchedules, ...dayArray];
+      }
+    });
+  }
+
+  const extractedSchedulesDetails = flatSchedules.map((schedule) => {
     const firstName = schedule.user?.firstName ?? "Tutor";
     const lastName = schedule.user?.lastName ?? "Tutor";
 
@@ -39,7 +55,7 @@ export function processSchedules(schedules: Schedule[]) {
   return extractedSchedulesDetails;
 }
 
-export const processEnrollmentData = (users: User[]): EnrollmentData => {
+export const processEnrollmentData = (users?: User[]): EnrollmentData => {
   const enrollmentData: EnrollmentData = {};
   const months = [
     "JAN",
@@ -56,7 +72,7 @@ export const processEnrollmentData = (users: User[]): EnrollmentData => {
     "DEC",
   ];
 
-  users.forEach((user) => {
+  (users ?? []).forEach((user) => {
     const createdAt = new Date(user.createdAt);
     if (isNaN(createdAt.getTime())) return;
 
@@ -443,7 +459,7 @@ export const processTutorsMetrics = (tutorsMetrics: TutorsMetrics): OverviewCard
 export const processTutors = (tutors: Tutor[]) => {
   const extractedTutors = tutors.map((tutor) => {
     const id = tutor.id;
-    const name = `${tutor.firstName} ${tutor.lastName}`;
+    const name = `${tutor.firstName ?? ""} ${tutor.lastName ?? ""}`.trim();
 
     const email = tutor.email;
     const status = tutor.status;
@@ -746,7 +762,7 @@ export const processAssignmentsPage = (assignments: Assignment[]): AssignmentsLi
       const id = assignment.id;
       const type = assignment.type;
       const assignmentTitle = assignment.title;
-      const courseTitle = assignment.course.title;
+      const courseTitle = assignment.course?.title ?? "No Course";
       const status = assignment.status;
       const dueDate = format(new Date(assignment.dueAt), "PP");
       const submissions = assignment.AssignmentSubmission.length;
@@ -832,4 +848,55 @@ export const processNotificationsMetrics = (
       children: React.createElement(Info, { key: "icon", className: "w-6 h-6 text-success" }),
     },
   ];
+};
+
+type NotificationRecipientRecord = Partial<UserNotification> & {
+  id?: string;
+  user?: { id?: string };
+};
+
+type NotificationWithRecipientRecords = _Notification & {
+  userNotifications?: NotificationRecipientRecord[];
+  UserNotification?: NotificationRecipientRecord[];
+  recipients?: NotificationRecipientRecord[];
+  recipientIds?: string[];
+  userIds?: string[];
+};
+
+const getNotificationRecipientRecords = (
+  notification: NotificationWithRecipientRecords,
+): NotificationRecipientRecord[] => {
+  if (Array.isArray(notification.userNotifications)) return notification.userNotifications;
+  if (Array.isArray(notification.UserNotification)) return notification.UserNotification;
+  if (Array.isArray(notification.recipients)) return notification.recipients;
+
+  return [];
+};
+
+export const getNotificationMetrics = (notifications: _Notification[]): NotificationMetrics => {
+  const recipientRecords = notifications.flatMap((notification) =>
+    getNotificationRecipientRecords(notification as NotificationWithRecipientRecords),
+  );
+
+  const recipientIds = new Set<string>();
+
+  notifications.forEach((notification) => {
+    const notificationWithRecipients = notification as NotificationWithRecipientRecords;
+
+    notificationWithRecipients.recipientIds?.forEach((recipientId) => recipientIds.add(recipientId));
+    notificationWithRecipients.userIds?.forEach((userId) => recipientIds.add(userId));
+  });
+
+  recipientRecords.forEach((recipient) => {
+    const recipientId = recipient.userId ?? recipient.user?.id ?? recipient.id;
+    if (recipientId) recipientIds.add(recipientId);
+  });
+
+  const readCount = recipientRecords.filter((recipient) => recipient.isRead || recipient.readAt).length;
+
+  return {
+    totalNotifications: notifications.length,
+    readRate: recipientRecords.length > 0 ? Math.round((readCount / recipientRecords.length) * 100) : 0,
+    activeRecipients: recipientIds.size,
+  };
 };

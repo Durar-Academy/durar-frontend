@@ -2,7 +2,7 @@
 
 import { FileList } from "@/components/admin/file-list";
 
-import { tutorDocuments } from "@/data/mockData";
+import { tutorDocuments } from "@/data2/mockData";
 
 export default function TutorManagementDocumentPage() {
   return (

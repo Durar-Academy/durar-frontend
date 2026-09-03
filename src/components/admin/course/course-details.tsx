@@ -31,8 +31,51 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 
+import { Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { useDeleteCourse, useUpdateCourse } from "@/hooks/useAdmin";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+
 export function CourseDetails({ course }: { course: Course }) {
-  const studentCount = course.UserCourse.filter((user) => user.role === "student").length;
+  const router = useRouter();
+  const lessons = course.Lesson ?? [];
+  const enrolledUsers = course.UserCourse ?? [];
+  const studentCount = enrolledUsers.filter((user) => user.role === "student").length;
+
+  const { mutate: deleteCourse, isPending: isDeleting } = useDeleteCourse();
+  const { mutate: updateCourse, isPending: isUpdating } = useUpdateCourse();
+
+  const handleStatusToggle = () => {
+    const newStatus = course.status === "published" ? "draft" : "published";
+    
+    updateCourse(
+      { courseId: course.id, payload: { status: newStatus } },
+      {
+        onSuccess: () => toast.success(`Course ${newStatus === "published" ? "published" : "moved to draft"}.`),
+        onError: () => toast.error("Failed to update course status."),
+      }
+    );
+  };
+
+  const handleDelete = () => {
+    deleteCourse(course.id, {
+      onSuccess: () => {
+        toast.success("Course deleted successfully.");
+        router.push("/admin/courses");
+      },
+      onError: () => toast.error("Failed to delete course."),
+    });
+  };
 
   return (
     <div className="flex flex-col gap-3">
@@ -45,9 +88,9 @@ export function CourseDetails({ course }: { course: Course }) {
 
             <Switch
               checked={course.status === "published"}
-              disabled
-              aria-readonly
-              className="disabled:opacity-100"
+              onCheckedChange={handleStatusToggle}
+              disabled={isUpdating}
+              className="disabled:opacity-50"
             />
           </div>
 
@@ -60,12 +103,42 @@ export function CourseDetails({ course }: { course: Course }) {
           </Link>
 
           <Link
-            href={""}
+            href={`/admin/courses/edit/${course.id}`}
             className="flex gap-2 items-center text-orange font-medium hover:underline"
           >
             <PenLine className="w-5 h-5 text-inherit shrink-0" />
             <span>Edit</span>
           </Link>
+
+          <Dialog>
+            <DialogTrigger asChild>
+              <button className="flex gap-2 items-center text-danger font-medium hover:underline">
+                <Trash2 className="w-5 h-5 text-inherit shrink-0" />
+                <span>Delete</span>
+              </button>
+            </DialogTrigger>
+            <DialogContent className="max-w-[400px]">
+              <DialogHeader>
+                <DialogTitle>Delete Course</DialogTitle>
+              </DialogHeader>
+              <div className="py-4 text-sm text-low">
+                Are you sure you want to delete this course? This action cannot be undone.
+              </div>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant={"_outline"} className="h-10 px-4 rounded-xl">Cancel</Button>
+                </DialogClose>
+                <Button
+                  variant={"_default"}
+                  className="h-10 px-4 rounded-xl bg-danger hover:bg-red-700 text-white"
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? "Deleting..." : "Delete"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
@@ -158,7 +231,7 @@ export function CourseDetails({ course }: { course: Course }) {
             <h4 className="text-high font-semibold text-base">Course Content</h4>
 
             <div className="space-y-6">
-              {course.Lesson.map((lesson, index) => (
+              {lessons.map((lesson, index) => (
                 <div className="flex gap-3 items-center" key={lesson.id + index}>
                   <div className="w-9 h-9 flex items-center justify-center bg-offwhite rounded-md">
                     <Video className="w-5 h-5 text-orange" />
@@ -220,7 +293,7 @@ export function CourseDetails({ course }: { course: Course }) {
 
             <div className="h-full">
               <div className="h-[390px] overflow-y-scroll hide-scrollbar">
-                {course.UserCourse.length > 0 ? (
+                {enrolledUsers.length > 0 ? (
                   <Table>
                     <TableHeader>
                       <TableRow className="text-low text-sm font-semibold">
@@ -233,7 +306,7 @@ export function CourseDetails({ course }: { course: Course }) {
                     </TableHeader>
 
                     <TableBody className="space-y-3">
-                      {course.UserCourse.map((student, index) => (
+                      {enrolledUsers.map((student, index) => (
                         <TableRow
                           className="text-sm text-high bg-offwhite h-12"
                           key={student.id + index}

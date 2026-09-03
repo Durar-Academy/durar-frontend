@@ -1,9 +1,9 @@
 "use client";
 
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Plus } from "lucide-react";
 import Link from "next/link";
-
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import { TopBar } from "@/components/shared/top-bar";
 import { OverviewCard } from "@/components/admin/overview-card";
 import { StudentsTable } from "@/components/admin/students-table";
@@ -18,7 +18,7 @@ export default function StudentsManagementPage() {
   const { data: students, isLoading: studentsLoading } = useStudents();
 
   const allStudentsMetrics = processStudentsMetrics(studentsMetrics ?? []);
-  const allStudents = processStudents(students?.records ?? []);
+  const allStudents = processStudents(students ?? []);
 
   return (
     <section className="flex flex-col gap-5">
@@ -40,6 +40,13 @@ export default function StudentsManagementPage() {
       <div className="rounded-xl p-6 border border-shade-2 bg-white flex flex-col gap-4">
         <div className="flex justify-between items-center">
           <h3 className="text-low font-medium text-xl">Students Overview</h3>
+
+          <Button asChild className="h-10 rounded-lg px-4">
+            <Link href="/admin/students/add-student" className="inline-flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              Add Student
+            </Link>
+          </Button>
         </div>
 
         <div className="students-overview-cards">

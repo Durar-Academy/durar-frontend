@@ -1,4 +1,5 @@
 "use client";
+import axios from "axios";
 import { setCookie, getCookie, deleteCookie } from "cookies-next";
 
 import { STORE_KEY } from "@/data/constants";
@@ -117,17 +118,47 @@ export function deleteAuthData() {
   deleteCookie("userRole");
 }
 
-export async function uploadFile(file: File) {
-  const formData = new FormData();
-  formData.append("file", file);
-
+export async function uploadFile(file: File): Promise<UploadFileResponse> {
   try {
-    const response = await axiosInstance.post("/file/upload", formData);
+    const payload = new FormData();
+    payload.append("file", file, file.name);
 
-    // console.log("Upload Response", response.data.data);
-    return response.data.data;
+    const response = await axiosInstance.post("/file/upload", payload);
+    const uploadResult = response.data.data as UploadFileResponse;
+
+    try {
+      const media = await getFileByStorageId(uploadResult.storageId);
+      return {
+        ...uploadResult,
+        id: media.id,
+      };
+    } catch (metadataError) {
+      console.error("Error fetching uploaded file metadata:", metadataError);
+      return uploadResult;
+    }
   } catch (error) {
     console.error("Error uploading file:", error);
+    if (axios.isAxiosError(error)) {
+      const uploadError = new Error(error.response?.data?.message || "Uploading Failed") as Error & {
+        response?: typeof error.response;
+        code?: string;
+      };
+
+      uploadError.response = error.response;
+      uploadError.code = error.code;
+
+      throw uploadError;
+    }
+
     throw new Error("Uploading Failed");
   }
+}
+
+export async function getFileByStorageId(fileId: string): Promise<Media> {
+  const response = await axiosInstance.get(`/file/${fileId}`);
+  return response.data.data;
+}
+
+export async function deleteFileByStorageId(fileId: string): Promise<void> {
+  await axiosInstance.delete(`/file/${fileId}`);
 }

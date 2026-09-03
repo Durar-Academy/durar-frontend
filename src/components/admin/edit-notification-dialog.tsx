@@ -96,7 +96,7 @@ export function EditNotificationDialog({
         title,
         content,
         recipientType,
-        mediaId: fileResponse?.storageId ?? null,
+        mediaId: fileResponse?.id ?? null,
       };
 
       const response = await axiosInstance.patch(`/notification/${notification.id}`, payload);

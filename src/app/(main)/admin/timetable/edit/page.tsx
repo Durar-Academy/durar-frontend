@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import Link from "next/link";
-import { ChevronRight, Download, Save } from "lucide-react";
+import { ChevronRight, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 import { TopBar } from "@/components/shared/top-bar";
@@ -12,126 +12,154 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EditTimeSchedule } from "@/components/admin/edit-quran-timetable";
 
 import { useCurrentUser } from "@/hooks/useAccount";
-import { useSchedules, useTutors } from "@/hooks/useAdmin";
-import { createSchedules, updateSchedules } from "@/lib/admin";
+import {
+  useSchedules,
+  useTutors,
+  useStudents,
+  useCourses,
+  useCreateSchedules,
+  useUpdateSchedules,
+  useDeleteSchedule,
+} from "@/hooks/useAdmin";
 import { QURAN_ID } from "@/data/constants";
 
 export default function EditTimetable() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
-  const { data: schedules, isLoading: schedulesLoading } = useSchedules();
-  const { data: tutors, isLoading: tutorsLoading } = useTutors();
+  const { data: schedules, isLoading: schedulesLoading, error: schedulesError } = useSchedules();
+  const { data: tutors, isLoading: tutorsLoading, error: tutorsError } = useTutors();
+  const { data: students, isLoading: studentsLoading, error: studentsError } = useStudents();
+  const { data: courses, isLoading: coursesLoading, error: coursesError } = useCourses();
 
-  // State to track edited schedules
+  // Local state for the working copy of schedules being edited
   const [editedSchedules, setEditedSchedules] = useState<Schedule[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const originalScheduleIdsRef = useRef<Set<string>>(new Set());
+  const initializedRef = useRef(false);
   const router = useRouter();
 
-  // Initialize state when schedules are fetched
+  // React Query mutations — they handle API calls and cache invalidation
+  const createMutation = useCreateSchedules();
+  const updateMutation = useUpdateSchedules();
+  const deleteMutation = useDeleteSchedule();
+
+  // Initialise the working copy once from server data
   useEffect(() => {
-    if (schedules?.records) {
-      setEditedSchedules(schedules.records);
-    }
-  }, [schedules]);
+    if (!schedules || initializedRef.current) return;
+    initializedRef.current = true;
 
-  const handleSave = async () => {
-    console.log("EDITED SCHEDULE: RAW", editedSchedules);
-
-    setIsSubmitting(true);
-
-    const editedSchedulesQuran = editedSchedules.filter(
-      (schedule) => schedule.courseId === QURAN_ID,
+    originalScheduleIdsRef.current = new Set(
+      schedules.filter((s) => s.id).map((s) => s.id),
     );
 
-    console.log("EDITED SCHEDULE: QURAN ONLY", editedSchedulesQuran);
+    setEditedSchedules(schedules);
+  }, [schedules]);
 
-    const classesToCreate = editedSchedulesQuran
-      .filter((schedule) => !schedule.id)
-      .map((schedule) => {
-        return {
-          day: schedule.day.toLowerCase(),
-          start: schedule.start,
-          end: schedule.end,
-          userId: schedule.userId,
-          status: "scheduled",
-        };
-      });
+  /** Compute what needs to be created, updated, and deleted. */
+  function computeChanges() {
+    const quranSchedules = editedSchedules.filter(
+      (s) => !s.courseId || s.courseId === QURAN_ID,
+    );
 
-    console.log("EDITED SCHEDULE: TO CREATE", classesToCreate);
+    const currentIds = new Set(
+      editedSchedules
+        .filter((s) => s.id && !s.id.startsWith("new-"))
+        .map((s) => s.id),
+    );
 
-    const classesToUpdate = editedSchedulesQuran
-      .filter((schedule) => schedule.id)
-      .map((schedule) => {
-        return {
-          id: schedule.id,
-          day: schedule.day.toLowerCase(),
-          start: schedule.start,
-          end: schedule.end,
-          courseId: schedule.courseId,
-          userId: schedule.userId,
-          status: "scheduled",
-        };
-      });
+    const deletedIds = Array.from(originalScheduleIdsRef.current).filter(
+      (id) => !currentIds.has(id),
+    );
 
-    console.log("EDITED SCHEDULE: TO UPDATE", classesToUpdate);
+    const toCreate = quranSchedules
+      .filter((s) => !s.id || s.id.startsWith("new-"))
+      .map((s) => ({
+        day: s.day.toLowerCase(),
+        start: s.start,
+        end: s.end,
+        userId: s.userId,
+        studentId: s.studentId || undefined,
+        link: s.link || "",
+        courseId: s.courseId || QURAN_ID,
+        status: "scheduled",
+      }));
+
+    const toUpdate = quranSchedules
+      .filter((s) => s.id && !s.id.startsWith("new-"))
+      .map((s) => ({
+        id: s.id,
+        day: s.day.toLowerCase(),
+        start: s.start,
+        end: s.end,
+        courseId: s.courseId || QURAN_ID,
+        userId: s.userId,
+        studentId: s.studentId || undefined,
+        link: s.link || "",
+        status: "scheduled",
+      }));
+
+    return { deletedIds, toCreate, toUpdate };
+  }
+
+  const handleSave = async () => {
+    setIsSubmitting(true);
+
+    const { deletedIds, toCreate, toUpdate } = computeChanges();
 
     try {
-      // Prepare API calls
-      const apiCalls = [];
+      const apiCalls: Promise<unknown>[] = [
+        ...deletedIds.map((id) => deleteMutation.mutateAsync(id)),
+        ...(toCreate.length > 0
+          ? [createMutation.mutateAsync({ classes: toCreate, courseId: QURAN_ID })]
+          : []),
+        ...(toUpdate.length > 0
+          ? [updateMutation.mutateAsync({ classes: toUpdate })]
+          : []),
+      ];
 
-      // Add create API call if needed
-      if (classesToCreate.length > 0) {
-        apiCalls.push(
-          createSchedules({
-            classes: classesToCreate,
-            courseId: QURAN_ID,
-          }).catch((error) => {
-            console.error("Create Schedules Error:", error);
-            throw error; // Re-throw to handle in the outer catch block
-          }),
-        );
-      }
-
-      // Add update API call if needed
-      if (classesToUpdate.length > 0) {
-        apiCalls.push(
-          updateSchedules({
-            classes: classesToUpdate,
-          }).catch((error) => {
-            console.error("Update Schedules Error:", error);
-            throw error; // Re-throw to handle in the outer catch block
-          }),
-        );
-      }
-
-      // Execute all API calls in parallel
-      if (apiCalls.length > 0) {
-        const responses = await Promise.allSettled(apiCalls);
-        console.log("CREATE AND UPDATE RESPONSES:", responses);
-
-        // Check for failed requests
-        const failedRequests = responses.filter((response) => response.status === "rejected");
-
-        if (failedRequests.length > 0) {
-          console.error("Some API calls failed:", failedRequests);
-          toast.error(`Unable to save ${failedRequests.length} schedule(s). Please try again.`);
-        } else {
-          console.log("All API calls succeeded!");
-          toast.success("Schedules saved successfully");
-        }
-      } else {
-        console.log("No schedules to create or update.");
+      if (apiCalls.length === 0) {
         toast("No changes to save.");
+        router.back();
+        return;
       }
 
-      // Navigate back after successful save
-      router.back();
+      const results = await Promise.allSettled(apiCalls);
+
+      const failures = results.filter(
+        (r): r is PromiseRejectedResult => r.status === "rejected",
+      );
+
+      if (failures.length > 0) {
+        // Log the actual API error for debugging
+        failures.forEach((f) =>
+          console.error("Schedule save error:", f.reason?.response?.data ?? f.reason),
+        );
+
+        const errorMessages = failures
+          .map((f) => {
+            const data = f.reason?.response?.data;
+            return data?.message || data?.error || "Unknown error";
+          })
+          .filter(Boolean);
+
+        toast.error(
+          `Unable to save ${failures.length} schedule(s). ${errorMessages.join("; ")}`,
+          { duration: 6000 },
+        );
+      } else {
+        toast.success("Schedules saved successfully");
+        router.back();
+      }
     } catch (error) {
-      console.error("Error saving schedules:", error);
+      console.error("Unexpected error during save:", error);
       toast.error("Unable to save schedules. Please try again");
     } finally {
       setIsSubmitting(false);
     }
   };
+
+  const isLoading =
+    schedulesLoading || tutorsLoading || studentsLoading || coursesLoading;
+  const hasError = schedulesError || tutorsError || studentsError || coursesError;
 
   return (
     <section className="flex flex-col gap-5">
@@ -167,21 +195,25 @@ export default function EditTimetable() {
               <Save className="w-6 h-6" strokeWidth={3} />
               <span>{isSubmitting ? "Saving..." : "Save"}</span>
             </Button>
-
-            <Button variant={"_default"} className="bg-orange hover:bg-burnt px-4 py-2 h-10">
-              <Download className="w-6 h-6" strokeWidth={3} />
-              <span>Download</span>
-            </Button>
           </div>
         </div>
 
         <div className="h-[1024px] overflow-y-scroll hide-scrollbar">
-          {schedulesLoading || tutorsLoading ? (
+          {hasError ? (
+            <div className="rounded-lg bg-red-50 border border-red-200 p-4">
+              <p className="text-red-800 font-medium">Error loading data</p>
+              <p className="text-red-700 text-sm mt-1">
+                Failed to fetch timetable data. Please try refreshing the page.
+              </p>
+            </div>
+          ) : isLoading ? (
             <Skeleton className="rounded-xl h-full" />
           ) : (
             <EditTimeSchedule
               schedules={editedSchedules}
-              tutors={tutors.records}
+              tutors={tutors?.records ?? []}
+              students={students ?? []}
+              courses={courses ?? []}
               onSave={setEditedSchedules}
             />
           )}

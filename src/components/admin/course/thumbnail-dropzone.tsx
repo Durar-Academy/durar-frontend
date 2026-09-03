@@ -3,19 +3,29 @@
 import { AlertCircle, CloudUpload, X } from "lucide-react";
 import Image from "next/image";
 import Dropzone, { FileError } from "react-dropzone";
-import { useState, MouseEvent } from "react";
+import { useEffect, useState, MouseEvent } from "react";
 
 import { cn, fileToBase64 } from "@/lib/utils";
 
-export function ThumbnailDropzone({ onFileDrop, value, showThumbnail = true }: DropzoneProps) {
+export function ThumbnailDropzone({
+  onFileDrop,
+  onClear,
+  value,
+  showThumbnail = true,
+}: DropzoneProps) {
   const [previews, setPreviews] = useState<FileDropValue>(value);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    setPreviews(value);
+  }, [value]);
 
   const handleThumbnailRemove = (event: MouseEvent<HTMLButtonElement>) => {
     if (!previews) return;
 
     event.stopPropagation();
     setPreviews(null);
+    onClear?.();
   };
 
   const handleThumbnailDrop = async (

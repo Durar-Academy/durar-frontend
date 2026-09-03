@@ -15,7 +15,7 @@ export const getRecipientLabel = (type: string): string => {
   return recipientTypeMap[type as RecipientType] ?? "Unknown";
 };
 
-export function NotificationsTable({ notifications }: { notifications: UserNotification[] }) {
+export function NotificationsTable({ notifications }: { notifications: _Notification[] }) {
   return (
     <div className="p-6 dashboard-shadow rounded-xl bg-white h-full w-full">
       <div className="flex justify-between items-center mb-6">
@@ -37,31 +37,37 @@ export function NotificationsTable({ notifications }: { notifications: UserNotif
           </TableHeader>
 
           <TableBody className="space-y-3">
-            {notifications.map((notification) => (
-              <TableRow className="text-sm text-high bg-offwhite h-12" key={notification.id}>
-                <TableCell className="capitalize">{notification.notification.title}</TableCell>
-                <TableCell className="capitalize">
-                  {getRecipientLabel(notification.notification.recipientType)}
-                </TableCell>
+            {notifications.length > 0 ? (
+              notifications.map((notification) => (
+                <TableRow className="text-sm text-high bg-offwhite h-12" key={notification.id}>
+                  <TableCell className="capitalize">{notification.title}</TableCell>
+                  <TableCell className="capitalize">
+                    {getRecipientLabel(notification.recipientType as string)}
+                  </TableCell>
 
-                <TableCell>{format(new Date(notification.createdAt), "PP")}</TableCell>
+                  <TableCell>{format(new Date(notification.createdAt), "PP")}</TableCell>
 
-                {/* the status is not being sent yet from BE */}
-                <TableCell className={`${notification.isRead ? "text-success" : "text-orange"}`}>
-                  {notification.isRead ? "Sent" : "Failed"}
-                </TableCell>
+                  {/* the status is not being sent yet from BE */}
+                  <TableCell className="text-success">Sent</TableCell>
 
-                <TableCell className="text-center flex justify-center">
-                  <Link href={`/notifications/${notification.notificationId}`}>
-                    <EyeIcon className="text-orange h-6 w-6" />
-                  </Link>
+                  <TableCell className="text-center flex justify-center">
+                    <Link href={`/admin/notifications/${notification.id}`}>
+                      <EyeIcon className="text-orange h-6 w-6" />
+                    </Link>
 
-                  <button>
-                    <Trash2Icon className="text-danger h-6 w-6" />
-                  </button>
+                    <button>
+                      <Trash2Icon className="text-danger h-6 w-6" />
+                    </button>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow className="text-sm text-low bg-offwhite h-20">
+                <TableCell colSpan={5} className="text-center">
+                  No notifications found.
                 </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </div>

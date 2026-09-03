@@ -14,7 +14,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { recipientTypeOptions } from "@/data/constants";
-import { axiosInstance } from "@/lib/axios";
 import { notificationFormSchema } from "@/lib/schemas";
 import { uploadFile } from "@/lib/storage";
 import { cn } from "@/lib/utils";
@@ -22,6 +21,7 @@ import { Paperclip, Plus, SendHorizonal, Upload } from "lucide-react";
 import { FormEvent, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import Select, { StylesConfig } from "react-select";
+import { useCreateNotification } from "@/hooks/useAdmin";
 
 interface OptionType {
   label: string;
@@ -59,6 +59,8 @@ export function AddNotificationDialog() {
 
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  const createNotificationMutation = useCreateNotification();
+
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
@@ -85,16 +87,19 @@ export function AddNotificationDialog() {
         fileResponse = await uploadFile(formData.file);
       }
 
-      const payload = {
+      const payload: CreateNotificationPayload = {
         title: formData.title,
         content: formData.content,
-        mediaId: fileResponse ? fileResponse.storageId : null,
-        recipientType: formData.recipientType,
+        recipientType: formData.recipientType as RecipientType,
       };
+      
+      if (fileResponse && fileResponse.id) {
+        payload.mediaId = fileResponse.id;
+      }
+
       console.log("Payload", payload);
 
-      const createNotificationResponse = await axiosInstance.post("/notification", payload);
-      console.log("CREATE NOTIFICATION", createNotificationResponse);
+      await createNotificationMutation.mutateAsync(payload);
 
       toast.success("Notification sent!");
 
@@ -104,10 +109,10 @@ export function AddNotificationDialog() {
       setRecipientType(null);
       setFile(null);
       setErrors({});
+      setIsSubmitting(false);
     } catch (error) {
       console.error("Notification Error:", error);
       toast.error("Failed to send notification.");
-    } finally {
       setIsSubmitting(false);
     }
   }
