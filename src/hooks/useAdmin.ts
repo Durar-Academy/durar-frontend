@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { registerStudent } from "@/lib/auth";
 
@@ -98,6 +98,7 @@ export function useStudents(filters?: SearchFilters) {
   return useQuery({
     queryKey: ["all-students", filters],
     queryFn: () => getStudents({ filters }),
+    placeholderData: keepPreviousData,
   });
 }
 
@@ -228,6 +229,7 @@ export function useCourses(filters?: SearchFilters) {
   return useQuery<Course[]>({
     queryKey: ["all-courses", filters],
     queryFn: () => getCourses({ filters }),
+    placeholderData: keepPreviousData,
   });
 }
 
@@ -349,6 +351,7 @@ export function useRegisterStudent() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["all-students"] });
       queryClient.invalidateQueries({ queryKey: ["all-students-metrics"] });
+      queryClient.invalidateQueries({ queryKey: ["dashboard-metrics"] });
     },
   });
 }
@@ -360,10 +363,11 @@ export function useUpdateCourse() {
   return useMutation({
     mutationFn: ({ courseId, payload }: { courseId: string; payload: UpdateCoursePayload }) =>
       updateCourse(courseId, payload),
-    onSuccess: (_data, variables) => {
+    onSuccess: async (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["all-courses"] });
       queryClient.invalidateQueries({ queryKey: ["all-courses-metrics"] });
       queryClient.invalidateQueries({ queryKey: ["course", variables.courseId] });
+      await queryClient.refetchQueries({ queryKey: ["all-courses-metrics"], type: "active" });
     },
   });
 }

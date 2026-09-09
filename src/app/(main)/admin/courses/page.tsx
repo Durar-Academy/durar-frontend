@@ -2,7 +2,7 @@
 
 import { GraduationCap, Plus } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { OverviewCard } from "@/components/admin/overview-card";
 import { TopBar } from "@/components/shared/top-bar";
@@ -17,10 +17,11 @@ import { processCoursesMetrics } from "@/utils/processor";
 
 export default function CoursesManagementPage() {
   const [selectedCourseId, setSelectedCourseId] = useState("");
+  const [filters, setFilters] = useState<SearchFilters>({ page: 1, limit: 50 });
 
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: coursesMetrics, isLoading: coursesMetricsLoading } = useCoursesMetrics();
-  const { data: courses, isLoading: coursesLoading, isError: coursesError } = useCourses();
+  const { data: courses, isLoading: coursesLoading, isError: coursesError } = useCourses(filters);
   const { data: course, isLoading: courseLoading, isError: courseError } = useCourse(selectedCourseId);
 
   // Keep a course selected once the list loads so the course-specific actions
@@ -32,6 +33,12 @@ export default function CoursesManagementPage() {
   }, [courses, selectedCourseId]);
 
   const allCoursesMetrics = processCoursesMetrics(coursesMetrics ?? []);
+  const handleCourseSearch = useCallback((search: string) => {
+    setFilters((current) => ({ ...current, search, page: 1 }));
+  }, []);
+  const handleCourseStatus = useCallback((status: SearchFilters["status"] | undefined) => {
+    setFilters((current) => ({ ...current, status, page: 1 }));
+  }, []);
 
   // console.log(selectedCourseId, course);
 
@@ -97,6 +104,10 @@ export default function CoursesManagementPage() {
               courses={courses ?? []}
               courseId={selectedCourseId}
               setCourseId={setSelectedCourseId}
+              search={filters.search ?? ""}
+              status={filters.status as CourseStatus | undefined}
+              onSearchChange={handleCourseSearch}
+              onStatusChange={handleCourseStatus}
             />
 
             <div className="w-full rounded-xl p-6 border border-shade-2 bg-white">

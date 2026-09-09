@@ -684,7 +684,7 @@ type TutorCoursesTableProps = {
 type CoursesMetrics = {
   totalCourses: number;
   activeCourses: number;
-  inActiveCourses: number;
+  draftCourses: number;
   completedCourses: number;
 };
 

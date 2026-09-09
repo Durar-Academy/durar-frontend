@@ -221,6 +221,8 @@ export async function getStudents(options?: { signal?: AbortSignal; filters?: Se
   const params = new URLSearchParams();
   if (options?.filters?.search) params.append("search", options.filters.search);
   if (options?.filters?.status) params.append("status", options.filters.status);
+  if (options?.filters?.page !== undefined) params.append("page", String(options.filters.page));
+  if (options?.filters?.limit !== undefined) params.append("limit", String(options.filters.limit));
 
   const response = await axiosInstance.get(`/user/students?${params.toString()}`, {
     signal: options?.signal,

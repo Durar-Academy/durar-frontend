@@ -638,8 +638,8 @@ export const processCoursesMetrics = (coursesMetrics: CoursesMetrics): OverviewC
     },
 
     {
-      title: "Inactive Courses",
-      figure: `${coursesMetrics.inActiveCourses ?? 0}`,
+      title: "DRAFT",
+      figure: `${coursesMetrics.draftCourses ?? 0}`,
       children: React.createElement(Info, { key: "icon", className: "w-6 h-6 text-danger" }),
     },
 

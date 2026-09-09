@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import Link from "next/link";
 // import { Download, Search } from "lucide-react";
 import { Search } from "lucide-react";
@@ -24,7 +25,29 @@ import { cn } from "@/lib/utils";
 import { STUDENT_STATUSES } from "@/data/constants";
 import { formatToReadableId } from "@/utils/formatter";
 
-export function StudentsTable({ students }: { students: StudentsTableProps }) {
+export function StudentsTable({
+  students,
+  search,
+  status,
+  onSearchChange,
+  onStatusChange,
+}: {
+  students: StudentsTableProps;
+  search: string;
+  status?: SearchFilters["status"];
+  onSearchChange: (value: string) => void;
+  onStatusChange: (value: SearchFilters["status"] | undefined) => void;
+}) {
+  const [searchInput, setSearchInput] = useState(search);
+
+  useEffect(() => {
+    const timeoutId = window.setTimeout(() => {
+      if (searchInput !== search) onSearchChange(searchInput);
+    }, 350);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [searchInput, search, onSearchChange]);
+
   return (
     <div className="p-6 rounded-xl bg-white h-full border border-shade-2">
       <div className="flex justify-between items-center mb-6">
@@ -37,16 +60,19 @@ export function StudentsTable({ students }: { students: StudentsTableProps }) {
 
             focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-2 focus-visible:border-orange"
               placeholder="Search..."
+              value={searchInput}
+              onChange={(event) => setSearchInput(event.target.value)}
             />
             <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-low" />
           </div>
 
-          <Select>
+          <Select value={status ?? "all"} onValueChange={(value) => onStatusChange(value === "all" ? undefined : value as SearchFilters["status"])}>
             <SelectTrigger className="w-fit h-10 text-high bg-white border border-shade-3 rounded-lg px-4 py-3 focus:ring-0 shadow-none">
               <SelectValue placeholder="Status" className="capitalize" />
             </SelectTrigger>
 
             <SelectContent>
+              <SelectItem value="all">All statuses</SelectItem>
               {STUDENT_STATUSES.map((studentStatus, index) => (
                 <SelectItem value={studentStatus.status} key={studentStatus.status + index}>
                   {studentStatus.label}

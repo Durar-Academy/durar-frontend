@@ -4,6 +4,7 @@ import { getFileByStorageId } from "@/lib/storage";
 
 import {
   getAssignments,
+  getStudentAssignment,
   getNotification,
   getNotifications,
   getPaymentMethods,
@@ -26,6 +27,14 @@ export function useAssignments(filters?: StudentAssignmentFilters) {
     queryFn: () => getAssignments({ filters }),
   });
   return query;
+}
+
+export function useStudentAssignment(assignmentId: string) {
+  return useQuery<StudentAssignment>({
+    queryKey: ["student-assignment", assignmentId],
+    queryFn: ({ signal }) => getStudentAssignment(assignmentId, { signal }),
+    enabled: !!assignmentId,
+  });
 }
 
 export function usePayments() {

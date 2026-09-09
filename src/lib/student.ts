@@ -9,6 +9,28 @@ type StudentAssignmentFilters = {
   limit?: number;
 };
 
+export type AssignmentSubmissionPayload = {
+  content?: string;
+  submissionLink?: string;
+  files: string[];
+  recordings: Array<{ position: number; fileId: string; duration: number }>;
+};
+
+export async function getStudentAssignment(assignmentId: string, options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get(`/assignment/${assignmentId}`, {
+    signal: options?.signal,
+  });
+  return (response.data?.data ?? response.data) as StudentAssignment;
+}
+
+export async function submitAssignment(
+  assignmentId: string,
+  payload: AssignmentSubmissionPayload,
+) {
+  const response = await axiosInstance.post(`/assignment/${assignmentId}/submit`, payload);
+  return response.data;
+}
+
 export async function initializeLesson(lessonId: string, options?: { signal?: AbortSignal }) {
   const response = await axiosInstance.post(`/lesson/${lessonId}/progress`, {
     signal: options?.signal,

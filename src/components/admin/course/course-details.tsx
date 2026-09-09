@@ -94,6 +94,7 @@ export function CourseDetails({ course }: { course: Course }) {
             />
           </div>
 
+          {/*
           <Link
             href={""}
             className="flex gap-2 items-center text-orange font-medium hover:underline"
@@ -101,6 +102,7 @@ export function CourseDetails({ course }: { course: Course }) {
             <Eye className="w-5 h-5 text-inherit shrink-0" />
             <span>Preview</span>
           </Link>
+          */}
 
           <Link
             href={`/admin/courses/edit/${course.id}`}

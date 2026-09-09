@@ -56,7 +56,7 @@ export function CreateCourseStructure() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-6">
+      <div className="flex max-h-[600px] flex-col gap-6 overflow-y-auto pr-2">
         {formData.Lesson.map((lesson, index) => (
           <div className="lesson-field relative" key={lesson.id}>
             <button

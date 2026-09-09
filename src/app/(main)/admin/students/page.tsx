@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback, useState } from "react";
 import { ChevronRight, Plus } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -13,9 +14,16 @@ import { useStudents, useStudentsMetrics } from "@/hooks/useAdmin";
 import { processStudents, processStudentsMetrics } from "@/utils/processor";
 
 export default function StudentsManagementPage() {
+  const [filters, setFilters] = useState<SearchFilters>({ page: 1, limit: 20 });
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: studentsMetrics, isLoading: studentsMetricsLoading } = useStudentsMetrics();
-  const { data: students, isLoading: studentsLoading } = useStudents();
+  const { data: students, isLoading: studentsLoading } = useStudents(filters);
+  const handleSearchChange = useCallback((search: string) => {
+    setFilters((current) => ({ ...current, search, page: 1 }));
+  }, []);
+  const handleStatusChange = useCallback((status: SearchFilters["status"] | undefined) => {
+    setFilters((current) => ({ ...current, status, page: 1 }));
+  }, []);
 
   const allStudentsMetrics = processStudentsMetrics(studentsMetrics ?? []);
   const allStudents = processStudents(students ?? []);
@@ -67,7 +75,13 @@ export default function StudentsManagementPage() {
           <Skeleton className="w-full h-[500px] rounded-xl" />
         ) : (
           <div className="h-[500px]">
-            <StudentsTable students={allStudents} />
+            <StudentsTable
+              students={allStudents}
+              search={filters.search ?? ""}
+              status={filters.status}
+              onSearchChange={handleSearchChange}
+              onStatusChange={handleStatusChange}
+            />
           </div>
         )}
       </div>
