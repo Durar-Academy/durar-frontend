@@ -22,7 +22,10 @@ export default function StudentsManagementPage() {
   const { data: students, isLoading: studentsLoading } = useStudents(studentQueryFilters);
 
   const handleStatusChange = useCallback((status: SearchFilters["status"] | undefined) => {
-    setFilters((current) => ({ ...current, status, page: 1 }));
+    setFilters((current) => ({ ...current, status, search: current.search, page: 1 }));
+  }, []);
+  const handleSearchChange = useCallback((search: string) => {
+    setFilters((current) => ({ ...current, search, page: 1 }));
   }, []);
   const handlePageChange = useCallback((page: number) => {
     setFilters((current) => ({ ...current, page }));
@@ -33,9 +36,13 @@ export default function StudentsManagementPage() {
 
   // The full list is fetched once and shown unfiltered until a status is picked,
   // so selecting "All statuses" always returns to every student.
-  const filteredStudents = filters.status
-    ? allStudents.filter((student) => student.status === filters.status)
-    : allStudents;
+  const normalizedSearch = (filters.search ?? "").trim().toLowerCase();
+  const filteredStudents = allStudents.filter((student) => {
+    const matchesStatus = !filters.status || student.status === filters.status;
+    const matchesSearch = !normalizedSearch || [student.name, student.email, student.id]
+      .some((value) => value.toLowerCase().includes(normalizedSearch));
+    return matchesStatus && matchesSearch;
+  });
 
   const pageSize = filters.limit ?? 20;
   const pageCount = Math.max(1, Math.ceil(filteredStudents.length / pageSize));
@@ -94,7 +101,9 @@ export default function StudentsManagementPage() {
           <div className="h-[500px]">
             <StudentsTable
               students={paginatedStudents}
+              search={filters.search ?? ""}
               status={filters.status}
+              onSearchChange={handleSearchChange}
               onStatusChange={handleStatusChange}
               page={currentPage}
               hasNextPage={currentPage < pageCount}

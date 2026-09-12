@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 // import { Download, Search } from "lucide-react";
-import { Search } from "lucide-react";
+import { ChevronLeft, ChevronRight, Search } from "lucide-react";
 
 import {
   Select,
@@ -31,12 +31,18 @@ export function StudentsTable({
   status,
   onSearchChange,
   onStatusChange,
+  page,
+  hasNextPage,
+  onPageChange,
 }: {
   students: StudentsTableProps;
   search: string;
   status?: SearchFilters["status"];
   onSearchChange: (value: string) => void;
   onStatusChange: (value: SearchFilters["status"] | undefined) => void;
+  page: number;
+  hasNextPage: boolean;
+  onPageChange: (page: number) => void;
 }) {
   const [searchInput, setSearchInput] = useState(search);
 
@@ -141,6 +147,27 @@ export function StudentsTable({
         ) : (
           <p className="text-sm mt-4 text-low">No Students Found</p>
         )}
+      </div>
+      <div className="flex items-center justify-end gap-2 pt-4">
+        <button
+          type="button"
+          aria-label="Previous page"
+          className="rounded-md border p-2 disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={page <= 1}
+          onClick={() => onPageChange(page - 1)}
+        >
+          <ChevronLeft className="h-4 w-4" />
+        </button>
+        <span className="text-sm text-low">Page {page}</span>
+        <button
+          type="button"
+          aria-label="Next page"
+          className="rounded-md border p-2 disabled:cursor-not-allowed disabled:opacity-50"
+          disabled={!hasNextPage}
+          onClick={() => onPageChange(page + 1)}
+        >
+          <ChevronRight className="h-4 w-4" />
+        </button>
       </div>
     </div>
   );
