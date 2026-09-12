@@ -217,23 +217,52 @@ export async function getStudentsMetrics(options?: { signal?: AbortSignal }) {
   return response.data.data;
 }
 
+// The API clamps `limit` to 100 per response, so accumulate pages at that size.
+const STUDENTS_PAGE_SIZE = 100;
+// Hard stop in case the API ever ignores `page` and repeats the same records.
+const STUDENTS_MAX_PAGES = 100;
+
+/**
+ * Fetches *every* student matching `search`/`status`, walking all API pages.
+ *
+ * Callers always receive the complete list — `page`/`limit` on `filters` are
+ * ignored here because display paging is done client-side by the caller. Any
+ * `search`/`status` filters passed are forwarded on every page request.
+ */
 export async function getStudents(options?: { signal?: AbortSignal; filters?: SearchFilters }) {
-  const params = new URLSearchParams();
-  if (options?.filters?.search) params.append("search", options.filters.search);
-  if (options?.filters?.status) params.append("status", options.filters.status);
-  if (options?.filters?.page !== undefined) params.append("page", String(options.filters.page));
-  if (options?.filters?.limit !== undefined) params.append("limit", String(options.filters.limit));
+  const filters = options?.filters;
+  const allRecords: Student[] = [];
 
-  const response = await axiosInstance.get(`/user/students?${params.toString()}`, {
-    signal: options?.signal,
-  });
+  for (let page = 1; page <= STUDENTS_MAX_PAGES; page += 1) {
+    const params = new URLSearchParams();
+    if (filters?.search) params.append("search", filters.search);
+    if (filters?.status) params.append("status", filters.status);
+    params.append("page", String(page));
+    params.append("limit", String(STUDENTS_PAGE_SIZE));
 
-  const payload = response.data?.data ?? response.data;
-  const records = Array.isArray(payload)
-    ? payload
-    : payload?.records ?? payload?.data?.records ?? payload?.data;
+    const response = await axiosInstance.get(`/user/students?${params.toString()}`, {
+      signal: options?.signal,
+    });
 
-  return Array.isArray(records) ? records : [];
+    const payload = response.data?.data ?? response.data;
+    const records = Array.isArray(payload)
+      ? payload
+      : payload?.records ?? payload?.data?.records ?? payload?.data;
+    const currentRecords = Array.isArray(records) ? records : [];
+
+    allRecords.push(...currentRecords);
+
+    // A short page means we've reached the end of the result set.
+    if (currentRecords.length < STUDENTS_PAGE_SIZE) break;
+
+    if (page === STUDENTS_MAX_PAGES) {
+      console.warn(
+        `[getStudents] Stopped after ${STUDENTS_MAX_PAGES} pages (${allRecords.length} students); the list may be incomplete.`,
+      );
+    }
+  }
+
+  return allRecords;
 }
 
 export async function getUser(userId: string, options?: { signal?: AbortSignal }) {

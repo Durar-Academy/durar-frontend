@@ -123,7 +123,7 @@ export function StudentsTable({
                       student.status === "active" && "text-success",
                       student.status === "unverified" && "text-orange",
                       (student.status === "suspended" || student.status === "deactivated") &&
-                        "text-danger",
+                      "text-danger",
                       student.status === "graduated" && "text-success-light",
                     )}
                   >

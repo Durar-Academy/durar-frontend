@@ -17,16 +17,33 @@ export default function StudentsManagementPage() {
   const [filters, setFilters] = useState<SearchFilters>({ page: 1, limit: 20 });
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: studentsMetrics, isLoading: studentsMetricsLoading } = useStudentsMetrics();
-  const { data: students, isLoading: studentsLoading } = useStudents(filters);
-  const handleSearchChange = useCallback((search: string) => {
-    setFilters((current) => ({ ...current, search, page: 1 }));
-  }, []);
+  // Keep the unfiltered view broad, but send a selected status to the API.
+  const studentQueryFilters = filters.status ? { status: filters.status } : undefined;
+  const { data: students, isLoading: studentsLoading } = useStudents(studentQueryFilters);
+
   const handleStatusChange = useCallback((status: SearchFilters["status"] | undefined) => {
     setFilters((current) => ({ ...current, status, page: 1 }));
+  }, []);
+  const handlePageChange = useCallback((page: number) => {
+    setFilters((current) => ({ ...current, page }));
   }, []);
 
   const allStudentsMetrics = processStudentsMetrics(studentsMetrics ?? []);
   const allStudents = processStudents(students ?? []);
+
+  // The full list is fetched once and shown unfiltered until a status is picked,
+  // so selecting "All statuses" always returns to every student.
+  const filteredStudents = filters.status
+    ? allStudents.filter((student) => student.status === filters.status)
+    : allStudents;
+
+  const pageSize = filters.limit ?? 20;
+  const pageCount = Math.max(1, Math.ceil(filteredStudents.length / pageSize));
+  // Clamp the page so a list that shrinks after a refetch can't leave the admin
+  // stranded on an empty page.
+  const currentPage = Math.min(Math.max(filters.page ?? 1, 1), pageCount);
+  const pageStart = (currentPage - 1) * pageSize;
+  const paginatedStudents = filteredStudents.slice(pageStart, pageStart + pageSize);
 
   return (
     <section className="flex flex-col gap-5">
@@ -76,11 +93,12 @@ export default function StudentsManagementPage() {
         ) : (
           <div className="h-[500px]">
             <StudentsTable
-              students={allStudents}
-              search={filters.search ?? ""}
+              students={paginatedStudents}
               status={filters.status}
-              onSearchChange={handleSearchChange}
               onStatusChange={handleStatusChange}
+              page={currentPage}
+              hasNextPage={currentPage < pageCount}
+              onPageChange={handlePageChange}
             />
           </div>
         )}
