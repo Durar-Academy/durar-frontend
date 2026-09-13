@@ -32,6 +32,8 @@ export default function Assignment() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: assignment, isLoading: assignmentLoading } = useStudentAssignment(assignmentId);
   const { data: assignmentMedia } = useFile(assignment?.mediaId);
+  const assignmentAudioUrl = assignment?.media?.src ?? assignmentMedia?.src;
+  console.log("assignment", assignment);
   const [content, setContent] = useState("");
   const [submissionLink, setSubmissionLink] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -146,13 +148,15 @@ export default function Assignment() {
               : assignment?.description || "No instructions provided."}
           </p>
 
-          <div className="mt-2">
-            {assignmentLoading ? (
+          {assignmentLoading ? (
+            <div className="mt-2">
               <Skeleton className="h-14 w-[360px] rounded-full" />
-            ) : (
-              <AudioPlayer audioUrl={assignmentMedia?.src} />
-            )}
-          </div>
+            </div>
+          ) : assignmentAudioUrl ? (
+            <div className="mt-2">
+              <AudioPlayer audioUrl={assignmentAudioUrl} />
+            </div>
+          ) : null}
         </div>
 
         <div>

@@ -566,6 +566,7 @@ type StudentAssignment = {
   description: string | null;
   allowLate: boolean;
   mediaId: string | null;
+  media?: Media | null;
   randomnize: boolean;
   autoGraded: boolean;
   duration: number | null;

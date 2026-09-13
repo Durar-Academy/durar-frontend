@@ -97,7 +97,7 @@ export function StudentsTable({
         </div>
       </div>
 
-      <div className="h-[388px] overflow-y-scroll hide-scrollbar">
+      <div className="h-[388px] overflow-y-auto hide-scrollbar">
         {students.length > 0 ? (
           <Table>
             <TableHeader>

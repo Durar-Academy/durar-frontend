@@ -17,10 +17,20 @@ export type AssignmentSubmissionPayload = {
 };
 
 export async function getStudentAssignment(assignmentId: string, options?: { signal?: AbortSignal }) {
-  const response = await axiosInstance.get(`/assignment/${assignmentId}`, {
+  const response = await axiosInstance.get("/assignment/student", {
+    params: { page: 1, limit: 100 },
     signal: options?.signal,
   });
-  return (response.data?.data ?? response.data) as StudentAssignment;
+
+  const data = response.data?.data ?? response.data;
+  const assignments = Array.isArray(data) ? data : data?.records ?? [];
+  const assignment = assignments.find((item: StudentAssignment) => item.id === assignmentId);
+
+  if (!assignment) {
+    throw new Error("Assignment not found");
+  }
+
+  return assignment as StudentAssignment;
 }
 
 export async function submitAssignment(
