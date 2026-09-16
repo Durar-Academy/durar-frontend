@@ -46,7 +46,7 @@ export function CourseList({
   }
 
   return (
-    <div className="w-full max-w-[360px] shrink-0 rounded-xl p-6 border border-shade-2 bg-white flex flex-col gap-6 min-h-0">
+    <div className="flex min-h-[360px] min-w-0 w-full flex-col gap-6 rounded-xl border border-shade-2 bg-white p-4 sm:p-6 lg:h-full lg:min-h-0 lg:max-w-[360px]">
       <div className="flex flex-col gap-3">
         <h4 className="text-low font-semibold text-base">Courses List</h4>
 
@@ -71,7 +71,7 @@ export function CourseList({
       </div>
 
       <div className="h-full flex flex-col gap-4 overflow-hidden">
-        <h5 className="flex gap-14 items-center text-low font-semibold text-sm">
+        <h5 className="grid grid-cols-[3rem_minmax(0,1fr)] items-center gap-3 text-sm font-semibold text-low">
           <span>ID</span>
           <span>Name</span>
         </h5>
@@ -86,12 +86,12 @@ export function CourseList({
                 key={course.id + course.title}
                 data-course-id={course.id}
                 className={cn(
-                  "rounded-xl border border-shade-3 bg-offwhite min-h-12 p-3 text-high text-sm flex gap-8 items-center cursor-pointer transition-colors",
+                  "grid min-h-12 grid-cols-[3rem_minmax(0,1fr)] items-center gap-3 rounded-xl border border-shade-3 bg-offwhite p-3 text-sm text-high cursor-pointer transition-colors",
                   courseId === course.id && "text-orange bg-light border-orange/10",
                 )}
               >
                 <span>{String(index + 1).padStart(3, "0")}</span>
-                <span>{course.title}</span>
+                <span className="min-w-0 truncate">{course.title}</span>
               </div>
             ))
           ) : (

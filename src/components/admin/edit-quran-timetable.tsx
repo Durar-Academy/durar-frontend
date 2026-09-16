@@ -235,8 +235,8 @@ export function EditTimeSchedule({
 
   return (
     <div className="w-full mx-auto">
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse">
+      <div className="min-w-0 max-w-full overflow-x-auto">
+        <table className="min-w-max w-full border-collapse">
           <thead>
             <tr>
               <th className="border text-high font-semibold text-sm leading-5 p-4 bg-offwhite min-w-[100px]">

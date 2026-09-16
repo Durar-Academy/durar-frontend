@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 import { Button } from "@/components/ui/button";
@@ -10,22 +11,30 @@ import { requestAccountVerification } from "@/lib/auth";
 import { retrieveItem, STORE_EMAIL_KEY } from "@/lib/storage";
 
 export function RequestVerification() {
-  const email = retrieveItem(STORE_EMAIL_KEY);
+  const [email, setEmail] = useState("");
+  const [isResending, setIsResending] = useState(false);
+
+  useEffect(() => {
+    setEmail(retrieveItem(STORE_EMAIL_KEY).trim().toLowerCase());
+  }, []);
 
   async function handleResendEmail() {
-    console.log("Resend Email: ", email);
+    if (!email) {
+      toast.error("We could not identify your account. Please return to login and try again.");
+      return;
+    }
+
+    setIsResending(true);
 
     try {
-      const response = await requestAccountVerification({ email });
-      console.log("RESEND: Request Account Verification Response Data", response);
-
-      {
-        toast.success("We've resent an account verification link to your email.\nPlease check your inbox.");
-      }
+      await requestAccountVerification({ email });
+      toast.success("We've resent an account verification link to your email.\nPlease check your inbox.");
     } catch (error) {
       console.error("RESEND: Account Verification Email Error: ", error);
 
       toast.error("Unable to resend account verification link. Please try again.");
+    } finally {
+      setIsResending(false);
     }
   }
 
@@ -55,8 +64,13 @@ export function RequestVerification() {
 
           <p className="mt-4">
             Didn&apos;t receive the email?{" "}
-            <button className="text-orange underline underline-offset-2" onClick={handleResendEmail}>
-              Resend
+            <button
+              type="button"
+              className="text-orange underline underline-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              onClick={handleResendEmail}
+              disabled={isResending}
+            >
+              {isResending ? "Resending..." : "Resend"}
             </button>
           </p>
         </div>

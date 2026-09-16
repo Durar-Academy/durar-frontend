@@ -41,8 +41,8 @@ export function StudentPageClient() {
         )}
       </div>
 
-      <div className="flex gap-3">
-        <div className="bg-shade-1 rounded-xl p-3 pt-6 w-3/4">
+      <div className="grid grid-cols-1 gap-3 lg:grid-cols-4">
+        <div className="rounded-xl bg-shade-1 p-3 pt-6 lg:col-span-3">
           <div className="flex justify-between items-center mb-6">
             <p className="text-high text-base leading-5 tracking-normal">
               Learning Progress: <span className="font-bold">{`${learningProgress}%`}</span>
@@ -87,7 +87,7 @@ export function StudentPageClient() {
           <CourseCard name={"Arabic"} thumbnail={""} progress={10} link={""} />
         </div> */}
 
-        <div className="bg-white p-6 rounded-xl border-2 border-shade-1 w-1/4">
+        <div className="rounded-xl border-2 border-shade-1 bg-white p-4 sm:p-6 lg:col-span-1">
           <h3 className="text-high tracking-wide text-base leading-5 mb-6">Assignments</h3>
 
           {assignmentsLoading ? (

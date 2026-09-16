@@ -26,8 +26,10 @@ import { decryptCredentials, encryptCredentials } from "@/lib/encryption";
 import {
   deleteCredentials,
   retrieveCredentials,
+  storeItem,
   storeAuthData,
   storeCredentials,
+  STORE_EMAIL_KEY,
 } from "@/lib/storage";
 import { loginUser } from "@/lib/auth";
 
@@ -59,6 +61,10 @@ export function Login() {
       console.log("Login Form Response Data", response);
 
       if (!response.data.isVerified) {
+        // The resend page uses this value to identify the account.
+        // Persist it here as well as during registration because users can
+        // reach the resend page from an unverified login.
+        storeItem(STORE_EMAIL_KEY, email);
         toast.error(
           "Please verify your account to continue.\nCheck your email for the verification link.",
         );

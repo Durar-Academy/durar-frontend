@@ -40,7 +40,7 @@ export default function PaymentsPage() {
         )}
       </div>
 
-      <div className="flex gap-3 overflow-x-scroll hide-scrollbar w-full">
+      <div className="w-full min-w-0">
         {paymentsLoading ? (
           <Skeleton className="w-full rounded-xl h-40" />
         ) : allPayments && allPayments.length > 0 ? (

@@ -36,14 +36,14 @@ export function Top_Bar({ children, subtext, user }: TopBarProps) {
   const profilePictureSrc = user.profilePicture?.src ?? user.profilePictureId ?? undefined;
       
   return (
-    <div className="bg-white border border-shade-2 py-5 px-6 rounded-xl flex justify-between items-center w-full">
+    <div className="flex w-full items-center justify-between gap-3 rounded-xl border border-shade-2 bg-white px-4 py-4 sm:px-6 sm:py-5">
       <div>
         <div className="text-low text-sm font-normal">{children}</div>
         <div className="text-high font-semibold text-lg leading-6 mt-3">
           {subtext}
         </div>
       </div>
-      <div className="flex justify-center items-center gap-2">
+      <div className="flex min-w-0 items-center justify-center gap-2">
         <div className="flex gap-2 items-center">
           <Link href="/tutor/notification">
             <Image
@@ -68,7 +68,7 @@ export function Top_Bar({ children, subtext, user }: TopBarProps) {
                 {userInitials}
               </AvatarFallback>
             </Avatar>
-            <div className="flex flex-col gap-1">
+            <div className="hidden flex-col gap-1 sm:flex">
               <h1 className="text-sm text-high font-semibold">
                 {userFullName}
               </h1>

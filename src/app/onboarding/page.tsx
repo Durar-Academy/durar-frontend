@@ -217,10 +217,10 @@ const Page = () => {
   };
 
   return (
-    <section className="w-full h-screen overflow-hidden flex bg-offwhite">
+    <section className="flex min-h-screen w-full bg-offwhite lg:h-screen lg:overflow-hidden">
       <OnboardingSidebar handleClick={handleClick} progress={progress} />
-      <section className="p-6 py-12 min-h-screen w-full overflow-y-auto flex flex-col gap-4 items-center">
-        <header className="flex items-baseline justify-center gap-5">
+      <section className="min-w-0 w-full overflow-y-auto px-4 pb-8 pt-20 sm:px-6 sm:py-12 lg:pt-12">
+        <header className="mx-auto flex max-w-[873px] flex-wrap items-baseline justify-center gap-x-3 gap-y-2 sm:gap-x-5">
           {onboardingSidebarData.map((eachData, i) => (
             <div key={i} className="flex items-center gap-2">
               <span
@@ -253,7 +253,7 @@ const Page = () => {
             </div>
           ))}
         </header>
-        <main className="w-[873px]">
+        <main className="mx-auto w-full max-w-[873px]">
           {progress === 0 ? (
             <PersonalInformation
               handleNext={handleNext}

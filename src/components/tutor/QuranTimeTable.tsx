@@ -101,9 +101,9 @@ export default function QuranTimetable() {
         ) : (
           <div
             ref={tableRef}
-            className="overflow-x-auto rounded-lg border p-4 bg-white"
+            className="min-w-0 max-w-full overflow-x-auto rounded-lg border bg-white p-4"
           >
-            <table className="w-full text-sm text-center border-collapse">
+            <table className="min-w-max w-full border-collapse text-center text-sm">
               <thead>
                 <tr>
                   <th className="border p-2">PERIOD</th>

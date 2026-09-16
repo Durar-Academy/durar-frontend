@@ -16,11 +16,11 @@ export default function TermsAndConditionModal({
         modal ? "sacle-100" : "scale-0"
       } transition-all duration-300 ease-in-out h-screen w-screen bg-black/30 backdrop-blur-sm fixed top-0 left-0 flex justify-center items-center`}
     >
-      <div className="bg-white relative max-w-[609px] w-[609px] h-[90vh] rounded-t-xl">
+      <div className="relative flex h-[min(90dvh,720px)] w-[calc(100%-2rem)] max-w-[609px] flex-col overflow-hidden rounded-t-xl bg-white">
         <h1 className="text-[18px] top-0 w-full font-semibold text-high p-3 sticky text-center border-b-[1px] border-b-shade-2 overflow-hidden">
           Terms and Conditions
         </h1>
-        <div className="overflow-y-auto h-[67vh] bg-white py-6 px-5 text-high flex flex-col gap-3">
+        <div className="min-h-0 flex-1 overflow-y-auto bg-white py-6 px-5 text-high flex flex-col gap-3">
           {TermsAndConditions.map((term, i) => (
             <div className="text-sm flex flex-col gap-1.5" key={i}>
               <p className="font-medium">{i + 1 + ". " + term.title}</p>

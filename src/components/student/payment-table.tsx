@@ -70,8 +70,8 @@ export function PaymentsTable({ payments }: { payments: PaymentsTableProps }) {
         </div>
       </div>
 
-      <div className="h-screen overflow-y-scroll hide-scrollbar">
-        <Table>
+      <div className="max-h-[calc(100dvh-16rem)] overflow-auto hide-scrollbar">
+        <Table className="min-w-[760px]">
           <TableHeader>
             <TableRow className="text-low text-sm font-semibold">
               <TableHead>Invoice ID</TableHead>
@@ -108,7 +108,8 @@ export function PaymentsTable({ payments }: { payments: PaymentsTableProps }) {
                   {payment.status}
                 </TableCell>
 
-                <TableCell className="flex justify-center">
+                <TableCell>
+                  <div className="flex justify-center whitespace-nowrap">
                   {payment.status === "pending" && (
                     <button
                       className="font-bold text-white bg-orange hover:bg-burnt
@@ -139,6 +140,7 @@ export function PaymentsTable({ payments }: { payments: PaymentsTableProps }) {
                       <Download className="w-5 h-5 text-orange" />
                     </button>
                   )}
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

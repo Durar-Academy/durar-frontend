@@ -75,11 +75,11 @@ export default function NotesTable({ notes, triggerShowNote, page, setPage, isLo
       </div>
 
       {/* Table or Loading Skeleton */}
-      <div className="overflow-x-auto">
+      <div className="min-w-0 max-w-full overflow-x-auto">
         {isLoading ? (
           <Skeleton className="w-full rounded-xl h-[140px]" />
         ) : (
-          <table className="text-sm min-w-full bg-white border-none border-separate border-spacing-y-3">
+          <table className="text-sm min-w-max bg-white border-none border-separate border-spacing-y-3">
             <tbody>
               {filterednotes.map((note, i) => (
                 <tr

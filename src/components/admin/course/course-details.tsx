@@ -79,10 +79,10 @@ export function CourseDetails({ course }: { course: Course }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex justify-between items-center">
-        <h3 className="text-high text-lg font-medium">{course.title}</h3>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h3 className="min-w-0 break-words text-lg font-medium text-high">{course.title}</h3>
 
-        <div className="flex gap-3 items-center text-sm">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
           <div className="flex items-center gap-2">
             <span className="font-normal text-sm text-high">Status:</span>
 
@@ -145,7 +145,7 @@ export function CourseDetails({ course }: { course: Course }) {
       </div>
 
       <Tabs defaultValue="overview">
-        <TabsList className="w-full min-h-12 rounded-xl p-4 border border-shade-2 bg-offwhite justify-start text-sm font-normal text-low mb-3">
+        <TabsList className="mb-3 flex min-h-12 w-full max-w-full justify-start gap-1 overflow-x-auto rounded-xl border border-shade-2 bg-offwhite p-2 text-sm font-normal text-low sm:p-4">
           <TabsTrigger
             value="overview"
             className="data-[state=active]:text-orange data-[state=active]:bg-transparent data-[state=active]:underline
@@ -187,7 +187,7 @@ export function CourseDetails({ course }: { course: Course }) {
           <div className="border border-shade-2 rounded-xl p-4 space-y-5">
             <h4 className="text-high font-semibold text-base">Course Statistics</h4>
 
-            <div className="flex gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <div className="bg-offwhite border border-shade-3 rounded-xl p-4 min-h-[72px] w-full space-y-4">
                 <p className="text-low text-sm font-medium">Enrolled Students</p>
                 <p className="text-high text-xl font-semibold">{studentCount}</p>

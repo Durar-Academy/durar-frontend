@@ -19,14 +19,14 @@ export function TopBar({
   const isStudent = user?.role === "student";
 
   return (
-    <div className="bg-white border border-shade-2 py-5 px-6 rounded-xl flex justify-between items-center w-full">
+    <div className="flex w-full items-center justify-between gap-3 rounded-xl border border-shade-2 bg-white px-4 py-4 sm:px-6 sm:py-5">
       <div>
         <div className="text-low text-sm font-normal">{children}</div>
 
         <div className="text-high font-semibold text-lg leading-6 mt-3">{subtext}</div>
       </div>
 
-      <div className="flex items-center gap-3">
+      <div className="flex min-w-0 items-center gap-2 sm:gap-3">
         {!isStudent && (
           <Link
             href="/admin/notification"
@@ -41,8 +41,8 @@ export function TopBar({
           <AvatarFallback className="bg-shade-3 text-black">{initials}</AvatarFallback>
         </Avatar>
 
-        <div className="">
-          <p className="text-sm text-high font-semibold">{fullName}</p>
+        <div className="hidden min-w-0 sm:block">
+          <p className="truncate text-sm font-semibold text-high">{fullName}</p>
 
           <Link
             href={isStudent ? "/student/settings" : "/admin/settings"}

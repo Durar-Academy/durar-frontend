@@ -118,8 +118,8 @@ export default function AssignmentTable({
         <Skeleton className="w-full h-[300px] rounded-xl" />
       ) : (
         <>
-          <div className="overflow-x-auto">
-            <table className="text-sm min-w-full bg-white border-none border-separate border-spacing-y-3">
+          <div className="min-w-0 max-w-full overflow-x-auto">
+            <table className="text-sm min-w-max bg-white border-none border-separate border-spacing-y-3">
               <thead>
                 <tr className="text-low text-sm text-left">
                   <th className="py-3 px-4 font-semibold">Assignment Title</th>

@@ -8,8 +8,8 @@ interface TableProps<T> {
 
 export default function Table<T>({ headers, data, renderRow }: TableProps<T>) {
   return (
-    <div className="overflow-x-auto border-spacing-y-4">
-      <table className="min-w-full bg-white border-none rounded-lg border-separate border-spacing-y-3">
+    <div className="min-w-0 max-w-full overflow-x-auto border-spacing-y-4">
+      <table className="min-w-max bg-white border-none rounded-lg border-separate border-spacing-y-3">
         <thead>
           <tr className="text-low text-sm text-left">
             {headers.map((header, index) => (

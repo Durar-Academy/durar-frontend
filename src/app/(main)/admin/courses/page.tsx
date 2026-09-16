@@ -54,23 +54,23 @@ export default function CoursesManagementPage() {
         )}
       </div>
 
-      <div className="rounded-xl p-6 border border-shade-2 bg-white flex flex-col gap-4">
-        <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-4 rounded-xl border border-shade-2 bg-white p-4 sm:p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h3 className="text-low font-medium text-xl">Courses Overview</h3>
 
-          <div className="flex items-center gap-3">
-            <Link href={selectedCourseId ? `/admin/courses/${selectedCourseId}/enroll` : "#"}>
+          <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+            <Link className="w-full sm:w-auto" href={selectedCourseId ? `/admin/courses/${selectedCourseId}/enroll` : "#"}>
               <Button
                 variant={"_default"}
-                className="bg-green hover:bg-dark-green px-4 py-2 h-10"
+                className="h-10 w-full bg-green px-4 py-2 hover:bg-dark-green sm:w-auto"
                 disabled={!selectedCourseId}
               >
                 <GraduationCap className="w-5 h-5" />
                 <span>Enrol Student</span>
               </Button>
             </Link>
-            <Link href={"/admin/courses/new"}>
-              <Button variant={"_default"} className="bg-orange hover:bg-burnt px-4 py-2 h-10">
+            <Link className="w-full sm:w-auto" href={"/admin/courses/new"}>
+              <Button variant={"_default"} className="h-10 w-full bg-orange px-4 py-2 hover:bg-burnt sm:w-auto">
               <Plus className="w-6 h-6" strokeWidth={3} />
               <span>Add Course</span>
               </Button>
@@ -82,7 +82,7 @@ export default function CoursesManagementPage() {
           {coursesMetricsLoading ? (
             <Skeleton className="w-full rounded-xl h-24" />
           ) : (
-            <div className="flex gap-6 h-24">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
               {allCoursesMetrics.map((coursesMetrics, index) => (
                 <OverviewCard overview={coursesMetrics} key={index} />
               ))}
@@ -91,7 +91,7 @@ export default function CoursesManagementPage() {
         </div>
       </div>
 
-      <div className="w-full flex gap-3 h-[600px]">
+      <div className="flex w-full flex-col gap-3 lg:grid lg:h-[600px] lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)]">
         {coursesLoading ? (
           <Skeleton className="w-full rounded-xl h-full" />
         ) : coursesError ? (
@@ -110,7 +110,7 @@ export default function CoursesManagementPage() {
               onStatusChange={handleCourseStatus}
             />
 
-            <div className="w-full rounded-xl p-6 border border-shade-2 bg-white">
+            <div className="min-w-0 w-full rounded-xl border border-shade-2 bg-white p-4 sm:p-6">
               {courseLoading ? (
                 <Skeleton className="w-full rounded-xl h-full" />
               ) : selectedCourseId && course ? (

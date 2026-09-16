@@ -37,10 +37,10 @@ export default function ResultPage() {
 
       <div>
         {!!results ? (
-          <section className="bg-white rounded-xl border border-shade-2 p-6 flex flex-col gap-6">
-            <div className="flex justify-between items-center">
+          <section className="flex flex-col gap-6 rounded-xl border border-shade-2 bg-white p-4 sm:p-6">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <Select>
-                <SelectTrigger className="w-fit h-10 text-high bg-white border border-shade-3 rounded-lg text-base px-4 py-3 focus:ring-0">
+                <SelectTrigger className="h-10 w-full rounded-lg border border-shade-3 bg-white px-4 py-3 text-base text-high focus:ring-0 sm:w-fit">
                   <SelectValue placeholder="Select Session" />
                 </SelectTrigger>
 
@@ -53,16 +53,16 @@ export default function ResultPage() {
 
               <Button
                 variant={"_outline"}
-                className="bg-white hover:bg-gray-50 text-orange px-4 py-2 h-10"
+                className="h-10 w-full whitespace-nowrap bg-white px-4 py-2 text-orange hover:bg-gray-50 sm:w-auto"
               >
-                <Download className="w-6 h-6" strokeWidth={3} />
+                <Download className="h-5 w-5" strokeWidth={3} />
                 <span>Download Report</span>
               </Button>
             </div>
 
             <ResultsTable results={results} />
 
-            <div className="flex items-center gap-14">
+            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center sm:gap-14">
               <p className="font-semibold">
                 <span className="text-low text-sm">Average Score:</span>{" "}
                 <span className="text-base text-high">250/500</span>

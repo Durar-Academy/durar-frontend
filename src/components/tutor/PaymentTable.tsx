@@ -38,8 +38,9 @@ const PaymentTable = () => {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow p-4 text-sm">
-      <table className="min-w-full table-auto font-medium">
+    <div className="w-full overflow-hidden rounded-xl bg-white p-4 text-sm shadow">
+      <div className="w-full overflow-x-auto">
+      <table className="min-w-[640px] table-auto font-medium">
         <thead>
           <tr className="text-left border-b">
             <th
@@ -62,13 +63,14 @@ const PaymentTable = () => {
           {sortedData.map((payment, index) => (
             <tr key={payment.id+" "+index} className="border-b hover:bg-gray-50 transition">
               <td className="py-4 px-4 text-high">{new Date(payment.createdAt).toLocaleDateString()}</td>
-              <td className="py-4 px-4 text-high/80">{payment.reference}</td>
-              <td className="py-4 px-4 text-high">{payment.amount}</td>
-              <td className="py-4 px-4 text-high font-bold">{payment.currency?.toUpperCase()}</td>
+              <td className="whitespace-nowrap px-4 py-4 text-high/80">{payment.reference}</td>
+              <td className="whitespace-nowrap px-4 py-4 text-high">{payment.amount}</td>
+              <td className="whitespace-nowrap px-4 py-4 font-bold text-high">{payment.currency?.toUpperCase()}</td>
             </tr>
           ))}
         </tbody>
       </table>
+      </div>
     </div>
   );
 };

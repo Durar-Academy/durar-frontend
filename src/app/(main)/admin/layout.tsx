@@ -2,10 +2,10 @@ import { AdminSidebar } from "@/components/admin/sidebar";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   return (
-    <section className="w-full h-screen overflow-hidden flex bg-offwhite">
+    <section className="flex min-h-screen w-full bg-offwhite lg:h-screen lg:overflow-hidden">
       <AdminSidebar />
 
-      <main className="p-6 w-full h-full overflow-y-auto overflow-x-hidden">{children}</main>
+      <main className="min-w-0 w-full overflow-x-hidden px-4 pb-6 pt-20 sm:px-6 sm:pt-6 lg:h-full lg:overflow-y-auto lg:pt-6">{children}</main>
     </section>
   );
 }

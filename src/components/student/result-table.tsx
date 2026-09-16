@@ -18,7 +18,7 @@ interface Result {
 
 export function ResultsTable({ results }: { results: Result[] }) {
   return (
-    <div className="h-full overflow-y-scroll hide-scrollbar">
+    <div className="h-full min-w-0 max-w-full overflow-y-scroll hide-scrollbar">
       {
         <Table>
           <TableHeader>

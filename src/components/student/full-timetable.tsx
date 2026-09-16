@@ -54,8 +54,8 @@ export function FullTimeSchedule({ schedules }: { schedules: Schedule[] }) {
 
   return (
     <div className="w-full mx-auto">
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse">
+      <div className="min-w-0 max-w-full overflow-x-auto">
+        <table className="min-w-max w-full border-collapse">
           <thead>
             <tr>
               <th className="border text-high font-semibold text-base leading-5 p-6 bg-offwhite">

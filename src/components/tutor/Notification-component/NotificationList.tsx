@@ -82,7 +82,7 @@ export default function NotificaitionList({
         </DropdownMenu>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="min-w-0 max-w-full overflow-x-auto">
         {filterednotifications.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 text-gray-400">
             <Image
@@ -100,7 +100,7 @@ export default function NotificaitionList({
             </p>
           </div>
         ) : (
-          <table className="text-sm min-w-full bg-white border-none border-separate border-spacing-y-3">
+          <table className="text-sm min-w-max bg-white border-none border-separate border-spacing-y-3">
             <thead>
               <tr className="text-low text-sm text-left">
                 <th className="py-3 px-4 font-semibold">Title</th>

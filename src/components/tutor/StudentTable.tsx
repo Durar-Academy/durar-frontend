@@ -66,15 +66,16 @@ export default function StudentTable({ page, setPage }: StudentTableProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center w-full gap-3">
+      <div className="flex w-full flex-col gap-3 lg:flex-row lg:items-center">
         <h2 className="text-xl font-semibold">Student Lists</h2>
-        <span className="flex-1"></span>
-        <div className="h-11 rounded-lg border-[#D2D4E0] border-[1px] flex items-center justify-center p-3">
+
+        <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap lg:ml-auto lg:w-auto lg:items-center">
+        <div className="flex h-11 min-w-0 w-full items-center justify-center rounded-lg border border-[#D2D4E0] p-3 sm:w-auto">
           <input
             placeholder="Search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="max-w-sm border-none outline-none text-sm"
+            className="min-w-0 w-full border-none text-sm outline-none sm:w-48"
           />
           <Image
             src="/SVGs/searchIcon.svg"
@@ -85,11 +86,11 @@ export default function StudentTable({ page, setPage }: StudentTableProps) {
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button className="h-11" variant="outline">
-              Status
+            <Button className="h-11 w-full sm:w-auto" variant="outline">
+              {statusFilter === "All" ? "Status" : statusFilter}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent>
+          <DropdownMenuContent align="end" sideOffset={6}>
             <DropdownMenuItem onClick={() => setStatusFilter("All")}>
               All
             </DropdownMenuItem>
@@ -103,7 +104,7 @@ export default function StudentTable({ page, setPage }: StudentTableProps) {
         </DropdownMenu>
         <button
           onClick={exportToCSV}
-          className="flex gap-3 text-sm text-orange border-[1px] border-orange p-3 rounded-lg justify-center items-center"
+          className="flex h-11 w-full items-center justify-center gap-3 rounded-lg border border-orange p-3 text-sm text-orange sm:w-auto"
         >
           Export List
           <Image
@@ -113,14 +114,15 @@ export default function StudentTable({ page, setPage }: StudentTableProps) {
             height={16}
           />
         </button>
+        </div>
       </div>
 
       {isLoading ? (
         <Skeleton className="w-full h-[300px] rounded-xl" />
       ) : (
         <>
-          <div className="overflow-x-auto">
-            <table className="text-sm min-w-full bg-white border-none border-separate border-spacing-y-3">
+          <div className="min-w-0 max-w-full overflow-x-auto">
+            <table className="text-sm min-w-max bg-white border-none border-separate border-spacing-y-3">
               <thead>
                 <tr className="text-low text-sm text-left">
                   <th className="py-3 px-4 font-semibold">Student ID</th>

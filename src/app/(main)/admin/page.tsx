@@ -43,7 +43,7 @@ export default function AdminPage() {
         {metricsLoading ? (
           <Skeleton className="w-full rounded-xl h-[140px]" />
         ) : (
-          <div className="h-[140px] flex gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
             {dashboardMetrics.map((dashboardMetric, index) => (
               <StatCard key={index} stat={dashboardMetric} />
             ))}
@@ -52,12 +52,12 @@ export default function AdminPage() {
       </div>
 
       <div className="graphs-classes-activities">
-        <div className="h-[280px] flex gap-4">
-          <div className="w-full">
+        <div className="grid grid-cols-1 gap-4 xl:h-[280px] xl:grid-cols-[minmax(0,1fr)_280px_240px]">
+          <div className="min-w-0 min-h-[280px]">
             {metricsLoading ? <Skeleton className="w-full h-full" /> : <EnrollmentTrendGraph users={metrics?.users} />}
           </div>
 
-          <div className="w-full max-w-[280px]">
+          <div className="min-w-0 min-h-[280px]">
             {schedulesLoading ? (
               <Skeleton className="w-full h-full" />
             ) : (
@@ -71,7 +71,7 @@ export default function AdminPage() {
             )}
           </div>
 
-          <div className="w-full max-w-[240px]">
+          <div className="min-w-0 min-h-[280px]">
             {activitiesLoading ? (
               <Skeleton className="w-full h-full" />
             ) : (
