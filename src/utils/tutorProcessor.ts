@@ -50,7 +50,9 @@ export const processTutorClasses = (classesData?: TutorClassesResponse): ClassIt
     if (!classesData?.records) return [];
     const tutorClasses = classesData.records.map((record) => ({
         day: record.day.charAt(0).toUpperCase() + record.day.slice(1),
-        student: `${record.student?.firstName} ${record.student?.lastName}`,
+        student:
+          [record.student?.firstName, record.student?.lastName].filter(Boolean).join(" ") ||
+          "Unassigned student",
         category: record.course.category || "Uncategorized",
         time: `${record.start} - ${record.end}`,
         status: record.status.charAt(0).toUpperCase() + record.status.slice(1),

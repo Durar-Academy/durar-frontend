@@ -33,7 +33,6 @@ export default function Assignment() {
   const { data: assignment, isLoading: assignmentLoading } = useStudentAssignment(assignmentId);
   const { data: assignmentMedia } = useFile(assignment?.mediaId);
   const assignmentAudioUrl = assignment?.media?.src ?? assignmentMedia?.src;
-  console.log("assignment", assignment);
   const [content, setContent] = useState("");
   const [submissionLink, setSubmissionLink] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);

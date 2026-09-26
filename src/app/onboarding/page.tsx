@@ -138,13 +138,10 @@ const Page = () => {
         documents: formData.documents, // This contains the mediaId strings
       };
 
-      console.log("[Onboarding] Submitting payload:", submitData);
 
       const response = await updateTutorOnboarding(submitData);
-      console.log("[Onboarding] Response received:", response);
 
       if (response.success) {
-        console.log("[Onboarding] Success — redirecting to /tutor");
         toast.success("Onboarding completed successfully!");
         // Clear any saved onboarding draft and navigate to tutor dashboard.
         // We avoid calling react-query hooks here to prevent SSR build errors

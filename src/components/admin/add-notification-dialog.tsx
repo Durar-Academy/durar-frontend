@@ -97,7 +97,6 @@ export function AddNotificationDialog() {
         payload.mediaId = fileResponse.id;
       }
 
-      console.log("Payload", payload);
 
       await createNotificationMutation.mutateAsync(payload);
 

@@ -9,7 +9,7 @@ interface Onboarding {
 export function OnboardingSidebar({ progress, handleClick }: Onboarding) {
 
   return (
-    <aside className="hidden w-[260px] shrink-0 h-full min-h-screen bg-green p-8 lg:block">
+    <aside className="hidden w-[260px] shrink-0 h-full min-h-screen overflow-y-auto bg-green p-8 lg:block">
       <div className="relative w-32 h-10">
         <Image
           src={"/logo-white.svg"}

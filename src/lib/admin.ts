@@ -118,14 +118,11 @@ export async function createSchedules(
   options?: { signal?: AbortSignal },
 ) {
   const payload = { classes, courseId };
-  console.log("📤 [createSchedules] Request body:", JSON.stringify(payload, null, 2));
-  console.log(classes)
 
   const response = await axiosInstance.post("/class", payload, {
     signal: options?.signal,
   });
 
-  console.log("📥 [createSchedules] Response:", response.data);
   return response.data;
 }
 
@@ -196,16 +193,22 @@ export async function getPayment(paymentId: string, options?: { signal?: AbortSi
   return response.data.data;
 }
 
+export async function getPaymentWebhookEvents(options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get('/payment/admin/webhook-events', { signal: options?.signal });
+  return response.data?.data ?? response.data;
+}
+
 export async function getUserPayments(userId: string, options?: { signal?: AbortSignal }) {
   return getPayments({ signal: options?.signal, filters: { userId } });
 }
 
-export async function downloadTransactions(options?: { signal?: AbortSignal }) {
+export async function downloadTransactions(options?: { signal?: AbortSignal; filters?: PaymentFilters }) {
   const response = await axiosInstance.get("/payment/download-transactions", {
     signal: options?.signal,
+    params: options?.filters,
     responseType: "blob",
   });
-  return response.data.data;
+  return response.data as Blob;
 }
 
 // ─── Students ─────────────────────────────────────────────────────────────────

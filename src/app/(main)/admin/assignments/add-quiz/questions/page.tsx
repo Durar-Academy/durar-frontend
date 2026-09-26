@@ -112,7 +112,6 @@ export default function AddNewQuizQuestionsPage() {
     updateFormData({ ...formData, questions: updatedQuestions });
   };
 
-  console.log("FORMDATA:PAGE 2", formData);
 
   return (
     <section className="flex flex-col gap-5 w-full">

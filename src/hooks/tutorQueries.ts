@@ -16,10 +16,10 @@ export const useTutorDashboard = () => {
 };
 
 
-export const useTutorStudents = ({ page = 1 }: { page?: number }) => {
+export const useTutorStudents = ({ page = 1, search }: { page?: number; search?: string }) => {
   return useQuery({
-    queryKey: ["tutor-students", page],
-    queryFn: () => tutorApi.getTutorStudents({ page }),
+    queryKey: ["tutor-students", page, search],
+    queryFn: () => tutorApi.getTutorStudents({ page, search }),
     placeholderData: (prev) => prev, // Maintain data while fetching new page
   });
 };

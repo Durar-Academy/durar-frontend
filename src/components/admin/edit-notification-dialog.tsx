@@ -100,7 +100,6 @@ export function EditNotificationDialog({
       };
 
       const response = await axiosInstance.patch(`/notification/${notification.id}`, payload);
-      console.log("UPDATE NOTIFICATION", response);
       toast.success("Notification updated!");
     } catch (error) {
       console.error("Update Error:", error);

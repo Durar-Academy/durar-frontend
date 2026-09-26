@@ -31,7 +31,7 @@ export function ResponsiveSidebar({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <aside className="hidden h-full w-[260px] shrink-0 bg-green p-8 lg:block">
+      <aside className="hidden h-full min-h-0 w-[260px] shrink-0 overflow-y-auto bg-green p-8 lg:block">
         <SidebarBrand />
         <div className="mt-[60px]">{children}</div>
       </aside>

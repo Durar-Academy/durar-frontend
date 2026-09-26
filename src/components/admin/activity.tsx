@@ -2,43 +2,44 @@ import React from "react";
 import { BookOpenCheck, Calendar1, CircleDollarSign, Glasses, LucideIcon, School } from "lucide-react";
 
 export function Activity({ activity }: { activity: string }) {
-  let icon;
-  let title = "";
+  let Icon: LucideIcon | undefined;
+  let title: string | undefined;
 
-  switch (activity) {
+  // Activity values come from the API, so normalize them before matching.
+  switch (activity.trim()) {
     case "NEW_ENROLLMENT":
-      icon = Calendar1;
+      Icon = Calendar1;
       title = "Recent Enrollment";
       break;
 
-    case " NEW_PAYMENT":
-      icon = CircleDollarSign;
+    case "NEW_PAYMENT":
+      Icon = CircleDollarSign;
       title = "New Payment";
       break;
 
     case "NEW_COURSE":
-      icon = Glasses;
+      Icon = Glasses;
       title = "New Course";
       break;
 
     case "NEW_QUIZ_SUBMISSION":
-      icon = BookOpenCheck;
+      Icon = BookOpenCheck;
       title = "New Quiz Submission";
       break;
 
     case "NEW_ASSIGNMENT_SUBMISSION":
-      icon = School;
+      Icon = School;
       title = "New Assignment Submission";
       break;
   }
 
+  // Do not pass an undefined component to React if the API adds a new action.
+  if (!Icon || !title) return null;
+
   return (
     <div className="flex items-center gap-2">
       <div className="rounded-full w-8 h-8 bg-light flex items-center justify-center">
-        {React.createElement(icon as LucideIcon, {
-          key: "icon",
-          className: "text-orange w-4 h-4 shrink-0 inline-block",
-        })}
+        <Icon className="text-orange w-4 h-4 shrink-0 inline-block" />
       </div>
 
       <p className="text-high text-sm font-medium leading-4">{title}</p>

@@ -432,6 +432,7 @@ type UserCourse = {
   lastName: string;
   firstName: string;
   role: "student" | "tutor";
+  user?: Pick<User, "id" | "firstName" | "lastName" | "role">;
 };
 
 type Lesson = {

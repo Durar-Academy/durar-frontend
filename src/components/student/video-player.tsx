@@ -23,9 +23,7 @@ export function VideoPlayer({ lesson }: { lesson: Lesson | undefined }) {
       setLoading(false);
 
       const response = await initializeLesson(lesson.id);
-      console.log("INITIALIZE VIDEO RESPONSE: ", response.data);
     } catch (error) {
-      console.log("INITIALIZE VIDEO ERROR: ", error);
     }
   }, [lesson]);
 
@@ -35,9 +33,7 @@ export function VideoPlayer({ lesson }: { lesson: Lesson | undefined }) {
     try {
       hasEnded.current = true;
       const response = await updateLessonProgress(lesson.id, { progress: 100 });
-      console.log("VIDEO COMPLETE RESPONSE: ", response.data);
     } catch (error) {
-      console.log("VIDEO COMPLETE ERROR: ", error);
     }
   }, [lesson]);
 
@@ -53,9 +49,7 @@ export function VideoPlayer({ lesson }: { lesson: Lesson | undefined }) {
 
       try {
         const response = await updateLessonProgress(lesson.id, { progress: currentProgress });
-        console.log("VIDEO PROGRESS RESPONSE: ", response.data);
       } catch (error) {
-        console.log("VIDEO PROGRESS ERROR: ", error);
       }
     },
     [lesson],

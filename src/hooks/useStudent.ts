@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { getFileByStorageId } from "@/lib/storage";
 
@@ -9,7 +9,10 @@ import {
   getNotifications,
   getPaymentMethods,
   getPayments,
+  PaymentHistoryFilters,
+  downloadStudentTransactions,
   getStudentTimetable,
+  setPreferredPaymentMethod,
 } from "@/lib/student";
 
 type StudentAssignmentFilters = {
@@ -37,8 +40,12 @@ export function useStudentAssignment(assignmentId: string) {
   });
 }
 
-export function usePayments() {
-  const query = useQuery({ queryKey: ["all-student-payments"], queryFn: getPayments });
+export function usePayments(filters?: PaymentHistoryFilters) {
+  const query = useQuery({
+    queryKey: ["all-student-payments", filters],
+    queryFn: () => getPayments({ filters }),
+    placeholderData: (previous) => previous,
+  });
   return query;
 }
 
@@ -46,8 +53,21 @@ export function usePaymentMethods() {
   const query = useQuery<PaymentMethod[]>({
     queryKey: ["all-student-payment-methods"],
     queryFn: getPaymentMethods,
+    select: (methods) => (Array.isArray(methods) ? methods : []),
   });
   return query;
+}
+
+export function useDownloadStudentTransactions() {
+  return useMutation({ mutationFn: downloadStudentTransactions });
+}
+
+export function useSetPreferredPaymentMethod() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: setPreferredPaymentMethod,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["all-student-payment-methods"] }),
+  });
 }
 
 export function useNotifications() {

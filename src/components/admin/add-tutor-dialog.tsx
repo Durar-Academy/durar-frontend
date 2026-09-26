@@ -97,7 +97,6 @@ export function AddTutorDialog() {
 
     try {
       const response = await inviteTutor({ email, courseIds });
-      console.log("Invite Tutor Response Data", response);
 
       toast.success("Tutor invitation sent successfully!");
       setErrors({});

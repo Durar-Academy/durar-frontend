@@ -41,7 +41,6 @@ export function Login() {
   const setValue = useMemo(() => loginFormController.setValue, [loginFormController.setValue]);
 
   async function handleSubmit(values: z.infer<typeof loginFormSchema>) {
-    console.log("Login Form Values: ", values);
     const email = values.email.trim().toLowerCase();
 
     if (values.rememberMe) {
@@ -58,7 +57,6 @@ export function Login() {
     setIsSubmitting(true);
     try {
       const response = await loginUser(payload);
-      console.log("Login Form Response Data", response);
 
       if (!response.data.isVerified) {
         // The resend page uses this value to identify the account.
@@ -72,6 +70,15 @@ export function Login() {
         return;
       }
 
+      if (response.data.requiresPasswordReset) {
+        toast.success("Please create a new password to continue.");
+        loginFormController.reset();
+        if (response.data.passwordResetToken) {
+          router.push(`/auth/reset-password?token=${encodeURIComponent(response.data.passwordResetToken)}`);
+        }
+        return;
+      }
+
       toast.success("Login successful!\nWelcome to Durar Academy.");
 
       const { accessToken, refreshToken, role } = response.data;
@@ -80,7 +87,6 @@ export function Login() {
       loginFormController.reset();
 
       const normalizedRole = role.toLowerCase();
-      console.log("Redirecting for role:", normalizedRole);
 
       switch (normalizedRole) {
         case "student":
@@ -98,7 +104,6 @@ export function Login() {
       }
       // router.push(`/${role.toLowerCase()}`);
     } catch (error: unknown) {
-      console.log("Login Form Error", error);
 
       // Check if it's an Axios error
       if (axios.isAxiosError(error)) {

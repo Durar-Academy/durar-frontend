@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { FormEvent, useState } from "react";
+import { FormEvent, Suspense, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
@@ -13,12 +14,18 @@ import { resetPasswordFormSchema } from "@/lib/schemas";
 import { cn } from "@/lib/utils";
 import { initiatePasswordReset } from "@/lib/auth";
 
-export default function ForgotPassword() {
+function ForgotPasswordForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [email, setEmail] = useState("");
   const [inputError, setInputError] = useState("");
 
   const [verifiedReset, setVerifiedReset] = useState(false);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const invitedEmail = searchParams.get("email");
+    if (invitedEmail) setEmail(invitedEmail);
+  }, [searchParams]);
 
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
@@ -33,7 +40,6 @@ export default function ForgotPassword() {
 
     try {
       const response = await initiatePasswordReset({ email });
-      console.log("Initiate Password Reset Response Data", response);
 
       toast.success("We've sent a password reset link to your email.\nPlease check your inbox.");
 
@@ -49,7 +55,6 @@ export default function ForgotPassword() {
 
   async function handleResendEmail() {
     const response = await initiatePasswordReset({ email });
-    console.log("RESEND: Password Reset Response Data", response);
 
     {
       toast.success("We've resent a password reset link to your email.\nPlease check your inbox.");
@@ -156,5 +161,13 @@ export default function ForgotPassword() {
         </form>
       </div>
     </div>
+  );
+}
+
+export default function ForgotPassword() {
+  return (
+    <Suspense fallback={null}>
+      <ForgotPasswordForm />
+    </Suspense>
   );
 }

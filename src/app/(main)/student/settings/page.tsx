@@ -1,6 +1,7 @@
 "use client";
 
-import { Camera, Check, User, X } from "lucide-react";
+import { Camera, Check, CreditCard, User, X } from "lucide-react";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import toast from "react-hot-toast";
@@ -27,9 +28,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ChangePassword } from "@/components/auth/change-password";
+import { AttendanceSummary } from "@/components/student/attendance-summary";
 
 import { COUNTRIES, DAILING_CODES, GENDERS, TITLES } from "@/data/constants";
 import { useCurrentUser } from "@/hooks/useAccount";
+import { usePaymentMethods, useSetPreferredPaymentMethod } from "@/hooks/useStudent";
+import { useSessionBookings } from "@/hooks/useSubscription";
 import { useUpdateForm } from "@/hooks/useForm";
 import { updateUserInfo } from "@/lib/account";
 import { updateFormSchema } from "@/lib/schemas";
@@ -82,6 +86,9 @@ export default function SettingsPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [removeProfileImage, setRemoveProfileImage] = useState(false);
+  const { data: paymentMethods = [], isLoading: paymentMethodsLoading } = usePaymentMethods();
+  const setPreferred = useSetPreferredPaymentMethod();
+  const { data: attendanceBookings = [], isLoading: attendanceLoading } = useSessionBookings();
 
   const updateImagePreview = (nextPreview: string | null) => {
     setImagePreview((previousPreview) => {
@@ -614,6 +621,36 @@ export default function SettingsPage() {
             </form>
           </Form>
         </section>
+      </div>
+
+      <AttendanceSummary bookings={attendanceBookings} loading={attendanceLoading} />
+
+      <div className="p-6 border border-shade-2 bg-white rounded-xl flex flex-col gap-5">
+        <div className="flex items-center justify-between gap-4">
+          <h2 className="flex items-center gap-2 text-high font-semibold text-lg">
+            <CreditCard className="w-5 h-5 text-orange" />
+            <span>Payment Methods</span>
+          </h2>
+          <Link href="/student/subscription" className="rounded-lg bg-orange px-4 py-2 text-sm text-white">
+            Add through Paystack
+          </Link>
+        </div>
+        <p className="text-sm text-low">Add a card securely through Paystack. Your preferred method is used for automatic subscription renewals.</p>
+        {paymentMethodsLoading ? <Skeleton className="h-16 w-full rounded-lg" /> : paymentMethods.length === 0 ? (
+          <p className="rounded-lg bg-offwhite p-4 text-sm text-low">No payment methods saved yet.</p>
+        ) : (
+          <div className="space-y-3">
+            {paymentMethods.map((method) => (
+              <div key={method.id} className="flex flex-wrap items-center justify-between gap-3 rounded-lg border border-shade-2 p-4">
+                <div>
+                  <p className="font-medium text-high">{method.cardType || method.provider} ending in {method.last4}</p>
+                  <p className="text-sm text-low">Expires {String(method.expMonth).padStart(2, "0")}/{method.expYear}</p>
+                </div>
+                {method.preferred ? <span className="rounded-full bg-success/10 px-3 py-1 text-xs text-success">Preferred</span> : <button type="button" disabled={setPreferred.isPending} onClick={() => setPreferred.mutate(method.id)} className="text-sm text-orange disabled:opacity-50">Make preferred</button>}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
 
       <ChangePassword />
