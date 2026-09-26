@@ -25,7 +25,6 @@ export default function AddNewQuizPage() {
 
   const { formData, updateFormData, cancelForm, nextStep } = useQuizFormProvider();
 
-  console.log("FORMDATA:PAGE 1", formData);
 
   const courseOptions = allCourses
     ? allCourses.map((course) => {

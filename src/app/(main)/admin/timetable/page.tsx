@@ -19,7 +19,6 @@ export default function ViewTimetable() {
   useEffect(() => {
     if (!timetable) return;
 
-    console.log("[Admin timetable] schedules:", timetable);
   }, [timetable]);
 
   return (

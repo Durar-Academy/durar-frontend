@@ -33,12 +33,10 @@ export function AuthorizationRedirect({
 
       if (!userRole) {
         try {
-          console.log("Attempting to refresh user role");
           const user = await getCurrentUser({ signal: abortControllerRef.current.signal });
           storeAuthData(undefined, undefined, user.role);
 
           [, , userRole] = retrieveAuthData();
-          console.log("Successfully refreshed user role");
         } catch (error) {
           if (axios.isCancel(error)) return;
           console.error("Unable to refresh user role", error);

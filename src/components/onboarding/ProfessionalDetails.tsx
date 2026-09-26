@@ -13,6 +13,7 @@ import { useEffect, useState, useCallback } from "react";
 import { toast } from "react-hot-toast";
 import { axiosInstance } from "@/lib/axios";
 import { uploadFile } from "@/lib/storage";
+import { SUPPORTED_LANGUAGES } from "@/data/constants";
 
 // Define document types
 type Document = {
@@ -345,17 +346,18 @@ const ProfessionalDetails = ({
 
         <div className="flex flex-col gap-2">
           <label htmlFor="language">Language(s)</label>
-          <input
-            placeholder="Enter languages..."
+          <select
             className={`pl-2 h-12 rounded-lg ${
               errors.language ? "border-red-500" : "border-shade-3"
             } border outline-orange`}
-            type="text"
             name="language"
             id="language"
             value={formData.language}
             onChange={handleChange}
-          />
+          >
+            <option value="">Select language</option>
+            {SUPPORTED_LANGUAGES.map((language) => <option key={language.value} value={language.value}>{language.label}</option>)}
+          </select>
           {errors.language && (
             <span className="text-xs text-red-500">{errors.language}</span>
           )}

@@ -7,6 +7,7 @@ import {
   Grid2X2,
   Layers,
   Layers2,
+  GraduationCap,
   LogOut,
   PanelsTopLeft,
   Settings,
@@ -76,6 +77,14 @@ export const ADMIN_SIDEBAR_LINKS: ComponentConfig[] = [
     type: "link",
     component: LinkComponent,
     props: {
+      href: "/admin/sessions",
+      children: [React.createElement(Columns2, { key: "icon", className: "h-4 w-4" }), "Sessions & Attendance"],
+    },
+  },
+  {
+    type: "link",
+    component: LinkComponent,
+    props: {
       href: "/admin/assignments",
       children: [React.createElement(Table2, { key: "icon", className: "h-4 w-4" }), "Assignment"],
     },
@@ -102,6 +111,30 @@ export const ADMIN_SIDEBAR_LINKS: ComponentConfig[] = [
     props: {
       href: "/admin/settings",
       children: [React.createElement(Settings, { key: "icon", className: "h-4 w-4" }), "Settings"],
+    },
+  },
+  {
+    type: "link",
+    component: LinkComponent,
+    props: {
+      href: "/admin/results",
+      children: [React.createElement(GraduationCap, { key: "icon", className: "h-4 w-4" }), "Results"],
+    },
+  },
+  {
+    type: "link",
+    component: LinkComponent,
+    props: {
+      href: "/admin/academic-sessions",
+      children: [React.createElement(GraduationCap, { key: "icon", className: "h-4 w-4" }), "Academic Sessions"],
+    },
+  },
+  {
+    type: "link",
+    component: LinkComponent,
+    props: {
+      href: "/admin/billing-plans",
+      children: [React.createElement(Wallet, { key: "icon", className: "h-4 w-4" }), "Billing Plans"],
     },
   },
   {
@@ -217,6 +250,17 @@ export const COURSE_LANGUAGE = [
     label: "French",
   },
 ];
+
+export const SUPPORTED_LANGUAGES = [
+  { value: "english", label: "English" },
+  { value: "arabic", label: "Arabic" },
+  { value: "french", label: "French" },
+] as const;
+
+export const SUPPORTED_CURRENCIES = [
+  { value: "ngn", label: "Nigerian Naira (NGN)" },
+  { value: "usd", label: "US Dollar (USD)" },
+] as const;
 
 export const COURSE_CATEGORY = [
   {
@@ -398,6 +442,22 @@ export const STUDENT_SIDEBAR_LINKS: ComponentConfig[] = [
         React.createElement(Wallet, { key: "icon", className: "h-4 w-4" }),
         "Payment History",
       ],
+    },
+  },
+  {
+    type: "link",
+    component: LinkComponent,
+    props: {
+      href: "/student/subscription",
+      children: [React.createElement(Wallet, { key: "icon", className: "h-4 w-4" }), "Subscription"],
+    },
+  },
+  {
+    type: "link",
+    component: LinkComponent,
+    props: {
+      href: "/student/sessions",
+      children: [React.createElement(Table2, { key: "icon", className: "h-4 w-4" }), "Sessions"],
     },
   },
 

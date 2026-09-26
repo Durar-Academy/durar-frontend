@@ -26,16 +26,13 @@ function SetPasswordForm() {
 
   async function handleSubmit(values: z.infer<typeof setPasswordFormSchema>) {
     setIsSubmitting(true);
-    console.log("Set Password Form Values: ", values);
 
     const token = retrieveItem(STORE_TOKEN_KEY) || searchParams.get("token")!;
 
     const payload = { password: values.password, token };
-    console.log("Set Password Form Payload: ", payload);
 
     try {
       const response = await setNewPassword(payload);
-      console.log("Set Password Form Response Data", response);
 
       toast.success("Password set successful!\nPlease login with your new password.");
 

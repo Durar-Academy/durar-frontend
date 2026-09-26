@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 import React from "react";
 
-import { formatAmount, formatDateAndTime } from "@/utils/formatter";
+import { formatAmount, formatDateAndTime, formatOptionalDate } from "@/utils/formatter";
 
 export function processSchedules(schedulesData: any) {
   let flatSchedules: Schedule[] = [];
@@ -161,8 +161,8 @@ export const processActivities = (activities: Activity[]) => {
 
 export const processPayments = (payments: Payment[]) => {
   const extractedPayments = payments.map((payment) => {
-    const id = payment.charge.id;
-    const amount = payment.charge.amount;
+    const id = payment.id;
+    const amount = payment.amount;
     const { date: dateIssued } = formatDateAndTime(payment.charge.createdAt);
     const { date: dueDate } = formatDateAndTime(payment.charge.dueAt);
     const paymentMethod = payment.provider;
@@ -300,8 +300,8 @@ export const processStudentCourses = (courses: Courses[]) => {
     const id = course.course.id;
     const courseTitle = course.course.title;
     const progress = course.progress;
-    const startDate = format(new Date(course.startAt as Date), "PP");
-    const completionDate = format(new Date(course.completeAt as Date), "PP");
+    const startDate = formatOptionalDate(course.startAt);
+    const completionDate = formatOptionalDate(course.completeAt);
 
     return {
       id,
@@ -362,10 +362,10 @@ export const processStudentPaymentOverview = (
 
 export const processUserPayments = (payments: Payment[]) => {
   const extractedPayments = payments.map((payment) => {
-    const id = payment.charge.id;
-    const date = format(new Date(payment.charge.createdAt), "PP");
+    const id = payment.id;
+    const date = format(new Date(payment.createdAt), "PP");
 
-    const amount = payment.charge.amount;
+    const amount = payment.amount;
     const status = payment.status;
 
     return {
@@ -546,8 +546,8 @@ export const processTutorCourses = (courses: Courses[]) => {
     const id = course.course.id;
     const courseTitle = course.course.title;
     const progress = course.progress;
-    const startDate = format(new Date(course.startAt as Date), "PP");
-    const completionDate = format(new Date(course.completeAt as Date), "PP");
+    const startDate = formatOptionalDate(course.startAt);
+    const completionDate = formatOptionalDate(course.completeAt);
     const noOfStudents = course.course.UserCourse.length;
 
     return {
@@ -690,13 +690,13 @@ export const processPaymentsMetrics = (paymentsMetrics: PaymentsMetrics): Overvi
 
 export const processPaymentsPage = (payments: Payment[]) => {
   const extractedPayments = payments.map((payment) => {
-    const id = payment.charge.id;
+    const id = payment.id;
     const firstName = payment.charge.user.firstName;
     const lastName = payment.charge.user.lastName;
-    const amount = payment.charge.amount;
+    const amount = payment.amount;
     const status = payment.status;
 
-    const date = format(new Date(payment.charge.createdAt), "PP");
+    const date = format(new Date(payment.createdAt), "PP");
     const paymentMethod = payment.provider;
     const currency = payment.currency;
 

@@ -110,15 +110,16 @@ export function AddNewCard({ open, onOpenChange }: { open: boolean; onOpenChange
       expiry: data.expiry,
     };
 
-    console.log("Payload to send:", payload);
-
     try {
       setIsSubmitting(true);
 
       const response = await addCard(payload);
-      console.log("ADD CARD", response.data);
-
-      toast.success(response?.message || "Card added successfully");
+      const paymentLink = response?.data?.payment_link ?? response?.payment_link;
+      if (paymentLink) {
+        window.location.assign(`${paymentLink}${paymentLink.includes("?") ? "&" : "?"}type=add_card`);
+      } else {
+        toast.success(response?.message || "Card added successfully");
+      }
     } catch (error) {
       console.error("ADD CARD", error);
 

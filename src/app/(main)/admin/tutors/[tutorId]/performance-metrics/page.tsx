@@ -2,17 +2,14 @@
 
 import { Search } from "lucide-react";
 import { useParams } from "next/navigation";
-import { format } from "date-fns";
 
 import { OverviewCard } from "@/components/admin/overview-card";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ReviewList } from "@/components/admin/review-list";
 
 import { useTutorMetrics } from "@/hooks/useAdmin";
 import { processTutorPeformance } from "@/utils/processor";
-import { tutorReviews } from "@/data2/mockData";
 
 export default function TutorManangementPerformaceMetricsPage() {
   const { tutorId } = useParams();
@@ -62,17 +59,10 @@ export default function TutorManangementPerformaceMetricsPage() {
           </div>
         </div>
 
-        <div className="h-full overflow-y-scroll hide-scrollbar grid grid-cols-2 gap-3">
-          {tutorReviews.map((review, index) => (
-            <div key={index}>
-              <ReviewList
-                studentName={review.student}
-                course={review.course}
-                date={format(new Date(review.createdAt), "PP")}
-                review={review.review}
-              />
-            </div>
-          ))}
+        <div className="h-full overflow-y-scroll hide-scrollbar">
+          <p className="rounded-lg border border-dashed border-shade-3 p-6 text-sm text-low">
+            Tutor reviews are not available yet.
+          </p>
         </div>
       </div>
     </div>

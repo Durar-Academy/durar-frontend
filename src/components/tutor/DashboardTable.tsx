@@ -35,27 +35,27 @@ export default function UpcomingClasses() {
             return (
             <tr
               key={index}
-              className="border-[1px] bg-[#F8F8FA] border-[#D2D4E0] mt-3"
+              className="bg-[#F8F8FA] text-sm"
             >
-              <td className="text-sm py-4 pl-3 border-[1px] border-[#D2D4E0] rounded-l-xl border-r-0">
+              <td className="w-[110px] whitespace-nowrap rounded-l-xl border-y border-l border-[#D2D4E0] px-4 py-3">
                 {item.day}
               </td>
-              <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0]">
+              <td className="max-w-[180px] truncate border-y border-[#D2D4E0] px-4 py-3" title={item.student}>
                 {item.student}
               </td>
-              <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0]">
+              <td className="max-w-[150px] truncate border-y border-[#D2D4E0] px-4 py-3" title={item.category}>
                 {item.category}
               </td>
-              <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0]">
+              <td className="w-[150px] whitespace-nowrap border-y border-[#D2D4E0] px-4 py-3">
                 {item.time}
               </td>
-              <td className="text-sm py-4 border-[1px] border-[#D2D4E0] border-l-0 rounded-r-xl">
+              <td className="w-[120px] whitespace-nowrap rounded-r-xl border-y border-r border-[#D2D4E0] px-4 py-3 text-right">
                 {meetingUrl ? (
                   <a
                     href={meetingUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-orange font-semibold hover:underline text-sm"
+                    className="inline-flex rounded-md border border-orange px-2.5 py-1 text-sm font-semibold text-orange hover:bg-orange hover:text-white"
                   >
                     Start Class
                   </a>

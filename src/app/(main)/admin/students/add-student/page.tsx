@@ -48,7 +48,7 @@ const addStudentSchema = z
       invalid_type_error: "Please select a gender",
     }),
     enrollmentDate: z.string().min(1, "Enrolment date is required"),
-    studentId: z.string().min(1, "Student ID is required"),
+    studentId: z.string().optional(),
     assignCategory: z.string().min(1, "Please select a category"),
     assignmentCourses: z.array(z.string()).min(1, "Please select assigned courses"),
     address: z.string().min(1, "Address is required"),
@@ -126,7 +126,7 @@ const selectStyles: StylesConfig<CourseOption, true> = {
 
 const stepTwoFields = [
   { name: "enrollmentDate", label: "Enrolment Date", type: "date" as const },
-  { name: "studentId", label: "Student ID", type: "text" as const },
+  { name: "studentId", label: "Student ID (generated after saving)", type: "text" as const },
   { name: "assignCategory", label: "Assign Category", type: "select" as const, options: categoryOptions },
   { name: "assignmentCourses", label: "Assignment Courses", type: "multi-select" as const },
 ];
@@ -145,6 +145,7 @@ export default function AddStudentPage() {
   const [enrollmentDate, setEnrollmentDate] = useState<Date | undefined>(new Date());
   const registerStudentMutation = useRegisterStudent();
   const router = useRouter();
+  const [createdStudentId, setCreatedStudentId] = useState("");
 
   const courseOptions: CourseOption[] = allCourses
     ? allCourses.map((course) => ({
@@ -167,7 +168,7 @@ export default function AddStudentPage() {
       phoneNumber: "",
       gender: "Male",
       enrollmentDate: "",
-      studentId: "12345",
+      studentId: "",
       assignCategory: "",
       assignmentCourses: [],
       address: "",
@@ -182,7 +183,7 @@ export default function AddStudentPage() {
   const next = async () => {
     const fieldsByStep: Record<number, (keyof AddStudentValues)[]> = {
       1: ["title", "firstName", "middleName", "lastName", "dob", "email", "dialingCode", "phoneNumber", "gender"],
-      2: ["enrollmentDate", "studentId", "assignCategory", "assignmentCourses"],
+      2: ["enrollmentDate", "assignCategory", "assignmentCourses"],
       3: ["address", "cityState", "country"],
       4: ["email", "password", "confirmPassword"],
     };
@@ -209,8 +210,14 @@ export default function AddStudentPage() {
         assignedCoursesIds: values.assignmentCourses,
       };
 
-      await registerStudentMutation.mutateAsync(payload);
-      toast.success("Student account created successfully");
+      const response = await registerStudentMutation.mutateAsync(payload);
+      const createdUser = response?.data ?? response;
+      const realStudentId = createdUser?.id as string | undefined;
+      if (realStudentId) {
+        setCreatedStudentId(realStudentId);
+        form.setValue("studentId", realStudentId);
+      }
+      toast.success(realStudentId ? `Student account created. ID: ${realStudentId}` : "Student account created successfully");
       router.push("/admin/students");
     } catch (error: any) {
       const message =
@@ -368,6 +375,9 @@ export default function AddStudentPage() {
                 <Input
                   className="h-14 rounded-xl border-shade-3 text-base shadow-none bg-[#E6EAF6] focus-visible:ring-0 focus-visible:border-shade-3"
                   {...field}
+                  value={createdStudentId || field.value || ""}
+                  placeholder="Generated after account creation"
+                  aria-label="Student ID generated after account creation"
                   readOnly
                   disabled
                 />
@@ -404,8 +414,6 @@ export default function AddStudentPage() {
                       const nextValues = Array.isArray(selected)
                         ? selected.map((option) => option.value)
                         : [];
-                      console.log("ADD STUDENT COURSES - selected options:", selected);
-                      console.log("ADD STUDENT COURSES - selected course ids:", nextValues);
                       field.onChange(nextValues);
                     }}
                     styles={selectStyles}

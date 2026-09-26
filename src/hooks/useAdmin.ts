@@ -24,6 +24,7 @@ import {
   getNotification,
   getNotifications,
   getPayment,
+  getPaymentWebhookEvents,
   getPayments,
   getPaymentsMetrics,
   getSchedules,
@@ -86,6 +87,10 @@ export function usePayments(filters?: PaymentFilters) {
     queryKey: ["all-payments", filters],
     queryFn: () => getPayments({ filters }),
   });
+}
+
+export function usePaymentWebhookEvents() {
+  return useQuery({ queryKey: ['admin-payment-webhook-events'], queryFn: getPaymentWebhookEvents });
 }
 
 // ─── Student Queries ──────────────────────────────────────────────────────────

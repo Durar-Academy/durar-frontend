@@ -1,4 +1,4 @@
-import { Download, Search } from "lucide-react";
+import { Download } from "lucide-react";
 import Link from "next/link";
 
 import {
@@ -17,37 +17,44 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 import { cn } from "@/lib/utils";
 import { formatAmount, formatToReadableId } from "@/utils/formatter";
 import { PAYMENT_STATUSES } from "@/data/constants";
 
-export function PaymentsPageTable({ payments }: { payments: PaymentsPageTableProps }) {
+export function PaymentsPageTable({
+  payments,
+  status,
+  startAt,
+  endAt,
+  onStatusChange,
+  onStartAtChange,
+  onEndAtChange,
+  onExport,
+}: {
+  payments: PaymentsPageTableProps;
+  status?: PaymentStatus;
+  startAt?: Date;
+  endAt?: Date;
+  onStatusChange: (value?: PaymentStatus) => void;
+  onStartAtChange: (value?: Date) => void;
+  onEndAtChange: (value?: Date) => void;
+  onExport: () => void;
+}) {
   return (
     <div className="rounded-xl p-6 border border-shade-2 bg-white h-full">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-base text-high font-semibold">Payments</h3>
 
-        <div className="flex gap-3">
-          <div className="relative w-[200px]">
-            <Input
-              className="w-full text-sm h-10 px-4 pr-10 rounded-lg border border-shade-3 bg-white shadow-none placeholder:text-low
-
-
-            focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-2 focus-visible:border-orange"
-              placeholder="Search..."
-            />
-            <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-low" />
-          </div>
-
-          <Select>
+        <div className="flex flex-wrap justify-end gap-3">
+          <Select value={status ?? "all"} onValueChange={(value) => onStatusChange(value === "all" ? undefined : value as PaymentStatus)}>
             <SelectTrigger className="w-fit h-10 text-high bg-white border border-shade-3 rounded-lg text-base px-4 py-3 focus:ring-0">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
 
             <SelectContent>
+              <SelectItem value="all">All statuses</SelectItem>
               {PAYMENT_STATUSES.map((paymentStatus, index) => (
                 <SelectItem
                   value={paymentStatus.status}
@@ -61,12 +68,15 @@ export function PaymentsPageTable({ payments }: { payments: PaymentsPageTablePro
           </Select>
 
           <div>
-            <DatePicker />
+            <DatePicker date={startAt} onChange={onStartAtChange} />
           </div>
+
+          <DatePicker date={endAt} onChange={onEndAtChange} />
 
           <Button
             variant={"_outline"}
             className="bg-white border-orange text-orange hover:bg-offwhite px-4 py-2 h-10"
+            onClick={onExport}
           >
             <Download className="w-6 h-6" strokeWidth={3} />
             <span>Export List</span>

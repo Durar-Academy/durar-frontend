@@ -14,7 +14,6 @@ export default function CoursesPage() {
 
   const learningProgress = getCumulativeProgress(courses);
 
-  console.log("ALL COURSES", courses);
 
   return (
     <section className="flex flex-col gap-5">

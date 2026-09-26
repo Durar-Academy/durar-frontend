@@ -1,5 +1,4 @@
 import {
-    Bell,
     BookText,
     Columns2,
     Grid2X2,
@@ -8,7 +7,8 @@ import {
     Wallet,
     PanelsTopLeft,
     Layers2,
-    Settings,
+    Layers,
+    Bell,
     LogOut,
 } from "lucide-react";
 import React from "react";
@@ -57,6 +57,14 @@ export const ADMIN_SIDEBAR_LINKS: ComponentConfig[] = [
         type: "link",
         component: LinkComponent,
         props: {
+            href: "/tutor/sessions",
+            children: [React.createElement(Columns2, { key: "icon", className: "h-4 w-4" }), "Sessions"],
+        },
+    },
+    {
+        type: "link",
+        component: LinkComponent,
+        props: {
             href: "/tutor/timetable",
 
             children: [React.createElement(Columns2, { key: "icon", className: "h-4 w-4" }), "Timetable"],
@@ -74,6 +82,14 @@ export const ADMIN_SIDEBAR_LINKS: ComponentConfig[] = [
         type: "link",
         component: LinkComponent,
         props: {
+            href: "/tutor/results",
+            children: [React.createElement(Layers, { key: "icon", className: "h-4 w-4" }), "Results"],
+        },
+    },
+    {
+        type: "link",
+        component: LinkComponent,
+        props: {
             href: "/tutor/payments",
             children: [React.createElement(Wallet, { key: "icon", className: "h-4 w-4" }), "Payments"],
         },
@@ -83,15 +99,7 @@ export const ADMIN_SIDEBAR_LINKS: ComponentConfig[] = [
         component: LinkComponent,
         props: {
             href: "/tutor/notification",
-            children: [React.createElement(Bell, { key: "icon", className: "h-4 w-4" }), "Notification"],
-        },
-    },
-    {
-        type: "link",
-        component: LinkComponent,
-        props: {
-            href: "/tutor/settings",
-            children: [React.createElement(Settings, { key: "icon", className: "h-4 w-4" }), "Settings"],
+            children: [React.createElement(Bell, { key: "icon", className: "h-4 w-4" }), "Notifications"],
         },
     },
     {

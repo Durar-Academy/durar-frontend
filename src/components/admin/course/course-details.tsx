@@ -18,6 +18,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+import { formatOptionalDate } from "@/utils/formatter";
+
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -49,8 +51,10 @@ import { Button } from "@/components/ui/button";
 export function CourseDetails({ course }: { course: Course }) {
   const router = useRouter();
   const lessons = course.Lesson ?? [];
-  const enrolledUsers = course.UserCourse ?? [];
-  const studentCount = enrolledUsers.filter((user) => user.role === "student").length;
+  const enrolledUsers = (course.UserCourse ?? []).filter(
+    (enrollment) => enrollment.user?.role === "student" || enrollment.role === "student",
+  );
+  const studentCount = enrolledUsers.length;
 
   const { mutate: deleteCourse, isPending: isDeleting } = useDeleteCourse();
   const { mutate: updateCourse, isPending: isUpdating } = useUpdateCourse();
@@ -315,7 +319,7 @@ export function CourseDetails({ course }: { course: Course }) {
                         >
                           <TableCell>{String(index + 1).padStart(3, "0")}</TableCell>
                           <TableCell className="capitalize">
-                            {student.firstName} {student.lastName}
+                            {student.user?.firstName ?? student.firstName} {student.user?.lastName ?? student.lastName}
                           </TableCell>
                           <TableCell
                             className={cn(
@@ -327,11 +331,13 @@ export function CourseDetails({ course }: { course: Course }) {
                             {student.progress === 100 ? "Completed" : `${student.progress}%`}
                           </TableCell>
                           <TableCell className="text-center">
-                            {format(new Date(student.startAt as Date), "PP")}
+                            {formatOptionalDate(student.createdAt)}
                           </TableCell>
                           <TableCell className="text-center">
-                            {format(new Date(student.lastAccessAt as Date), "PP")} |{" "}
-                            {format(new Date(student.lastAccessAt as Date), "h:mm a")}
+                            {formatOptionalDate(student.lastAccessAt ?? student.createdAt)}
+                            {student.lastAccessAt && (
+                              <> | {formatOptionalDate(student.lastAccessAt, "h:mm a")}</>
+                            )}
                           </TableCell>
                         </TableRow>
                       ))}

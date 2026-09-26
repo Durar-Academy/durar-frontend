@@ -20,11 +20,14 @@ import { formatUserName } from "@/utils/formatter";
 import { useCourses } from "@/hooks/useAdmin";
 import { getCumulativeProgress } from "@/utils/processor";
 import { useAssignments } from "@/hooks/useStudent";
+import { useSubscriptions } from "@/hooks/useSubscription";
 
 export function StudentPageClient() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: courses, isLoading: coursesLoading } = useCourses({ status: "published" });
   const { data: assignments, isLoading: assignmentsLoading } = useAssignments();
+  const { data: subscriptions, isLoading: subscriptionsLoading } = useSubscriptions();
+  const hasActiveSubscription = (subscriptions ?? []).some((subscription) => subscription.status === "active");
 
   const learningProgress = getCumulativeProgress(courses);
   const { firstName } = formatUserName(user);
@@ -112,14 +115,16 @@ export function StudentPageClient() {
 
       <DashboardTimetable />
 
-      <div className="flex justify-start">
-        <button
-          type="button"
-          className="w-[206px] h-10 px-8 py-2 rounded-xl border border-orange bg-orange text-white text-sm font-medium hover:bg-burnt hover:border-burnt transition-colors"
-        >
-          Make Payment Here
-        </button>
-      </div>
+      {!subscriptionsLoading && !hasActiveSubscription && (
+        <div className="flex justify-start">
+          <Link
+            href="/student/subscription"
+            className="w-[206px] h-10 px-8 py-2 rounded-xl border border-orange bg-orange text-white text-sm font-medium hover:bg-burnt hover:border-burnt transition-colors text-center"
+          >
+            Make Payment Here
+          </Link>
+        </div>
+      )}
       <StudentWelcomeModal />
     </section>
   );

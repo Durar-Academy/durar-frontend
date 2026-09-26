@@ -17,15 +17,16 @@ export default function StudentTable({ page, setPage }: StudentTableProps) {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<"All" | "Active" | "Inactive">("All");
 
-  const { data: studentsData, isLoading } = useTutorStudents({ page });
+  const { data: studentsData, isLoading } = useTutorStudents({
+    page,
+    search: search.trim() || undefined,
+  });
   const students = processTutorStudents(studentsData);
 
   const filteredStudents = students.filter((student) => {
-    const matchesSearch =
-      student.name.toLowerCase().includes(search.toLowerCase()) ||
-      student.email.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus = statusFilter === "All" || student.status === statusFilter;
-    return matchesSearch && matchesStatus;
+    const matchesStatus =
+      statusFilter === "All" || student.status.toLowerCase() === statusFilter.toLowerCase();
+    return matchesStatus;
   });
 
   const exportToCSV = () => {
@@ -121,16 +122,24 @@ export default function StudentTable({ page, setPage }: StudentTableProps) {
         <Skeleton className="w-full h-[300px] rounded-xl" />
       ) : (
         <>
-          <div className="min-w-0 max-w-full overflow-x-auto">
-            <table className="text-sm min-w-max bg-white border-none border-separate border-spacing-y-3">
+          <div className="w-full min-w-0 overflow-x-auto rounded-lg">
+            <table className="w-full min-w-[960px] table-auto border-separate border-spacing-y-3 bg-white text-sm">
+              <colgroup>
+                <col className="w-[18%]" />
+                <col className="w-[20%]" />
+                <col className="w-[17%]" />
+                <col className="w-[27%]" />
+                <col className="w-[10%]" />
+                <col className="w-[8%]" />
+              </colgroup>
               <thead>
                 <tr className="text-low text-sm text-left">
-                  <th className="py-3 px-4 font-semibold">Student ID</th>
-                  <th className="py-3 px-4 font-semibold">Name</th>
-                  <th className="py-3 px-4 font-semibold">Category</th>
-                  <th className="py-3 px-4 font-semibold">Email</th>
-                  <th className="py-3 px-4 font-semibold">Status</th>
-                  <th className="py-3 px-4 font-semibold">Action</th>
+                  <th className="whitespace-nowrap px-4 py-3 font-semibold">Student ID</th>
+                  <th className="whitespace-nowrap px-4 py-3 font-semibold">Name</th>
+                  <th className="whitespace-nowrap px-4 py-3 font-semibold">Category</th>
+                  <th className="whitespace-nowrap px-4 py-3 font-semibold">Email</th>
+                  <th className="whitespace-nowrap px-4 py-3 font-semibold">Status</th>
+                  <th className="whitespace-nowrap px-4 py-3 font-semibold">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -144,21 +153,21 @@ export default function StudentTable({ page, setPage }: StudentTableProps) {
                   filteredStudents.map((student) => (
                     <tr
                       key={student.id}
-                      className="border-[1px] bg-[#F8F8FA] border-[#D2D4E0] mt-3"
+                      className="mt-3 border-[1px] border-[#D2D4E0] bg-[#F8F8FA]"
                     >
-                      <td className="text-sm py-4 pl-3 border-[1px] border-[#D2D4E0] rounded-l-xl border-r-0">
+                      <td className="whitespace-nowrap rounded-l-xl border-[1px] border-r-0 border-[#D2D4E0] py-4 pl-4 pr-4 text-sm">
                         {student.id}
                       </td>
-                      <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0]">
+                      <td className="whitespace-nowrap border-y-[1px] border-[#D2D4E0] px-4 py-4 text-sm">
                         {student.name}
                       </td>
-                      <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0]">
+                      <td className="whitespace-nowrap border-y-[1px] border-[#D2D4E0] px-4 py-4 text-sm">
                         {student.category}
                       </td>
-                      <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0]">
+                      <td className="whitespace-nowrap border-y-[1px] border-[#D2D4E0] px-4 py-4 text-sm">
                         {student.email}
                       </td>
-                      <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0]">
+                      <td className="whitespace-nowrap border-y-[1px] border-[#D2D4E0] px-4 py-4 text-sm">
                         <span
                           className={
                             student.status === "Active"
@@ -169,7 +178,7 @@ export default function StudentTable({ page, setPage }: StudentTableProps) {
                           {student.status}
                         </span>
                       </td>
-                      <td className="text-sm py-4 border-[1px] border-[#D2D4E0] border-l-0 rounded-r-xl text-orange cursor-pointer hover:underline">
+                      <td className="whitespace-nowrap rounded-r-xl border-[1px] border-l-0 border-[#D2D4E0] px-4 py-4 text-sm text-orange hover:underline">
                         <Link href={`/tutor/students/profile/${student.id}`}>View</Link>
                       </td>
                     </tr>
@@ -178,7 +187,7 @@ export default function StudentTable({ page, setPage }: StudentTableProps) {
               </tbody>
             </table>
           </div>
-          <div className="flex justify-between items-center mt-4">
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
             <Button
               onClick={handlePreviousPage}
               disabled={!studentsData?.metaData.hasPreviousPages}
