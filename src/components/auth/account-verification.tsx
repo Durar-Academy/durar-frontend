@@ -37,6 +37,14 @@ export function AccountVerification() {
         try {
           const response = await verifyAccount({ token, signal: abortControllerRef.current.signal });
           if (response.success) {
+            if (response.data?.requiresPasswordReset && response.data.passwordResetToken) {
+              toast.success("Account verified. Please create your password to continue.");
+              setProgressValue(100);
+              deleteItem(STORE_EMAIL_KEY);
+              router.push(`/auth/reset-password?token=${encodeURIComponent(response.data.passwordResetToken)}`);
+              return;
+            }
+
             toast.success("Account verification successful.\nYou can proceed to login to your account.");
 
             setProgressValue(100);
