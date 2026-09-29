@@ -18,6 +18,7 @@ export function AuthorizationRedirect({
   const pathname = usePathname();
   const { loggedIn } = useAuth();
   const abortControllerRef = useRef<AbortController | null>(null);
+  const sessionExpiredToastRef = useRef(false);
 
   const checkRole = useCallback(() => {
     (async function () {
@@ -41,7 +42,12 @@ export function AuthorizationRedirect({
           if (axios.isCancel(error)) return;
           console.error("Unable to refresh user role", error);
 
-          toast.error("Your session has expired. Please login again.");
+          // A single expired session must not stack the same toast: StrictMode
+          // double-invokes this effect and every navigation re-enters here.
+          if (!sessionExpiredToastRef.current) {
+            sessionExpiredToastRef.current = true;
+            toast.error("Your session has expired. Please login again.");
+          }
 
           deleteAuthData();
           router.push("/auth");
@@ -55,18 +61,12 @@ export function AuthorizationRedirect({
         return;
       }
 
-      // if (pathname.startsWith("/admin") && userRole !== "admin") {
-      //   router.push(`/${userRole.toLowerCase()}`);
-      // } else if (pathname.startsWith("/tutor") && userRole !== "tutor") {
-      //   router.push(`/${userRole.toLowerCase()}`);
-      // } else if (pathname.startsWith("/student") && userRole !== "student") {
-      //   router.push(`/${userRole.toLowerCase()}`);
-      // }
-
       if (pathname.startsWith("/admin") && userRole !== "admin") {
         router.push(userRole === "student" ? "/" : `/${userRole.toLowerCase()}`);
       } else if (pathname.startsWith("/tutor") && userRole !== "tutor") {
         router.push(userRole === "student" ? "/" : `/${userRole.toLowerCase()}`);
+      } else if (pathname.startsWith("/student") && userRole !== "student") {
+        router.push(`/${userRole.toLowerCase()}`);
       } else if (pathname === "/" || pathname === "") {
         router.push(`/${userRole.toLowerCase()}`);
       }

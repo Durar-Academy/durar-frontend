@@ -129,14 +129,62 @@ export const useStudentSubmissions = ({
   userId,
   assignmentId,
   page = 1,
+  limit = 100,
+  enabled = true,
 }: {
   userId?: string;
   assignmentId?: string;
   page?: number;
+  limit?: number;
+  enabled?: boolean;
 }) => {
   return useQuery({
     queryKey: ["student-submissions", userId, assignmentId, page],
-    queryFn: ({ signal }) => tutorApi.getStudentSubmissions({ userId, assignmentId, page, signal }),
+    queryFn: ({ signal }) =>
+      tutorApi.getStudentSubmissions({ userId, assignmentId, page, limit, signal }),
+    enabled: enabled && !!assignmentId,
     placeholderData: (prev) => prev,
+  });
+};
+
+export const useSubmissionDetail = ({
+  submissionId,
+  enabled = true,
+}: {
+  submissionId: string | null;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    queryKey: ["submission-detail", submissionId],
+    queryFn: ({ signal }) =>
+      tutorApi.getSubmission({ submissionId: submissionId as string, signal }),
+    enabled: enabled && !!submissionId,
+  });
+};
+
+export const useGradeSubmission = () => {
+  return useMutation({
+    mutationFn: tutorApi.gradeSubmission,
+  });
+};
+
+export const useCreateAssignmentFeedback = () => {
+  return useMutation({
+    mutationFn: tutorApi.createAssignmentFeedback,
+  });
+};
+
+export const useQuizSubmissions = ({
+  assignmentId,
+  enabled = true,
+}: {
+  assignmentId?: string;
+  enabled?: boolean;
+}) => {
+  return useQuery({
+    queryKey: ["quiz-submissions", assignmentId],
+    queryFn: ({ signal }) =>
+      tutorApi.getQuizSubmissions({ assignmentId: assignmentId as string, signal }),
+    enabled: enabled && !!assignmentId,
   });
 };

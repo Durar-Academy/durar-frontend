@@ -191,7 +191,7 @@ export function Register() {
                   <FormControl>
                     <RadioGroup
                       onValueChange={field.onChange}
-                      value={field.value}
+                      value={field.value ?? ""}
                       className="flex justify-between gap-3"
                     >
                       {GENDERS.map((gender) => (
@@ -203,7 +203,6 @@ export function Register() {
                             <FormControl>
                               <RadioGroupItem
                                 value={gender}
-                                checked={field.value === gender}
                                 className="h-6 w-6 shadow-none border-shade-1 
 
                               focus:outline-0 focus-visible:ring-0 focus:border-2"

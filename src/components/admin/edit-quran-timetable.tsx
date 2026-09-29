@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef } from "react";
 import Select from "react-select";
 import { GraduationCap, Link2, Plus, Trash2, UserRound } from "lucide-react";
 
@@ -41,14 +41,26 @@ export function EditTimeSchedule({
   tutors,
   students,
   courses,
+  highlightScheduleId,
   onSave,
 }: {
   schedules: Schedule[];
   tutors: Tutor[];
   students: Student[];
   courses: Course[];
+  highlightScheduleId?: string | null;
   onSave: (schedules: Schedule[]) => void;
 }) {
+  const highlightRef = useRef<HTMLDivElement | null>(null);
+  const hasScrolledToHighlight = useRef(false);
+
+  useEffect(() => {
+    if (!highlightScheduleId || hasScrolledToHighlight.current || !highlightRef.current) return;
+
+    hasScrolledToHighlight.current = true;
+    highlightRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+  }, [highlightScheduleId, schedules]);
+
   const processSchedules = useCallback(
     (schedulesData: Schedule[] | Record<string, Schedule[]> | null | undefined): ProcessedData => {
       const processedData: ProcessedData = {};
@@ -278,7 +290,12 @@ export function EditTimeSchedule({
                           return (
                             <div
                               key={entry.id + entryIdx}
-                              className="rounded-lg border border-shade-2 bg-offwhite p-3 flex flex-col gap-2"
+                              ref={entry.id === highlightScheduleId ? highlightRef : undefined}
+                              className={`rounded-lg border bg-offwhite p-3 flex flex-col gap-2 ${
+                                entry.id === highlightScheduleId
+                                  ? "border-2 border-orange ring-2 ring-orange/40"
+                                  : "border-shade-2"
+                              }`}
                             >
                               {/* Status indicator + Course select */}
                               <div className="flex items-center gap-2">

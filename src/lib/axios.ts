@@ -5,8 +5,19 @@ import axios from "axios";
 import { storeAuthData, retrieveAuthData } from "./storage";
 import { refreshAccessToken } from "./auth";
 
+// `NEXT_PUBLIC_*` values are inlined at build time. When the variable is
+// missing, axios falls back to the origin the app is served from, so every API
+// call hits the frontend's own 404. Fail loudly at module load instead.
+const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
+
+if (!apiBaseUrl) {
+  throw new Error(
+    "NEXT_PUBLIC_API_BASE_URL is not set. Configure it for this build environment (e.g. Vercel); without it every API request is sent to the frontend origin and returns 404.",
+  );
+}
+
 export const axiosInstance = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+  baseURL: apiBaseUrl,
   withCredentials: true,
   // timeout: 10_000_000,
 });

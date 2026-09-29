@@ -17,7 +17,7 @@ const emptyForm: FormState = { title: '', firstName: '', middleName: '', lastNam
 export default function AdminSettingsPage() {
   const { data: user, isLoading } = useCurrentUser();
   const { data: plans = [] } = useAdminBillingPlans();
-  const update = useUpdateAdminProfile();
+  const update = useUpdateAdminProfile(user?.id);
   const [form, setForm] = useState<FormState>(emptyForm);
 
   useEffect(() => {

@@ -15,8 +15,14 @@ import { Input } from "@/components/ui/input";
 
 import { useCurrentUser } from "@/hooks/useAccount";
 import { useFile, useStudentAssignment } from "@/hooks/useStudent";
-import { submitAssignment } from "@/lib/student";
+import {
+  findActiveQuizSubmission,
+  findSubmittedQuizSubmission,
+  submitAssignment,
+  type StudentAssignmentWithQuiz,
+} from "@/lib/student";
 import { uploadFile } from "@/lib/storage";
+import { cn } from "@/lib/utils";
 import toast from "react-hot-toast";
 
 interface RecordingItem {
@@ -26,6 +32,13 @@ interface RecordingItem {
   duration: number;
   createdAt: Date;
 }
+
+const formatQuizDuration = (durationMs: number) => {
+  const minutes = Math.max(1, Math.round(durationMs / 60_000));
+
+  return `${minutes} minute${minutes === 1 ? "" : "s"}`;
+};
+
 export default function Assignment() {
   const { assignmentId } = useParams<{ assignmentId: string }>();
   const router = useRouter();
@@ -33,6 +46,22 @@ export default function Assignment() {
   const { data: assignment, isLoading: assignmentLoading } = useStudentAssignment(assignmentId);
   const { data: assignmentMedia } = useFile(assignment?.mediaId);
   const assignmentAudioUrl = assignment?.media?.src ?? assignmentMedia?.src;
+
+  // Quizzes replace the submission form with a status card. Their submission
+  // rows live under `QuizSubmission` (newest first), because the list payload's
+  // own `grade`/`status` fields are mapped from AssignmentSubmission only.
+  const assignmentWithQuiz = assignment as StudentAssignmentWithQuiz | undefined;
+  const isQuiz = assignmentWithQuiz?.type === "quiz";
+  const submittedQuiz = findSubmittedQuizSubmission(assignmentWithQuiz);
+  const activeQuiz = findActiveQuizSubmission(assignmentWithQuiz);
+  const quizHref = `/student/assignments/${assignmentId}/quiz`;
+  const quizCtaLabel = submittedQuiz ? "View Result" : activeQuiz ? "Resume Quiz" : "Start Quiz";
+  const quizStatusLabel = submittedQuiz ? "Submitted" : activeQuiz ? "In progress" : "Not started";
+  const quizStatusDescription = submittedQuiz
+    ? "You have submitted this quiz. Your score is shown above."
+    : activeQuiz
+      ? "You have an attempt in progress. The timer keeps running while you are away."
+      : "This quiz is timed from the moment you start it.";
   const [content, setContent] = useState("");
   const [submissionLink, setSubmissionLink] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -129,7 +158,7 @@ export default function Assignment() {
 
               <ChevronRight className="h-4 w-4" />
 
-              <span>Submit Assignment</span>
+              <span>{isQuiz ? "Quiz" : "Submit Assignment"}</span>
             </p>
           </TopBar>
         )}
@@ -159,13 +188,65 @@ export default function Assignment() {
         </div>
 
         <div>
-          <Button onClick={handleSubmit} disabled={isSubmitting} className="bg-orange hover:bg-burnt" variant={"_default"}>
-            <SendHorizonalIcon className="size-4" />
-            {isSubmitting ? "Submitting..." : "Submit Assignment"}
-          </Button>
+          {isQuiz ? (
+            <Button asChild className="bg-orange hover:bg-burnt text-white" variant={"_default"}>
+              <Link href={quizHref}>{quizCtaLabel}</Link>
+            </Button>
+          ) : (
+            <Button onClick={handleSubmit} disabled={isSubmitting} className="bg-orange hover:bg-burnt" variant={"_default"}>
+              <SendHorizonalIcon className="size-4" />
+              {isSubmitting ? "Submitting..." : "Submit Assignment"}
+            </Button>
+          )}
         </div>
       </div>
 
+      {isQuiz && (
+        <div className="bg-white border border-shade-2 rounded-xl p-6 flex flex-col gap-4">
+          <h2 className="text-base text-high font-semibold">Quiz status</h2>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <span
+              className={cn(
+                "rounded-full px-3 py-1 text-xs font-semibold",
+                submittedQuiz
+                  ? "bg-success/20 text-success-light"
+                  : activeQuiz
+                    ? "bg-light text-orange"
+                    : "bg-shade-1 text-low",
+              )}
+            >
+              {quizStatusLabel}
+            </span>
+
+            {submittedQuiz && typeof submittedQuiz.grade === "number" && (
+              <span className="text-sm text-high font-medium">
+                Score: {Math.round(submittedQuiz.grade)}%
+              </span>
+            )}
+
+            {!submittedQuiz && typeof assignmentWithQuiz?.duration === "number" && assignmentWithQuiz.duration > 0 && (
+              <span className="text-sm text-low">
+                Time limit: {formatQuizDuration(assignmentWithQuiz.duration)}
+              </span>
+            )}
+
+            {!submittedQuiz && typeof assignmentWithQuiz?.totalScore === "number" && assignmentWithQuiz.totalScore > 0 && (
+              <span className="text-sm text-low">Total score: {assignmentWithQuiz.totalScore}</span>
+            )}
+          </div>
+
+          <p className="text-sm text-low">{quizStatusDescription}</p>
+
+          <div>
+            <Button asChild className="bg-orange hover:bg-burnt text-white" variant={"_default"}>
+              <Link href={quizHref}>{quizCtaLabel}</Link>
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {!isQuiz && (
       <div className="bg-white border border-shade-2 rounded-xl p-6 space-y-4">
         <h2 className="text-base text-high font-semibold">Written response</h2>
         <textarea
@@ -176,7 +257,9 @@ export default function Assignment() {
         />
         <Input value={submissionLink} onChange={(event) => setSubmissionLink(event.target.value)} placeholder="Submission link (optional)" />
       </div>
+      )}
 
+      {!isQuiz && (
       <div className="bg-white border border-shade-2 rounded-xl p-6">
         <div className="space-y-6">
           {/* Header */}
@@ -218,6 +301,7 @@ export default function Assignment() {
           </div>
         </div>
       </div>
+      )}
     </section>
   );
 }

@@ -33,7 +33,7 @@ export default function PaymentsPage() {
   const { data: payments, isLoading: paymentsLoading } = usePayments(paymentFilters);
   const { data: webhookEvents = [], isLoading: webhookEventsLoading } = usePaymentWebhookEvents();
 
-  const allPaymentsMetrics = processPaymentsMetrics(paymentsMetrics ?? []);
+  const paymentsMetricsSummaries = processPaymentsMetrics(paymentsMetrics);
   const paymentsRecords = processPaymentsPage(payments?.records ?? []);
 
   const handleExport = async () => {
@@ -73,9 +73,21 @@ export default function PaymentsPage() {
           {paymentsMetricsLoading ? (
             <Skeleton className="w-full rounded-xl h-24" />
           ) : (
-            <div className="flex gap-6 h-24">
-              {allPaymentsMetrics.map((payments, index) => (
-                <OverviewCard overview={payments} key={index} />
+            <div className="flex flex-col gap-4">
+              {paymentsMetricsSummaries.map((summary) => (
+                <div key={summary.currency} className="flex flex-col gap-2">
+                  {paymentsMetricsSummaries.length > 1 && (
+                    <p className="text-xs font-semibold uppercase tracking-wider text-low">
+                      {summary.currency}
+                    </p>
+                  )}
+
+                  <div className="flex gap-6 h-24">
+                    {summary.cards.map((payments, index) => (
+                      <OverviewCard overview={payments} key={`${summary.currency}-${index}`} />
+                    ))}
+                  </div>
+                </div>
               ))}
             </div>
           )}

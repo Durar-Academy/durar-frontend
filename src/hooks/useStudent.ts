@@ -4,15 +4,19 @@ import { getFileByStorageId } from "@/lib/storage";
 
 import {
   getAssignments,
+  getQuizQuestions,
   getStudentAssignment,
   getNotification,
   getNotifications,
   getPaymentMethods,
   getPayments,
+  startQuizAttempt,
   PaymentHistoryFilters,
   downloadStudentTransactions,
   getStudentTimetable,
   setPreferredPaymentMethod,
+  type StudentQuizQuestion,
+  type StudentQuizSubmission,
 } from "@/lib/student";
 
 type StudentAssignmentFilters = {
@@ -93,6 +97,23 @@ export function useFile(fileId?: string | null) {
   });
 
   return query;
+}
+
+export function useQuizQuestions(assignmentId: string, options?: { enabled?: boolean }) {
+  return useQuery<StudentQuizQuestion[]>({
+    queryKey: ["quiz-questions", assignmentId],
+    queryFn: ({ signal }) => getQuizQuestions(assignmentId, { signal }),
+    enabled: !!assignmentId && (options?.enabled ?? true),
+    // Question rows are static while an attempt is open; a background refetch
+    // would rebuild (and re-shuffle) the paper under the student.
+    staleTime: Infinity,
+  });
+}
+
+export function useStartQuizAttempt() {
+  return useMutation<StudentQuizSubmission, Error, string>({
+    mutationFn: (assignmentId) => startQuizAttempt(assignmentId),
+  });
 }
 
 export function useStudentTimetable() {

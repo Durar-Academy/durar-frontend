@@ -18,18 +18,13 @@ export function ResetVerification() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const abortControllerRef = useRef<AbortController | null>(null);
+  const verifiedTokenRef = useRef<string | null>(null);
 
   const token = searchParams.get("token") ?? "";
 
   const confirmUserPasswordReset = useCallback(
     (token: string) =>
       (async function () {
-        if (!token) {
-          toast.error("Cannot find verification token.\nPlease request for a new verification.");
-          router.push("/auth/forgot-password");
-          return;
-        }
-
         setIsVerifying(true);
 
         abortControllerRef.current = new AbortController();
@@ -74,12 +69,33 @@ export function ResetVerification() {
   }, [isVerifying]);
 
   useEffect(() => {
+    // The token search param is empty during the static prerender and only fills
+    // in after the client hydrates; StrictMode also double-invokes effects in
+    // development. Both used to run the verification (and its toasts) more than
+    // once, so wait for the token and verify each token value exactly once.
+    if (!token) {
+      const timeout = setTimeout(() => {
+        toast.error("Cannot find verification token.\nPlease request for a new verification.");
+        router.push("/auth/forgot-password");
+      }, 1_000);
+
+      return () => clearTimeout(timeout);
+    }
+
+    if (verifiedTokenRef.current === token) return;
+
+    verifiedTokenRef.current = token;
+
     confirmUserPasswordReset(token);
 
     return () => {
       if (abortControllerRef.current) abortControllerRef.current.abort();
+
+      // The cleanup above aborts this run, so release the guard — a replacing
+      // effect (StrictMode) still has to verify the same token.
+      verifiedTokenRef.current = null;
     };
-  }, [confirmUserPasswordReset, token]);
+  }, [confirmUserPasswordReset, router, token]);
 
   return (
     <div className="card-shadow rounded-[24px] bg-white p-5 w-full max-w-[500px] mx-auto border border-shade-1">

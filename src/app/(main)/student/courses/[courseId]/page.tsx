@@ -14,6 +14,7 @@ import { ChevronRight, Lock, Tv, Unlock } from "lucide-react";
 import { TopBar } from "@/components/shared/top-bar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
+import { EnrollButton } from "@/components/student/enroll-button";
 import { VideoPlayer } from "@/components/student/video-player";
 
 import { useCurrentUser } from "@/hooks/useAccount";
@@ -28,6 +29,7 @@ export default function SingleCoursePage() {
   const [currentLessonId, setCurrentLessonId] = useState(unfinishedLesson?.id || "");
   const currentLesson = course?.Lesson.find((lesson) => lesson.id === currentLessonId);
   const courseAccess = (course as (Course & { access?: { allowed: boolean; reason?: string | null } }) | undefined)?.access;
+  const isEnrolled = course?.enrolled ?? ((course?.UserCourse?.length ?? 0) > 0);
 
   const handleSelectLesson = (lesson: Lesson) => {
     if (lesson.isLocked) return;
@@ -42,7 +44,7 @@ export default function SingleCoursePage() {
         ) : (
           <TopBar subtext={currentLesson?.title ?? "Current Lesson"} user={user as User}>
             <p className="flex items-center gap-1">
-              <Link href={"/courses"} className="hover:underline">
+              <Link href={"/student/courses"} className="hover:underline">
                 Courses
               </Link>
 
@@ -62,9 +64,18 @@ export default function SingleCoursePage() {
             <div className="w-full">
               {courseAccess && !courseAccess.allowed ? (
                 <div className="flex h-[450px] w-full flex-col items-center justify-center gap-4 rounded-xl border border-shade-2 bg-white text-center">
-                  <h2 className="text-xl font-semibold text-high">Subscription required</h2>
-                  <p className="max-w-md text-low">Activate your subscription to access your enrolled courses and class sessions.</p>
-                  <Link href="/student/subscription" className="rounded-lg bg-orange px-4 py-2 text-white">View subscription</Link>
+                  <h2 className="text-xl font-semibold text-high">
+                    {isEnrolled ? "Subscription required" : "Enroll to access this course"}
+                  </h2>
+                  <p className="max-w-md text-low">
+                    {isEnrolled
+                      ? "Activate your subscription to access your enrolled courses and class sessions."
+                      : "Purchase this course to unlock its lessons and join its class sessions."}
+                  </p>
+                  <div className="flex items-center gap-3">
+                    {!isEnrolled && <EnrollButton courseId={courseId as string} amount={course?.amount} />}
+                    <Link href="/student/subscription" className="rounded-lg bg-orange px-4 py-2 text-white">View subscription</Link>
+                  </div>
                 </div>
               ) : <VideoPlayer lesson={currentLesson} />}
 

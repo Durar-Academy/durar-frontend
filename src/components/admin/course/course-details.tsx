@@ -41,6 +41,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -126,6 +127,10 @@ export function CourseDetails({ course }: { course: Course }) {
             <DialogContent className="max-w-[400px]">
               <DialogHeader>
                 <DialogTitle>Delete Course</DialogTitle>
+
+                <DialogDescription>
+                  Confirm deleting this course. This action cannot be undone.
+                </DialogDescription>
               </DialogHeader>
               <div className="py-4 text-sm text-low">
                 Are you sure you want to delete this course? This action cannot be undone.

@@ -7,6 +7,7 @@ export interface SessionOccurrence {
   scheduledStart: string;
   scheduledEnd: string;
   status: string;
+  meetingLink?: string | null;
   course?: { id: string; title: string };
   classTemplate?: { id: string; title?: string; userId?: string };
   bookings: Array<{

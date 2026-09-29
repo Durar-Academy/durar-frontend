@@ -25,7 +25,7 @@ type Media = {
 };
 
 type UploadFileResponse = {
-  id?: string;
+  id: string;
   url: string;
   storageId: string;
 };
@@ -192,10 +192,14 @@ type EnrollmentData = {
 type PaymentsTableProps = {
   id: string;
   amount: number;
+  currency?: string;
   dateIssued: string;
   dueDate: string;
   paymentMethod: string;
   status: PaymentStatus;
+  // Re-attached from the raw record so a failed payment can be re-initialized.
+  courseId?: string | null;
+  billingPlanId?: string | null;
 }[];
 
 type EnrollmentTrendGraphProps = {
@@ -263,6 +267,7 @@ type Payment = {
   reference: string;
   refundReference: string | null;
   chargeId: string;
+  courseId?: string | null;
   status: PaymentStatus;
   metadata: Record<string, never> | null;
   deletedAt: Date;
@@ -403,6 +408,9 @@ type Course = {
   averageRating: number;
   CourseRating: CourseRating[];
   completionRate: number;
+  // Set by browse mode (`GET /course?browse=true`); `amount` is the price in NGN.
+  amount?: number;
+  enrolled?: boolean;
 };
 
 type CourseRating = {
@@ -517,6 +525,7 @@ type Subscription = {
 type UsersPaymentsTableProps = {
   id: string;
   amount: number;
+  currency?: string;
   date: string;
   status: PaymentStatus;
 }[];
@@ -838,7 +847,8 @@ type AssignmentsMetrics = {
   totalAssignments: number;
   pendingAssignments: number;
   completedAssignments: number;
-  lateAssignments: number;
+  // The metrics payload reports `lateSubmissions`; older builds used `lateAssignments`.
+  lateAssignments?: number;
   totalSubmissions: number;
   lateSubmissions: number;
   totalPending: number;
@@ -921,6 +931,8 @@ type CourseCardProps = {
   thumbnailId?: string | null;
   progress: number;
   id: string;
+  enrolled?: boolean;
+  amount?: number | null;
 };
 
 // Tutor Types starts here
@@ -1259,6 +1271,12 @@ type _Notification = {
   updatedAt: Date | string;
   media: NotificationMedia;
   createdBy: NotificationCreator;
+};
+
+// `GET /notification/:id` returns the bare notification row: the media and
+// createdBy relations are not embedded and there is no per-user wrapper.
+type NotificationDetail = Omit<_Notification, "media"> & {
+  media?: NotificationMedia | null;
 };
 
 type UserNotification = {

@@ -252,7 +252,6 @@ export default function AddStudentPage() {
                         <FormControl>
                           <RadioGroupItem
                             value={gender}
-                            checked={field.value === gender}
                             className="h-6 w-6 shadow-none border-shade-1 focus:outline-0 focus-visible:ring-0 focus:border-2"
                           >
                             <div className="h-4 w-4 bg-orange rounded-full"></div>
