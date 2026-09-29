@@ -57,7 +57,6 @@ export default function CoursesPage() {
                     progress={course.UserCourse?.[0]?.progress ?? 0}
                     id={course.id}
                     enrolled={course.enrolled ?? ((course.UserCourse?.length ?? 0) > 0)}
-                    amount={course.amount}
                   />
                 ))}
               </div>

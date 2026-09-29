@@ -14,7 +14,6 @@ import { ChevronRight, Lock, Tv, Unlock } from "lucide-react";
 import { TopBar } from "@/components/shared/top-bar";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
-import { EnrollButton } from "@/components/student/enroll-button";
 import { VideoPlayer } from "@/components/student/video-player";
 
 import { useCurrentUser } from "@/hooks/useAccount";
@@ -70,10 +69,9 @@ export default function SingleCoursePage() {
                   <p className="max-w-md text-low">
                     {isEnrolled
                       ? "Activate your subscription to access your enrolled courses and class sessions."
-                      : "Purchase this course to unlock its lessons and join its class sessions."}
+                      : "Subscribe to access the courses assigned to you and join their class sessions."}
                   </p>
                   <div className="flex items-center gap-3">
-                    {!isEnrolled && <EnrollButton courseId={courseId as string} amount={course?.amount} />}
                     <Link href="/student/subscription" className="rounded-lg bg-orange px-4 py-2 text-white">View subscription</Link>
                   </div>
                 </div>

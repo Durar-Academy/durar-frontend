@@ -25,7 +25,7 @@ import toast from "react-hot-toast";
 import { AddNewCard } from "./add-new-card";
 import { StudentPaymentMethods } from "./student-payment-methods";
 import { useDownloadStudentTransactions, usePaymentMethods } from "@/hooks/useStudent";
-import { initializeCoursePayment, initializeSubscriptionPayment } from "@/lib/subscription";
+import { initializeSubscriptionPayment } from "@/lib/subscription";
 import type { PaymentHistoryFilters, PaymentHistoryResponse } from "@/lib/student";
 
 export function PaymentsTable({
@@ -51,7 +51,7 @@ export function PaymentsTable({
   const retryKeysRef = useRef<Record<string, string>>({});
 
   const handleRetry = async (payment: PaymentsTableProps[number]) => {
-    if (!payment.courseId && !payment.billingPlanId) return;
+    if (!payment.billingPlanId) return;
 
     // A stable key per payment keeps repeat retries from creating new charges.
     retryKeysRef.current[payment.id] ??=
@@ -60,9 +60,7 @@ export function PaymentsTable({
     const idempotencyKey = retryKeysRef.current[payment.id];
 
     try {
-      const response = payment.courseId
-        ? await initializeCoursePayment({ courseId: payment.courseId, idempotencyKey })
-        : await initializeSubscriptionPayment({ billingPlanId: payment.billingPlanId as string, idempotencyKey });
+      const response = await initializeSubscriptionPayment({ billingPlanId: payment.billingPlanId, idempotencyKey });
 
       const paymentLink = response?.authorization_url ?? response?.payment_link;
 

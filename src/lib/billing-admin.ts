@@ -6,7 +6,6 @@ export type BillingPlanInput = {
   amount: number;
   currency: string;
   interval: string;
-  sessionsPerWeek: number;
   gracePeriodDays: number;
   maxCarryForwardSessions: number;
   description?: string;

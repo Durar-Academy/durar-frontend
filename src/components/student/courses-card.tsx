@@ -2,11 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Progress } from "@/components/ui/progress";
-import { EnrollButton } from "@/components/student/enroll-button";
-
 import { useFile } from "@/hooks/useStudent";
 
-export function CourseCard({ name, thumbnailId, progress, id, enrolled = true, amount }: CourseCardProps) {
+export function CourseCard({ name, thumbnailId, progress, id, enrolled = true }: CourseCardProps) {
   // thumbnailId is a raw storage ID, not a URL — resolve it to the media src before rendering.
   const { data: media } = useFile(thumbnailId);
   const thumbnail = media?.src;
@@ -32,11 +30,9 @@ export function CourseCard({ name, thumbnailId, progress, id, enrolled = true, a
 
         <h3 className="text-low text-sm tracking-wide">{name}</h3>
 
-        <EnrollButton
-          courseId={id}
-          amount={amount}
-          className="w-full rounded-lg bg-orange px-4 py-2 text-sm font-medium text-white hover:bg-burnt disabled:opacity-50"
-        />
+        <Link href="/student/subscription" className="w-full rounded-lg bg-orange px-4 py-2 text-center text-sm font-medium text-white hover:bg-burnt">
+          Subscribe to access
+        </Link>
       </div>
     );
   }
