@@ -11,7 +11,6 @@ export default function NotificationPage() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
 
   const { data: notifications, isLoading: notificationsLoading } = useNotifications();
-  console.log(notifications, "notifications");
 
   return (
     <section className="flex flex-col gap-5">
@@ -26,7 +25,7 @@ export default function NotificationPage() {
       </div>
 
       {notificationsLoading ? (
-        <Skeleton className="rounded-xl w-full h-screen" />
+        <Skeleton className="rounded-xl w-full h-64" />
       ) : (
         <NotificationsTable notifications={notifications} />
       )}

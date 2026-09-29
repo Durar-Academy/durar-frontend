@@ -5,6 +5,31 @@ type EncryptionPayload = {
   key: Uint8Array;
 };
 
+type Media = {
+  id: string;
+  filename: string;
+  mimetype: string;
+  url: string;
+  size: number | null;
+  createdAt: Date | string;
+  // Legacy fields for backward compatibility
+  fileType?: string;
+  fileName?: string;
+  storageId?: string;
+  src?: string;
+  width?: number | null;
+  height?: number | null;
+  alt?: string | null;
+  updatedAt?: Date | string;
+  deletedAt?: Date | null;
+};
+
+type UploadFileResponse = {
+  id?: string;
+  url: string;
+  storageId: string;
+};
+
 type CreateAccountPayload = {
   email: string;
   password: string;
@@ -15,6 +40,20 @@ type CreateAccountPayload = {
   country: string;
   phone: string;
   title: "Mr" | "Mrs" | "Ms" | "Dr";
+};
+
+type RegisterStudentPayload = {
+  gender: string;
+  email: string;
+  title: "Mr" | "Mrs" | "Ms" | "Dr";
+  password: string;
+  firstName: string;
+  lastName: string;
+  middleName: string;
+  phone: string;
+  country: string;
+  category: string;
+  assignedCoursesIds: string[];
 };
 
 type TutorOnboardingPayload = {
@@ -37,16 +76,15 @@ type TutorOnboardingPayload = {
 };
 
 type UpdateAccountPayload = {
-  firstName: string;
-  lastName: string;
-  middleName: string;
-  email: string;
-  gender: string;
-  phone: string;
-  country: string;
-
-  // title: string;
-  // profilePic: string;
+  title?: string;
+  firstName?: string;
+  lastName?: string;
+  middleName?: string;
+  email?: string;
+  gender?: string;
+  phone?: string;
+  country?: string;
+  profilePictureId?: string | null;
 };
 
 type AuthenticationContextProps = {
@@ -111,6 +149,7 @@ type User = {
   lastLoginAt: string | null;
   role: "admin" | "student" | "tutor";
   profilePictureId: string | null;
+  profilePicture?: Media | null;
   deletedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
@@ -287,6 +326,13 @@ type StudentStatus = "unverified" | "active" | "suspended" | "deactivated" | "gr
 type SearchFilters = {
   search?: string;
   status?: StudentStatus | TutorStatus | CourseStatus;
+  page?: number;
+  limit?: number;
+};
+
+type CourseFilters = SearchFilters & {
+  page?: number | string;
+  limit?: number | string;
 };
 
 type Student = {
@@ -303,6 +349,7 @@ type Student = {
   lastLoginAt: string | null;
   role: "student";
   profilePictureId: string | null;
+  profilePicture?: Media | null;
   deletedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
@@ -385,6 +432,7 @@ type UserCourse = {
   lastName: string;
   firstName: string;
   role: "student" | "tutor";
+  user?: Pick<User, "id" | "firstName" | "lastName" | "role">;
 };
 
 type Lesson = {
@@ -509,6 +557,30 @@ type Assignment = {
   // AssignmentFeedback: StudentFeedback[];
 };
 
+type StudentAssignment = {
+  id: string;
+  title: string;
+  courseId: string;
+  totalScore: number;
+  dueAt: string | Date;
+  type: "quiz" | "assignment" | string;
+  description: string | null;
+  allowLate: boolean;
+  mediaId: string | null;
+  media?: Media | null;
+  randomnize: boolean;
+  autoGraded: boolean;
+  duration: number | null;
+  createdAt: string | Date;
+  updatedAt: string | Date;
+  status?: AssignmentStatus | string;
+  grade?: number | null;
+  course?: {
+    id?: string;
+    title?: string;
+  };
+};
+
 type AssignmentSubmission = {
   id: string;
   assignmentId: string;
@@ -614,11 +686,13 @@ type TutorCoursesTableProps = {
 type CoursesMetrics = {
   totalCourses: number;
   activeCourses: number;
-  inActiveCourses: number;
+  draftCourses: number;
   completedCourses: number;
 };
 
 type CourseStatus = "draft" | "published";
+
+type LessonContentType = "video" | "audio" | "text" | "image";
 
 type CreateCourse = {
   title: string;
@@ -636,15 +710,39 @@ type CreateCourse = {
   trackProgress: boolean;
   enableComments: boolean;
   additionalNotes: string;
+  prerequisites: string[];
   status: CourseStatus;
 };
 
 type CreateLesson = {
-  id: number;
+  id: number | string;
   name: string;
   video: FileDropValue;
-  type: string;
+  type: LessonContentType;
   isLocked: boolean;
+};
+
+type CreateCoursePayload = {
+  title: string;
+  description?: string;
+  storageId?: string;
+  status: CourseStatus;
+  language?: string;
+  category?: string;
+  difficultyLevel?: string;
+  enableCertification: boolean;
+  trackProgress: boolean;
+  enableComments: boolean;
+  additionalNotes?: string;
+  prerequisites: string[];
+  lessons: {
+    id?: string;
+    title: string;
+    duration: number;
+    dueAt?: Date;
+    type: LessonContentType;
+    storageId?: string;
+  }[];
 };
 
 type CreateCourseFormContextProps = {
@@ -663,15 +761,17 @@ type CreateCourseFormContextProps = {
   publishCourse: () => void;
 
   isSubmitting: boolean;
+  submissionMode: CourseStatus | null;
 };
 
 type DropzoneProps = {
   onFileDrop: ({ file: File, preview: string }) => void;
   value: FileDropValue;
   showThumbnail?: boolean;
+  onClear?: () => void;
 };
 
-type FileDropValue = { file: File; preview: string } | null;
+type FileDropValue = { file: File | null; preview: string; src?: string } | null;
 
 type Schedule = {
   id: string;
@@ -681,12 +781,14 @@ type Schedule = {
   courseId: string;
   status: string;
   userId: string;
-  createdAt: string;
-  updatedAt: string;
-  deletedAt: null;
+  studentId?: string;
+  link?: string;
+  createdAt?: string;
+  updatedAt?: string;
+  deletedAt?: null;
   course: Course;
-
   user: Tutor;
+  student?: Student;
 };
 
 type PaymentMethod = {
@@ -728,6 +830,8 @@ type CreateSchedule = {
   courseId?: string;
   status: string;
   userId: string;
+  studentId?: string;
+  link: string;
 };
 
 type AssignmentsMetrics = {
@@ -781,7 +885,7 @@ type CreateQuiz = {
   allowLate: boolean;
   randomnize: boolean;
   duration: number;
-  autograded: boolean;
+  autoGraded: boolean;
 
   questions: Question[];
 };
@@ -814,7 +918,7 @@ type Question = {
 
 type CourseCardProps = {
   name: string;
-  thumbnail: string;
+  thumbnailId?: string | null;
   progress: number;
   id: string;
 };
@@ -879,6 +983,7 @@ interface ClassItem {
   category: string;
   time: string;
   status: string;
+  link?: string | null;
 }
 
 interface TutorStudentsResponse {
@@ -925,6 +1030,7 @@ interface TutorClassesResponse {
     start: string;
     end: string;
     status: string;
+    link?: string | null;
     courseId: string;
     studentId: string;
     createdAt: string;
@@ -946,6 +1052,7 @@ interface TutorClassesResponse {
       email: string;
     };
   }[];
+  links?: string[];
   metaData: {
     page: number;
     perPage: number;
@@ -1019,6 +1126,7 @@ interface UserProfileResponse {
   lastLoginAt: string | null;
   role: string;
   profilePictureId: string | null;
+  profilePicture?: Media | null;
   paypalCustomerId: string | null;
   paypalCardCustomerId: string | null;
   deletedAt: string | null;
@@ -1034,6 +1142,7 @@ interface UserProfile {
   status: string;
   role: string;
   profilePictureId: string | null;
+  profilePicture?: Media | null;
 }
 
 interface TutorActivityResponse {
@@ -1296,6 +1405,7 @@ interface TutorTimetableResponse {
     end: string;
     courseId: string;
     status: string;
+    link?: string | null;
     userId: string;
     studentId: string;
     createdAt: string;
@@ -1341,6 +1451,12 @@ interface TutorTimetableResponse {
       createdAt: string;
       updatedAt: string;
     };
+    student?: {
+      id: string;
+      firstName: string;
+      lastName: string;
+      email: string;
+    } | null;
   }[];
   metaData: {
     page: number;
@@ -1360,8 +1476,9 @@ interface TimetableEntry {
   period: string;
   schedule: {
     [day: string]: {
-      teacher: string;
-      profileLink: string;
+      id: string;
+      studentName: string;
+      link?: string | null;
     };
   };
 }
@@ -1375,3 +1492,83 @@ interface NotificationItem {
   sender: string;
   mediaUrl?: string | null;
 }
+
+// --- Admin Mutation Payload Types ---
+
+type UpdateCoursePayload = {
+  title?: string;
+  description?: string;
+  status?: CourseStatus;
+  language?: string;
+  category?: string;
+  difficultyLevel?: string;
+  enableCertification?: boolean;
+  trackProgress?: boolean;
+  enableComments?: boolean;
+  additionalNotes?: string;
+  prerequisites?: string[];
+  lessons?: {
+    id?: string;
+    title: string;
+    duration: number;
+    dueAt?: Date | string;
+    type: string;
+    storageId?: string;
+    courseId?: string;
+  }[];
+};
+
+type CreateAssignmentPayload = {
+  title: string;
+  courseId: string;
+  totalScore: number;
+  dueAt: string | Date;
+  type: "quiz" | "assignment";
+  description?: string;
+  allowLate?: boolean;
+  mediaId?: string;
+  randomnize?: boolean;
+  autoGraded?: boolean;
+  duration?: number;
+};
+
+type UpdateAssignmentPayload = {
+  title?: string;
+  totalScore?: number;
+  dueAt?: string | Date;
+  description?: string;
+  allowLate?: boolean;
+  randomnize?: boolean;
+  autoGraded?: boolean;
+  duration?: number;
+};
+
+type AssignmentFilters = SearchFilters & {
+  courseId?: string;
+  type?: "quiz" | "assignment";
+  page?: number | string;
+  limit?: number | string;
+};
+
+type PaymentFilters = {
+  userId?: string;
+  startAt?: string;
+  endAt?: string;
+  page?: number | string;
+  limit?: number | string;
+};
+
+type CreateNotificationPayload = {
+  title: string;
+  content: string;
+  recipientType: RecipientType;
+  mediaId?: string | null;
+  recipientIds?: string[] | null;
+};
+
+type UpdateNotificationPayload = {
+  title?: string;
+  content?: string;
+  recipientType?: RecipientType | string;
+  mediaId?: string | null;
+};

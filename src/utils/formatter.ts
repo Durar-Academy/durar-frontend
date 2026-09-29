@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 export function formatAmount(amount: number, currency?: string) {
   let formattedAmount: string;
 
@@ -31,6 +33,17 @@ export function formatDateAndTime(isoDateString: Date) {
     date: formattedDate,
     time: formattedTime,
   };
+}
+
+export function formatOptionalDate(
+  value: Date | string | null | undefined,
+  formatString = "PP",
+  placeholder = "—",
+) {
+  if (!value) return placeholder;
+
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? placeholder : format(date, formatString);
 }
 
 export function formatToReadableId(id: string, prefix: string): string {

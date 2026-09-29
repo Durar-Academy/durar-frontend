@@ -63,16 +63,16 @@ export default function SingleAssignmentPage() {
         )}
       </div>
 
-      <div className="rounded-xl p-6 border border-shade-2 bg-white flex flex-col gap-4">
-        <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-4 rounded-xl border border-shade-2 bg-white p-4 sm:p-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <h3 className="text-low font-medium text-xl">Assignment Overview</h3>
         </div>
 
         <div className="assignment-overview-cards">
           {assignmentMetricsLoading ? (
-            <Skeleton className="w-full rounded-xl h-24" />
-          ) : (
-            <div className="flex gap-6 h-24">
+              <Skeleton className="h-24 w-full rounded-xl" />
+            ) : (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
               {allAssignmentsMetrics.map((assignemnt, index) => (
                 <OverviewCard overview={assignemnt} key={index} />
               ))}
@@ -137,7 +137,7 @@ export default function SingleAssignmentPage() {
                     <span>Course</span>
 
                     <span className="capitalize text-orange">
-                      {assignment?.course.title ?? "Course Title"}
+                      {assignment?.course?.title ?? "Course Title"}
                     </span>
                   </>
 

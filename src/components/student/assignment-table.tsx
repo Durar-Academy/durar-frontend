@@ -10,19 +10,18 @@ import { format } from "date-fns";
 
 import { cn } from "@/lib/utils";
 
-export function AssignmentsTable({ assignments }: { assignments: Assignment[] }) {
+export function AssignmentsTable({ assignments }: { assignments: StudentAssignment[] }) {
   return (
     <div className="h-screen overflow-y-scroll hide-scrollbar">
       {assignments.length > 0 ? (
         <Table>
           <TableHeader>
             <TableRow className="text-low text-sm font-semibold">
-              <TableHead>Assignment Title</TableHead>
-              <TableHead>Course</TableHead>
-              <TableHead>Type</TableHead>
+              <TableHead>Subject</TableHead>
+              <TableHead>Topic</TableHead>
               <TableHead>Date Issued - Due Date</TableHead>
-              <TableHead>Grade</TableHead>
-              <TableHead>Total Score</TableHead>
+              <TableHead>Score</TableHead>
+              <TableHead>Class Average</TableHead>
               <TableHead>Status</TableHead>
             </TableRow>
           </TableHeader>
@@ -31,25 +30,18 @@ export function AssignmentsTable({ assignments }: { assignments: Assignment[] })
             {assignments.map((assignment) => (
               <TableRow
                 className="text-sm text-high bg-offwhite h-12"
-                key={assignment.id + assignment.status}
+                key={`${assignment.id}-${assignment.status ?? "unknown"}`}
               >
-                <TableCell className="capitalize">{assignment.title}</TableCell>
-                <TableCell className="capitalize">{assignment.course.title}</TableCell>
-                <TableCell
-                  className={cn(
-                    "capitalize font-medium text-high",
-                    assignment.type === "assignment" && "text-success",
-                    assignment.type === "quiz" && "text-orange",
-                  )}
-                >
-                  {assignment.type}
+                <TableCell className="capitalize">
+                  {assignment.course?.title ?? assignment.courseId}
                 </TableCell>
+                <TableCell>{assignment.title}</TableCell>
                 <TableCell>
                   {format(new Date(assignment.createdAt), "PP")} -{" "}
                   {format(new Date(assignment.dueAt), "PP")}
                 </TableCell>
-                <TableCell>{assignment.grade}</TableCell>
-                <TableCell>{assignment.totalScore}</TableCell>
+                <TableCell>{assignment.grade ?? "-"}</TableCell>
+                <TableCell>-</TableCell>
                 <TableCell
                   className={cn(
                     "capitalize font-medium text-high",
@@ -57,7 +49,7 @@ export function AssignmentsTable({ assignments }: { assignments: Assignment[] })
                     assignment.status === "pending" && "text-orange",
                   )}
                 >
-                  {assignment.status}
+                  {assignment.status ?? "unknown"}
                 </TableCell>
               </TableRow>
             ))}

@@ -1,6 +1,7 @@
 "use client";
 
-import Image from "next/image";
+import { format } from "date-fns";
+import { useMemo, useState } from "react";
 
 import { TopBar } from "@/components/shared/top-bar";
 import { PaymentsTable } from "@/components/student/payment-table";
@@ -11,12 +12,24 @@ import { processPayments } from "@/utils/processor";
 
 // import { mockPayments } from "@/data/mockData";
 import { usePayments } from "@/hooks/useStudent";
+import type { PaymentHistoryFilters } from "@/lib/student";
 
 export default function PaymentsPage() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
-  const { data: payments, isLoading: paymentsLoading } = usePayments();
+  const [status, setStatus] = useState<PaymentStatus>();
+  const [date, setDate] = useState<Date>();
+  const [page, setPage] = useState(1);
+  const filters = useMemo<PaymentHistoryFilters>(() => ({
+    ...(status ? { status } : {}),
+    ...(date ? { startAt: format(date, "yyyy-MM-dd"), endAt: format(date, "yyyy-MM-dd") } : {}),
+    page,
+    limit: 10,
+  }), [date, page, status]);
+  const { data: paymentsData, isLoading: paymentsLoading } = usePayments(filters);
 
-  const allPayments = processPayments(payments);
+  // React Query has no data on the initial render (including static prerendering).
+  // Keep the processor and the table working with a predictable array shape.
+  const allPayments = processPayments(paymentsData?.records ?? []);
   const pendingPayments = allPayments.filter((payment) => payment.status === "pending");
 
   return (
@@ -38,27 +51,24 @@ export default function PaymentsPage() {
         )}
       </div>
 
-      <div className="flex gap-3 overflow-x-scroll hide-scrollbar w-full">
+      <div className="w-full min-w-0">
         {paymentsLoading ? (
           <Skeleton className="w-full rounded-xl h-40" />
-        ) : allPayments && allPayments.length > 0 ? (
-          <PaymentsTable payments={allPayments} />
         ) : (
-          <section className="bg-white rounded-xl border border-shade-2 flex items-center justify-center py-14 w-full">
-            <div className="flex flex-col items-center">
-              <Image
-                src="/empty-slate.svg"
-                width={250}
-                height={200}
-                alt="Empty Icon"
-                className="object-cover object-center scale-90"
-              />
-
-              <h3 className="text-center max-w-52 text-high text-lg font-semibold">
-                You have not made any payment yet
-              </h3>
-            </div>
-          </section>
+          <PaymentsTable
+            payments={allPayments}
+            filters={filters}
+            metaData={paymentsData?.metaData}
+            onStatusChange={(nextStatus) => {
+              setStatus(nextStatus);
+              setPage(1);
+            }}
+            onDateChange={(nextDate) => {
+              setDate(nextDate);
+              setPage(1);
+            }}
+            onPageChange={setPage}
+          />
         )}
       </div>
     </section>

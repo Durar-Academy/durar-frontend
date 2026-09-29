@@ -5,10 +5,10 @@ import { OnboardingSidebar } from "@/components/onboarding/OnboardingSidebar";
 import PersonalInformation from "@/components/onboarding/PersonalInformation";
 import ProfessionalDetails from "@/components/onboarding/ProfessionalDetails";
 import { onboardingSidebarData } from "@/data2/constants";
-import { axiosInstance } from "@/lib/axios";
 import { useState, useEffect } from "react";
-// router not used in this component
 import { toast } from "react-hot-toast";
+
+import { updateTutorOnboarding } from "@/lib/auth";
 
 // Explicitly define FormData type
 type FormData = {
@@ -30,7 +30,7 @@ type FormData = {
   bankAccountDetails: string;
   agreedToTerms: boolean;
 };
-
+ 
 const Page = () => {
   
   const [progress, setProgress] = useState(0);
@@ -125,7 +125,7 @@ const Page = () => {
         lastName: formData.lastName,
         middleName: formData.middleName || undefined,
         phone: formData.phone,
-        gender: formData.gender,
+        gender: (formData.gender === "female" ? "female" : "male") as "male" | "female",
         country: formData.country,
         dob: formData.dob,
         specializationAndSkill: formData.specializationAndSkill,
@@ -133,19 +133,15 @@ const Page = () => {
         address: formData.address,
         city: formData.city,
         state: formData.state,
-        paymentMode: formData.paymentMode,
+        paymentMode: formData.paymentMode as "BankTransfer" | "PayPal" | "Crypto",
         bankAccountDetails: formData.bankAccountDetails,
         documents: formData.documents, // This contains the mediaId strings
       };
 
-      console.log("Submitting data:", submitData);
 
-      const response = await axiosInstance.patch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/onboard-tutor`,
-        submitData
-      );
+      const response = await updateTutorOnboarding(submitData);
 
-      if (response.data.success) {
+      if (response.success) {
         toast.success("Onboarding completed successfully!");
         // Clear any saved onboarding draft and navigate to tutor dashboard.
         // We avoid calling react-query hooks here to prevent SSR build errors
@@ -158,18 +154,18 @@ const Page = () => {
         // Force a full reload to ensure fresh data is fetched after onboarding.
         window.location.href = "/tutor";
       } else {
-        toast.error(response.data.message || "Something went wrong");
+        console.warn("[Onboarding] Backend returned success=false:", response.message);
+        toast.error(response.message || "Something went wrong");
       }
     } catch (error: unknown) {
-      const errorMessage = error instanceof Error 
-        ? error.message 
-        : error && typeof error === 'object' && 'response' in error && error.response && typeof error.response === 'object' && 'data' in error.response && error.response.data && typeof error.response.data === 'object' && 'message' in error.response.data
-        ? String(error.response.data.message)
-        : "An error occurred during onboarding";
-      
+      const axiosError = error as { response?: { data?: { message?: string } }; message?: string };
+      const errorMessage = axiosError?.response?.data?.message || axiosError?.message || "An error occurred during onboarding";
+
+      console.error("[Onboarding] Error:", {
+        message: axiosError?.message,
+        responseData: axiosError?.response?.data,
+      });
       toast.error(errorMessage);
-      console.error("Onboarding error:", error);
-      console.error("Error response data:", error && typeof error === 'object' && 'response' in error ? (error.response as Record<string, unknown>)?.data : undefined);
     } finally {
       setIsSubmitting(false);
     }
@@ -218,10 +214,10 @@ const Page = () => {
   };
 
   return (
-    <section className="w-full h-screen overflow-hidden flex bg-offwhite">
+    <section className="flex min-h-screen w-full bg-offwhite lg:h-screen lg:overflow-hidden">
       <OnboardingSidebar handleClick={handleClick} progress={progress} />
-      <section className="p-6 py-12 min-h-screen w-full overflow-y-auto flex flex-col gap-4 items-center">
-        <header className="flex items-baseline justify-center gap-5">
+      <section className="min-w-0 w-full overflow-y-auto px-4 pb-8 pt-20 sm:px-6 sm:py-12 lg:pt-12">
+        <header className="mx-auto flex max-w-[873px] flex-wrap items-baseline justify-center gap-x-3 gap-y-2 sm:gap-x-5">
           {onboardingSidebarData.map((eachData, i) => (
             <div key={i} className="flex items-center gap-2">
               <span
@@ -254,7 +250,7 @@ const Page = () => {
             </div>
           ))}
         </header>
-        <main className="w-[873px]">
+        <main className="mx-auto w-full max-w-[873px]">
           {progress === 0 ? (
             <PersonalInformation
               handleNext={handleNext}

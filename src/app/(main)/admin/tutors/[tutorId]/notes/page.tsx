@@ -7,9 +7,13 @@ import { Input } from "@/components/ui/input";
 import { DisplayList } from "@/components/admin/display-list";
 import { AddNoteDialog } from "@/components/admin/add-note-dialog";
 
-import { tutorNotes } from "@/data/mockData";
+import { useParams } from "next/navigation";
+import { useStudentNotes } from "@/hooks/useAdmin";
 
 export default function TutorManagementCommentPage() {
+  const { tutorId } = useParams<{ tutorId: string }>();
+  const { data, isLoading, isError } = useStudentNotes(tutorId);
+  const notes = data?.records ?? [];
   return (
     <div className="p-6 rounded-xl bg-white border border-shade-2">
       <div className="flex justify-between items-center mb-6">
@@ -32,15 +36,23 @@ export default function TutorManagementCommentPage() {
           </div>
 
           <div>
-            <AddNoteDialog />
+            <AddNoteDialog studentId={tutorId} />
           </div>
         </div>
       </div>
 
       <div className="flex flex-col gap-3">
-        {tutorNotes.map((note, index) => (
-          <DisplayList key={index} text={note.text} date={note.date as unknown as Date} />
-        ))}
+        {isLoading ? (
+          <p className="rounded-lg border border-dashed border-shade-3 p-6 text-sm text-low">Loading notes...</p>
+        ) : isError ? (
+          <p className="rounded-lg border border-dashed border-red-200 p-6 text-sm text-red-600">Unable to load tutor notes.</p>
+        ) : notes.length === 0 ? (
+          <p className="rounded-lg border border-dashed border-shade-3 p-6 text-sm text-low">No notes have been added for this tutor.</p>
+        ) : (
+          notes.map((note: { id: string; title?: string | null; content: string; createdAt: string }) => (
+            <DisplayList key={note.id} text={note.title || note.content} date={new Date(note.createdAt)} />
+          ))
+        )}
       </div>
     </div>
   );

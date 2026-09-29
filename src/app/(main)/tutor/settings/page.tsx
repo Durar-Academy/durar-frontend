@@ -1,11 +1,14 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { Bell } from "lucide-react";
+import Link from "next/link";
 import { toast } from "react-hot-toast";
 import { useCurrentUser } from "@/hooks/useAccount";
 import { updateTutorOnboarding } from "@/lib/auth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Top_Bar } from "@/components/tutor/top-bar";
+import { SUPPORTED_LANGUAGES } from "@/data/constants";
 
 export default function TutorSettingsPage() {
   const { data: user, isLoading } = useCurrentUser();
@@ -337,15 +340,16 @@ export default function TutorSettingsPage() {
                 <label htmlFor="language" className="text-sm text-low">
                   Language
                 </label>
-                <input
-                  placeholder="Enter language..."
+                <select
                   className="pl-2 h-12 rounded-lg border-shade-3 border outline-orange focus:border-orange"
-                  type="text"
                   name="language"
                   id="language"
                   value={formData.language}
                   onChange={handleChange}
-                />
+                >
+                  <option value="">Select language</option>
+                  {SUPPORTED_LANGUAGES.map((language) => <option key={language.value} value={language.value}>{language.label}</option>)}
+                </select>
               </div>
             </div>
           </div>
@@ -451,6 +455,24 @@ export default function TutorSettingsPage() {
             </button>
           </div>
         </form>
+      </div>
+
+      <div className="flex items-center justify-between gap-4 rounded-xl border border-shade-2 bg-white p-6">
+        <div className="flex items-start gap-3">
+          <Bell className="mt-0.5 h-5 w-5 text-orange" aria-hidden="true" />
+          <div>
+            <h2 className="text-lg font-medium text-high">Notifications</h2>
+            <p className="mt-1 text-sm text-low">
+              View and manage your academy notifications.
+            </p>
+          </div>
+        </div>
+        <Link
+          href="/tutor/notification"
+          className="shrink-0 rounded-lg bg-orange px-4 py-2.5 text-sm font-medium text-white hover:bg-orange/90"
+        >
+          View notifications
+        </Link>
       </div>
     </section>
   );

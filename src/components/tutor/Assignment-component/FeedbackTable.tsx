@@ -59,8 +59,8 @@ export default function FeedbackTable({ feedbacks }: feedbackTableProps) {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
-        <table className="text-sm min-w-full bg-white border-none border-separate border-spacing-y-3">
+      <div className="min-w-0 max-w-full overflow-x-auto">
+        <table className="text-sm min-w-max bg-white border-none border-separate border-spacing-y-3">
           <tbody>
             {filteredfeedbacks.map((feedback, i) => (
               <tr

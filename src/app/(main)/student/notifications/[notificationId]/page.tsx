@@ -72,7 +72,6 @@ export default function SingleNotificationPage() {
       setIsMarking(true);
 
       const response = await markAsRead(notificationId as string);
-      console.log("Mark as Read", response.data);
 
       toast.success(response?.message || "Marked as Read!");
     } catch (error) {

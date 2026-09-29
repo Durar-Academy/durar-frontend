@@ -8,12 +8,12 @@ interface TableProps<T> {
 
 export default function Table<T>({ headers, data, renderRow }: TableProps<T>) {
   return (
-    <div className="overflow-x-auto border-spacing-y-4">
-      <table className="min-w-full bg-white border-none rounded-lg border-separate border-spacing-y-3">
+    <div className="w-full min-w-0 overflow-x-auto">
+      <table className="w-full min-w-[620px] table-fixed border-separate border-spacing-y-2 rounded-lg bg-white">
         <thead>
           <tr className="text-low text-sm text-left">
             {headers.map((header, index) => (
-              <th key={index} className="py-3 px-4">
+              <th key={index} className="whitespace-nowrap px-4 py-3 text-left font-semibold">
                 {header}
               </th>
             ))}

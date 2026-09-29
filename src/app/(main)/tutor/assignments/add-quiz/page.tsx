@@ -28,7 +28,6 @@ export default function AddNewQuizPage() {
   const { formData, updateFormData, cancelForm, nextStep } =
     useTutorQuizFormProvider();
 
-  console.log("FORMDATA:PAGE 1", formData);
 
   const courseOptions = allCourses
     ? allCourses.map((course) => {
@@ -238,9 +237,9 @@ export default function AddNewQuizPage() {
                 aria-readonly
                 className="disabled:opacity-100"
                 id="autoGrade"
-                checked={formData.autograded}
+                checked={formData.autoGraded}
                 onCheckedChange={(checked) =>
-                  updateFormData({ ...formData, autograded: checked })
+                  updateFormData({ ...formData, autoGraded: checked })
                 }
               />
             </div>

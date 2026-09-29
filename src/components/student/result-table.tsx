@@ -7,18 +7,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-interface Result {
+export interface Result {
   id: string;
-  course: string;
+  course: { title: string };
   ca: number;
   exam: number;
+  totalScore: number;
   grade: string;
-  remarks: string;
 }
 
 export function ResultsTable({ results }: { results: Result[] }) {
   return (
-    <div className="h-full overflow-y-scroll hide-scrollbar">
+    <div className="h-full min-w-0 max-w-full overflow-y-scroll hide-scrollbar">
       {
         <Table>
           <TableHeader>
@@ -26,8 +26,8 @@ export function ResultsTable({ results }: { results: Result[] }) {
               <TableHead>Course</TableHead>
               <TableHead>CA</TableHead>
               <TableHead>Exam</TableHead>
+              <TableHead>Total</TableHead>
               <TableHead>Grade</TableHead>
-              <TableHead>Tutor Remarks</TableHead>
             </TableRow>
           </TableHeader>
 
@@ -35,14 +35,14 @@ export function ResultsTable({ results }: { results: Result[] }) {
             {results.map((result) => (
               <TableRow
                 className="text-sm text-high bg-offwhite h-12"
-                key={result.id + result.course}
+                key={result.id}
               >
-                <TableCell className="capitalize">{result.course}</TableCell>
+                <TableCell className="capitalize">{result.course.title}</TableCell>
                 <TableCell>{result.ca}</TableCell>
                 <TableCell>{result.exam}</TableCell>
+                <TableCell>{result.totalScore}</TableCell>
 
                 <TableCell className="uppercase">{result.grade}</TableCell>
-                <TableCell className="capitalize">{result.remarks}</TableCell>
               </TableRow>
             ))}
           </TableBody>

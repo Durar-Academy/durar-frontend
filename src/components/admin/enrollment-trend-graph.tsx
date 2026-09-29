@@ -13,7 +13,7 @@ export function EnrollmentTrendGraph({ users }: EnrollmentTrendGraphProps) {
   const [selectedYear, setSelectedYear] = useState<string>("");
 
   useEffect(() => {
-    const processedData = processEnrollmentData(users);
+    const processedData = processEnrollmentData(users ?? []);
     setEnrollmentData(processedData);
 
     const years = Object.keys(processedData);

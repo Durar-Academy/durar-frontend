@@ -20,7 +20,7 @@ const Page = () => {
           </Top_Bar>
         )}
       </div>
-      <section className="StudentLists p-6 rounded-xl bg-white border-[1px] border-[#E7E8EE]">
+      <section className="StudentLists rounded-xl border border-[#E7E8EE] bg-white p-4 sm:p-6">
         <StudentTable page={page} setPage={setPage} />
       </section>
     </section>

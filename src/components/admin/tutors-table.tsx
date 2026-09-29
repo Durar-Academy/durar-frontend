@@ -54,14 +54,6 @@ export function TutorsTable({ tutors }: { tutors: TutorsTableProps }) {
               ))}
             </SelectContent>
           </Select>
-
-          {/* <div>
-            <Button variant={"_outline"} className="text-orange border border-orange shadow-none py-3 px-4 h-10">
-              <span>Export List</span>
-
-              <Download />
-            </Button>
-          </div> */}
         </div>
       </div>
 

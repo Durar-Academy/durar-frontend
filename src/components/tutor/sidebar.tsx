@@ -1,17 +1,10 @@
-import Image from "next/image";
-
+import { ResponsiveSidebar } from "@/components/shared/responsive-sidebar";
 import { SidebarLinks } from "@/components/tutor/sidebar-links";
 
 export function TutorSidebar() {
   return (
-    <aside className="w-[260px] shrink-0 h-full bg-green p-8">
-      <div className="relative w-32 h-10">
-        <Image src={"/logo-white.svg"} fill alt="Durar Logo" className="object-cover object-center" />
-      </div>
-
-      <div className="mt-[60px]">
+    <ResponsiveSidebar>
         <SidebarLinks />
-      </div>
-    </aside>
+    </ResponsiveSidebar>
   );
 }

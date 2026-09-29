@@ -7,22 +7,17 @@ import { TopBar } from "@/components/shared/top-bar";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { useCurrentUser } from "@/hooks/useAccount";
-import { useNotifications } from "@/hooks/useAdmin";
-import { processNotificationsMetrics } from "@/utils/processor";
-
-const metrics = {
-  totalNotifications: 247,
-  readRate: 78,
-  activeRecipients: 10,
-};
+import { useAllNotifications } from "@/hooks/useAdmin";
+import { getNotificationMetrics, processNotificationsMetrics } from "@/utils/processor";
 
 export default function NotificationPage() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
 
-  const { data: notifications, isLoading: notificationsLoading } = useNotifications();
-  console.log(notifications, "notifications");
+  const { data: notifications, isLoading: notificationsLoading } = useAllNotifications();
 
-  const allNotificationsMetrics = processNotificationsMetrics(metrics ?? []);
+  const notificationRecords = notifications ?? [];
+  const notificationMetrics = getNotificationMetrics(notificationRecords);
+  const allNotificationsMetrics = processNotificationsMetrics(notificationMetrics);
 
   return (
     <section className="flex flex-col gap-5">
@@ -64,7 +59,7 @@ export default function NotificationPage() {
       {notificationsLoading ? (
         <Skeleton className="rounded-xl w-full h-screen" />
       ) : (
-        <NotificationsTable notifications={notifications} />
+        <NotificationsTable notifications={notificationRecords} />
       )}
     </section>
   );

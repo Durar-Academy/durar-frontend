@@ -96,11 +96,10 @@ export function EditNotificationDialog({
         title,
         content,
         recipientType,
-        mediaId: fileResponse?.storageId ?? null,
+        mediaId: fileResponse?.id ?? null,
       };
 
       const response = await axiosInstance.patch(`/notification/${notification.id}`, payload);
-      console.log("UPDATE NOTIFICATION", response);
       toast.success("Notification updated!");
     } catch (error) {
       console.error("Update Error:", error);

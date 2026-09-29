@@ -1,4 +1,5 @@
 import { DatePicker } from "@/components/ui/date-picker";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -22,13 +23,43 @@ import { Download, RefreshCw, Wallet } from "lucide-react";
 import { useState } from "react";
 import { AddNewCard } from "./add-new-card";
 import { StudentPaymentMethods } from "./student-payment-methods";
-import { usePaymentMethods } from "@/hooks/useStudent";
+import { useDownloadStudentTransactions, usePaymentMethods } from "@/hooks/useStudent";
+import type { PaymentHistoryFilters, PaymentHistoryResponse } from "@/lib/student";
 
-export function PaymentsTable({ payments }: { payments: PaymentsTableProps }) {
+export function PaymentsTable({
+  payments,
+  filters,
+  metaData,
+  onStatusChange,
+  onDateChange,
+  onPageChange,
+}: {
+  payments: PaymentsTableProps;
+  filters: PaymentHistoryFilters;
+  metaData?: PaymentHistoryResponse["metaData"];
+  onStatusChange: (status?: PaymentStatus) => void;
+  onDateChange: (date?: Date) => void;
+  onPageChange: (page: number) => void;
+}) {
   const [isOpen, setIsOpen] = useState(false);
   const [isAddNew, setIsAddNew] = useState(false);
 
   const { data: methods } = usePaymentMethods();
+  const downloadTransactions = useDownloadStudentTransactions();
+
+  const handleDownload = async () => {
+    try {
+      const csvBlob = await downloadTransactions.mutateAsync({ filters });
+      const blobUrl = URL.createObjectURL(csvBlob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = "payment-history.csv";
+      link.click();
+      URL.revokeObjectURL(blobUrl);
+    } catch {
+      window.alert("Unable to download your payment history. Please try again.");
+    }
+  };
 
   const cardsFromBackend =
     methods && methods.length > 0
@@ -46,13 +77,14 @@ export function PaymentsTable({ payments }: { payments: PaymentsTableProps }) {
         <h3 className="text-base text-high font-semibold">Payment History</h3>
 
         <div className="flex gap-3">
-          <Select>
-            <SelectTrigger className="w-fit h-10 text-high bg-white border border-shade-3 rounded-lg text-base px-4 py-3 focus:ring-0">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
+        <Select value={filters.status ?? "all"} onValueChange={(value) => onStatusChange(value === "all" ? undefined : value as PaymentStatus)}>
+          <SelectTrigger className="w-fit h-10 text-high bg-white border border-shade-3 rounded-lg text-base px-4 py-3 focus:ring-0">
+            <SelectValue placeholder="Status" />
+          </SelectTrigger>
 
-            <SelectContent>
-              {PAYMENT_STATUSES.map((paymentStatus, index) => (
+          <SelectContent>
+            <SelectItem value="all">All statuses</SelectItem>
+            {PAYMENT_STATUSES.map((paymentStatus, index) => (
                 <SelectItem
                   value={paymentStatus.status}
                   key={paymentStatus.status + index}
@@ -65,13 +97,16 @@ export function PaymentsTable({ payments }: { payments: PaymentsTableProps }) {
           </Select>
 
           <div>
-            <DatePicker />
+            <DatePicker
+              date={filters.startAt ? new Date(filters.startAt) : undefined}
+              onChange={onDateChange}
+            />
           </div>
         </div>
       </div>
 
-      <div className="h-screen overflow-y-scroll hide-scrollbar">
-        <Table>
+      <div className="max-h-[calc(100dvh-16rem)] overflow-auto hide-scrollbar">
+        <Table className="min-w-[760px]">
           <TableHeader>
             <TableRow className="text-low text-sm font-semibold">
               <TableHead>Invoice ID</TableHead>
@@ -84,7 +119,13 @@ export function PaymentsTable({ payments }: { payments: PaymentsTableProps }) {
           </TableHeader>
 
           <TableBody className="space-y-3">
-            {payments.map((payment) => (
+            {payments.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="py-10 text-center text-sm text-low">
+                  No payments match the selected filters.
+                </TableCell>
+              </TableRow>
+            ) : payments.map((payment) => (
               <TableRow
                 className="text-sm text-high bg-offwhite h-12"
                 key={payment.id + payment.status}
@@ -108,7 +149,8 @@ export function PaymentsTable({ payments }: { payments: PaymentsTableProps }) {
                   {payment.status}
                 </TableCell>
 
-                <TableCell className="flex justify-center">
+                <TableCell>
+                  <div className="flex justify-center whitespace-nowrap">
                   {payment.status === "pending" && (
                     <button
                       className="font-bold text-white bg-orange hover:bg-burnt
@@ -134,17 +176,43 @@ export function PaymentsTable({ payments }: { payments: PaymentsTableProps }) {
                     <button
                       className="font-bold text-orange bg-white
                       rounded-lg py-2 px-4 flex items-center justify-center gap-2"
+                      type="button"
+                      disabled={downloadTransactions.isPending}
+                      onClick={handleDownload}
                     >
-                      Download
+                      {downloadTransactions.isPending ? "Preparing..." : "Download"}
                       <Download className="w-5 h-5 text-orange" />
                     </button>
                   )}
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
       </div>
+
+      {metaData && metaData.pageCount > 1 && (
+        <div className="mt-4 flex items-center justify-between gap-3">
+          <Button
+            variant="outline"
+            disabled={!metaData.hasPreviousPages}
+            onClick={() => onPageChange(metaData.page - 1)}
+          >
+            Previous
+          </Button>
+          <span className="text-sm text-low">
+            Page {metaData.page} of {metaData.pageCount}
+          </span>
+          <Button
+            variant="outline"
+            disabled={!metaData.hasNextPages}
+            onClick={() => onPageChange(metaData.page + 1)}
+          >
+            Next
+          </Button>
+        </div>
+      )}
 
       <StudentPaymentMethods
         open={isOpen}

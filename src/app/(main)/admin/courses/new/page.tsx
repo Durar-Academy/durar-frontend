@@ -18,9 +18,7 @@ import { CreateCourseBasicInfoForm } from "@/components/admin/course/create-cour
 export default function CreateCoursePage() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
 
-  const { currentFormStep, formData } = useCreateCourseFormProvider();
-
-  console.log("FORM DATA:", formData, "\nSTEP:", currentFormStep);
+  const { currentFormStep } = useCreateCourseFormProvider();
 
   const RenderFormStepContent = () => {
     switch (currentFormStep) {

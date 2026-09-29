@@ -26,8 +26,10 @@ import { decryptCredentials, encryptCredentials } from "@/lib/encryption";
 import {
   deleteCredentials,
   retrieveCredentials,
+  storeItem,
   storeAuthData,
   storeCredentials,
+  STORE_EMAIL_KEY,
 } from "@/lib/storage";
 import { loginUser } from "@/lib/auth";
 
@@ -39,29 +41,41 @@ export function Login() {
   const setValue = useMemo(() => loginFormController.setValue, [loginFormController.setValue]);
 
   async function handleSubmit(values: z.infer<typeof loginFormSchema>) {
-    console.log("Login Form Values: ", values);
+    const email = values.email.trim().toLowerCase();
 
     if (values.rememberMe) {
-      const encryptedCredentials = await encryptCredentials(values.email, values.password);
+      const encryptedCredentials = await encryptCredentials(email, values.password);
 
       storeCredentials(encryptedCredentials as EncryptionPayload);
     } else deleteCredentials();
 
     const payload = {
-      email: values.email,
+      email,
       password: values.password,
     };
 
     setIsSubmitting(true);
     try {
       const response = await loginUser(payload);
-      console.log("Login Form Response Data", response);
 
       if (!response.data.isVerified) {
+        // The resend page uses this value to identify the account.
+        // Persist it here as well as during registration because users can
+        // reach the resend page from an unverified login.
+        storeItem(STORE_EMAIL_KEY, email);
         toast.error(
           "Please verify your account to continue.\nCheck your email for the verification link.",
         );
         router.push("/auth/request-verification");
+        return;
+      }
+
+      if (response.data.requiresPasswordReset) {
+        toast.success("Please create a new password to continue.");
+        loginFormController.reset();
+        if (response.data.passwordResetToken) {
+          router.push(`/auth/reset-password?token=${encodeURIComponent(response.data.passwordResetToken)}`);
+        }
         return;
       }
 
@@ -73,7 +87,6 @@ export function Login() {
       loginFormController.reset();
 
       const normalizedRole = role.toLowerCase();
-      console.log("Redirecting for role:", normalizedRole);
 
       switch (normalizedRole) {
         case "student":
@@ -91,7 +104,6 @@ export function Login() {
       }
       // router.push(`/${role.toLowerCase()}`);
     } catch (error: unknown) {
-      console.log("Login Form Error", error);
 
       // Check if it's an Axios error
       if (axios.isAxiosError(error)) {
@@ -99,7 +111,7 @@ export function Login() {
 
         if (status === 500) {
           toast.error("Server error. Please try again later.");
-        } else if (status === 401) {
+        } else if (status === 401 || status === 400 || status === 404) {
           toast.error("Invalid credentials. Please try again.");
         } else {
           toast.error("An error occurred. Please try again.");

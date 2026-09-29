@@ -49,7 +49,6 @@ export default function AddNewAssignmentPage() {
       })
     : [];
 
-  console.log("CREATE ASSIGNMENT", assignment);
 
   const cancelCreate = () => {
     // clear state and route back
@@ -69,7 +68,6 @@ export default function AddNewAssignmentPage() {
       if (assignment.thumbnail?.file) {
         thumbnailResponse = await uploadFile(assignment.thumbnail.file);
       }
-      console.log("CREATE ASSIGNMENT THUMBNAIL RESPONSE:", thumbnailResponse);
 
       // construct assignment payload
       const payload = {
@@ -79,16 +77,14 @@ export default function AddNewAssignmentPage() {
         type: "assignment",
         description: assignment.description,
         allowLate: assignment.allowLate,
-        storageId: thumbnailResponse ? thumbnailResponse.storageId : null,
+        storageId: thumbnailResponse?.storageId ?? null,
         totalScore: assignment.totalScore,
       };
 
-      console.log("CREATE ASSIGNMENT Payload:", payload);
 
       // await axiosInstance.post("/assignment", payload);
 
       const createAssignmentResponse = await axiosInstance.post("/assignment", payload);
-      console.log("CREATE ASSIGNMENT RESPONSE", createAssignmentResponse);
 
       toast.success("Assignment Created Successfully!");
 

@@ -1,5 +1,46 @@
 import { axiosInstance } from "./axios";
 
+type StudentAssignmentFilters = {
+  search?: string;
+  courseId?: string;
+  status?: string;
+  type?: string;
+  page?: number;
+  limit?: number;
+};
+
+export type AssignmentSubmissionPayload = {
+  content?: string;
+  submissionLink?: string;
+  files: string[];
+  recordings: Array<{ position: number; fileId: string; duration: number }>;
+};
+
+export async function getStudentAssignment(assignmentId: string, options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get("/assignment/student", {
+    params: { page: 1, limit: 100 },
+    signal: options?.signal,
+  });
+
+  const data = response.data?.data ?? response.data;
+  const assignments = Array.isArray(data) ? data : data?.records ?? [];
+  const assignment = assignments.find((item: StudentAssignment) => item.id === assignmentId);
+
+  if (!assignment) {
+    throw new Error("Assignment not found");
+  }
+
+  return assignment as StudentAssignment;
+}
+
+export async function submitAssignment(
+  assignmentId: string,
+  payload: AssignmentSubmissionPayload,
+) {
+  const response = await axiosInstance.post(`/assignment/${assignmentId}/submit`, payload);
+  return response.data;
+}
+
 export async function initializeLesson(lessonId: string, options?: { signal?: AbortSignal }) {
   const response = await axiosInstance.post(`/lesson/${lessonId}/progress`, {
     signal: options?.signal,
@@ -20,25 +61,85 @@ export async function updateLessonProgress(
   return response.data;
 }
 
-export async function getAssignments(options?: { signal?: AbortSignal }) {
-  const response = await axiosInstance.get("/assignment/student", {
+export async function getAssignments(options?: {
+  signal?: AbortSignal;
+  filters?: StudentAssignmentFilters;
+}) {
+  const params = new URLSearchParams();
+
+  if (options?.filters?.search) params.append("search", options.filters.search);
+  if (options?.filters?.courseId) params.append("courseId", options.filters.courseId);
+  if (options?.filters?.status) params.append("status", options.filters.status);
+  if (options?.filters?.type) params.append("type", options.filters.type);
+  if (options?.filters?.page !== undefined) params.append("page", String(options.filters.page));
+  if (options?.filters?.limit !== undefined) params.append("limit", String(options.filters.limit));
+
+  const response = await axiosInstance.get(`/assignment/student?${params.toString()}`, {
     signal: options?.signal,
   });
-  return response.data.data.records;
+
+  const data = response.data?.data ?? response.data;
+
+  if (Array.isArray(data)) return data;
+
+  return data?.records ?? [];
 }
 
-export async function getPayments(options?: { signal?: AbortSignal }) {
+export async function getPayments(options?: { signal?: AbortSignal; filters?: PaymentHistoryFilters }) {
   const response = await axiosInstance.get("/payment", {
     signal: options?.signal,
+    params: options?.filters,
   });
-  return response.data.data.records;
+  const payload = response.data?.data ?? response.data;
+  return {
+    records: Array.isArray(payload) ? payload : payload?.records ?? [],
+    metaData: Array.isArray(payload) ? undefined : payload?.metaData,
+  } as PaymentHistoryResponse;
 }
 
 export async function getPaymentMethods(options?: { signal?: AbortSignal }) {
   const response = await axiosInstance.get("/payment-method", {
     signal: options?.signal,
   });
-  return response.data;
+  const payload = response.data?.data ?? response.data;
+  if (Array.isArray(payload)) return payload as PaymentMethod[];
+  if (Array.isArray(payload?.records)) return payload.records as PaymentMethod[];
+  if (Array.isArray(payload?.data)) return payload.data as PaymentMethod[];
+  return [];
+}
+
+export async function downloadStudentTransactions(options?: { signal?: AbortSignal; filters?: PaymentHistoryFilters }) {
+  const response = await axiosInstance.get("/payment/download-transactions", {
+    signal: options?.signal,
+    params: options?.filters,
+    responseType: "blob",
+  });
+  return response.data as Blob;
+}
+
+export type PaymentHistoryFilters = {
+  status?: PaymentStatus;
+  startAt?: string;
+  endAt?: string;
+  page?: number;
+  limit?: number;
+};
+
+export type PaymentHistoryResponse = {
+  records: Payment[];
+  metaData?: {
+    page: number;
+    perPage: number;
+    pageCount: number;
+    totalCount: number;
+    hasPreviousPages: boolean;
+    hasNextPages: boolean;
+  };
+};
+
+export async function setPreferredPaymentMethod(paymentMethodId: string) {
+  const response = await axiosInstance.put(`/payment-method/${paymentMethodId}/preferred`);
+  return response.data?.data ?? response.data;
 }
 
 export async function addCard(payload: {
@@ -57,6 +158,11 @@ export async function addCard(payload: {
 }) {
   const response = await axiosInstance.post(`/payment/initialize`, payload);
   return response.data;
+}
+
+export async function verifyPayment(payload: { reference: string; provider?: string; type?: string }) {
+  const response = await axiosInstance.get('/payment/verify', { params: { provider: payload.provider ?? 'paystack', reference: payload.reference, type: payload.type } });
+  return response.data?.data ?? response.data;
 }
 
 export async function getNotifications(options?: { signal?: AbortSignal }) {
@@ -78,4 +184,11 @@ export async function markAsRead(notificationId: string, options?: { signal?: Ab
     signal: options?.signal,
   });
   return response.data;
+}
+
+export async function getStudentTimetable(options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get("/class/timetable", {
+    signal: options?.signal,
+  });
+  return response.data.data;
 }

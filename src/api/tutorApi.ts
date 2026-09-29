@@ -16,17 +16,56 @@ export const tutorApi = {
   getTutorStudents: async ({
     limit = 10,
     page = 1,
+    search,
     signal,
   }: {
     limit?: number;
     page?: number;
+    search?: string;
     signal?: AbortSignal;
   }) => {
-    const response = await axiosInstance.get("/class/tutor-student", {
-      params: { limit, page },
+    const response = await axiosInstance.get("/user-course/tutor-students", {
+      params: { limit, page, ...(search ? { search } : {}) },
       signal,
     });
-    return response.data.data as TutorStudentsResponse;
+
+    const payload = response.data.data as {
+      records?: Array<{
+        userId: string;
+        user?: {
+          id?: string;
+          firstName?: string | null;
+          lastName?: string | null;
+          email?: string | null;
+          status?: string | null;
+        } | null;
+        course?: { category?: string | null } | null;
+      }>;
+      metaData?: TutorStudentsResponse["metaData"];
+    };
+
+    return {
+      records: (payload.records ?? []).map((record) => ({
+        studentId: record.user?.id ?? record.userId,
+        studentName: [record.user?.firstName, record.user?.lastName]
+          .filter(Boolean)
+          .join(" ") || "Unnamed student",
+        category: record.course?.category ?? "Uncategorized",
+        email: record.user?.email ?? "",
+        status: record.user?.status ?? "inactive",
+        time: "",
+        day: "",
+      })),
+      metaData: payload.metaData ?? {
+        page,
+        perPage: limit,
+        pageCount: 0,
+        totalCount: 0,
+        hasPreviousPages: page > 1,
+        hasNextPages: false,
+        links: [],
+      },
+    } satisfies TutorStudentsResponse;
   },
   getTutorClasses: async ({
     limit = 10,
@@ -41,6 +80,7 @@ export const tutorApi = {
       params: { limit, page },
       signal,
     });
+    console.log(response.data.data, "RESPONSE DATA NEW");
     return response.data.data as TutorClassesResponse;
   },
   getTutorAssignments: async ({

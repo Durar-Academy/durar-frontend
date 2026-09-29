@@ -14,7 +14,6 @@ export default function CoursesPage() {
 
   const learningProgress = getCumulativeProgress(courses);
 
-  console.log("ALL COURSES", courses);
 
   return (
     <section className="flex flex-col gap-5">
@@ -43,7 +42,7 @@ export default function CoursesPage() {
                   <CourseCard
                     key={course.title + index}
                     name={course.title}
-                    thumbnail={course.thumbnailId ?? ""}
+                    thumbnailId={course.thumbnailId}
                     progress={course.UserCourse[0].progress}
                     id={course.id}
                   />

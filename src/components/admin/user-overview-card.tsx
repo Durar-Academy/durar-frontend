@@ -6,15 +6,13 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 
 export function UserOverviewCard({ user }: { user: Student }) {
+  const profilePictureSrc = user.profilePicture?.src ?? user.profilePictureId ?? undefined;
+
   return (
     <div className="w-full rounded-xl p-6 bg-white border border-shade-2 flex gap-4">
       <Avatar className="h-[154px] w-[188px] rounded-xl">
-        {user.profilePictureId && (
-          <AvatarImage
-            src={user.profilePictureId as string}
-            alt="User Profile Picture"
-            className="object-cover object-center"
-          />
+        {profilePictureSrc && (
+          <AvatarImage src={profilePictureSrc} alt="User Profile Picture" className="object-cover object-center" />
         )}
 
         <AvatarFallback className="bg-offwhite flex item-center justify-center rounded-xl">
@@ -26,7 +24,7 @@ export function UserOverviewCard({ user }: { user: Student }) {
         <p>
           <span>Full Name: </span>
           <span className="font-medium text-high">
-            {user.firstName} {user.middleName ? user.middleName : ""} {user.lastName}
+            {[user.firstName, user.middleName, user.lastName].filter(Boolean).join(" ")}
           </span>
         </p>
 

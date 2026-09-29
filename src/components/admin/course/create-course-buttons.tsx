@@ -15,6 +15,7 @@ export function CreateCourseButtons() {
     saveAsDraft,
     publishCourse,
     isSubmitting,
+    submissionMode,
   } = useCreateCourseFormProvider();
 
   return (
@@ -25,6 +26,8 @@ export function CreateCourseButtons() {
             variant={"_outline"}
             className="text-danger bg-white rounded-xl py-2 px-4 h-10 hover:bg-offwhite"
             onClick={cancelForm}
+            type="button"
+            disabled={isSubmitting}
           >
             <X className="w-5 h-5 text-inherit" />
             <span>Cancel</span>
@@ -34,6 +37,8 @@ export function CreateCourseButtons() {
             variant={"_outline"}
             onClick={prevStep}
             className="text-orange bg-white rounded-xl py-2 px-4 h-10 hover:bg-offwhite"
+            type="button"
+            disabled={isSubmitting}
           >
             <ArrowLeft className="w-5 h-5 text-inherit" />
             <span>Previous</span>
@@ -46,10 +51,11 @@ export function CreateCourseButtons() {
           variant={"_outline"}
           onClick={saveAsDraft}
           className="text-orange bg-white rounded-xl py-2 px-4 h-10 hover:bg-offwhite"
-          disabled={true}
+          type="button"
+          disabled={isSubmitting}
         >
           <Save className="w-5 h-5 text-inherit" />
-          <span>Save Draft</span>
+          <span>{submissionMode === "draft" ? "Saving..." : "Save Draft"}</span>
         </Button>
 
         <>
@@ -58,9 +64,10 @@ export function CreateCourseButtons() {
               variant={"_default"}
               onClick={publishCourse}
               className="text-white bg-success rounded-xl py-2 px-4 h-10 hover:bg-light-green"
+              type="button"
               disabled={isSubmitting}
             >
-              {isSubmitting ? (
+              {submissionMode === "published" ? (
                 <>Publishing...</>
               ) : (
                 <>
@@ -74,6 +81,8 @@ export function CreateCourseButtons() {
               variant={"_default"}
               onClick={nextStep}
               className="text-white bg-orange rounded-xl py-2 px-4 h-10 hover:bg-burnt"
+              type="button"
+              disabled={isSubmitting}
             >
               <span>Next</span>
               <ArrowRight className="w-5 h-5 text-inherit" />

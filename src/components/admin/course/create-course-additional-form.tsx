@@ -17,6 +17,16 @@ import { COURSE_DIFFICULTY, COURSE_LANGUAGE } from "@/data/constants";
 
 export function CreateCourseAdditionalInfoForm() {
   const { formData, updateFormData } = useCreateCourseFormProvider();
+  const prerequisitesValue = formData.prerequisites.join("\n");
+
+  const handlePrerequisitesChange = (value: string) => {
+    const prerequisites = value
+      .split(/\r?\n|,/)
+      .map((item) => item.trim())
+      .filter(Boolean);
+
+    updateFormData({ prerequisites });
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -24,10 +34,7 @@ export function CreateCourseAdditionalInfoForm() {
         <div className="space-y-2 w-full">
           <Label htmlFor="courseLanguage">Course Language</Label>
 
-          <Select
-            value={formData.language}
-            onValueChange={(value) => updateFormData({ ...formData, language: value })}
-          >
+          <Select value={formData.language} onValueChange={(value) => updateFormData({ language: value })}>
             <SelectTrigger className="h-12 text-high bg-white border border-shade-3 rounded-lg text-base px-4 py-3 focus:ring-0">
               <SelectValue placeholder="Select Course Language" />
             </SelectTrigger>
@@ -51,7 +58,7 @@ export function CreateCourseAdditionalInfoForm() {
 
           <Select
             value={formData.difficultyLevel}
-            onValueChange={(value) => updateFormData({ ...formData, difficultyLevel: value })}
+            onValueChange={(value) => updateFormData({ difficultyLevel: value })}
           >
             <SelectTrigger className="h-12 text-high bg-white border border-shade-3 rounded-lg text-base px-4 py-3 focus:ring-0">
               <SelectValue placeholder="Select Difficulty Level" />
@@ -85,9 +92,7 @@ export function CreateCourseAdditionalInfoForm() {
             className="disabled:opacity-100"
             id="courseCertification"
             checked={formData.enableCertification}
-            onCheckedChange={(checked) =>
-              updateFormData({ ...formData, enableCertification: checked })
-            }
+            onCheckedChange={(checked) => updateFormData({ enableCertification: checked })}
           />
         </div>
       </div>
@@ -105,7 +110,7 @@ export function CreateCourseAdditionalInfoForm() {
             className="disabled:opacity-100"
             id="progressTracking"
             checked={formData.trackProgress}
-            onCheckedChange={(checked) => updateFormData({ ...formData, trackProgress: checked })}
+            onCheckedChange={(checked) => updateFormData({ trackProgress: checked })}
           />
         </div>
       </div>
@@ -123,9 +128,7 @@ export function CreateCourseAdditionalInfoForm() {
             className="disabled:opacity-100"
             id="courseVisibility"
             checked={formData.status === "draft" ? false : true}
-            onCheckedChange={(checked) =>
-              updateFormData({ ...formData, status: checked ? "published" : "draft" })
-            }
+            onCheckedChange={(checked) => updateFormData({ status: checked ? "published" : "draft" })}
           />
         </div>
       </div>
@@ -143,9 +146,21 @@ export function CreateCourseAdditionalInfoForm() {
             className="disabled:opacity-100"
             id="enableComments"
             checked={formData.enableComments}
-            onCheckedChange={(checked) => updateFormData({ ...formData, enableComments: checked })}
+            onCheckedChange={(checked) => updateFormData({ enableComments: checked })}
           />
         </div>
+      </div>
+
+      <div className="space-y-2 w-full">
+        <Label htmlFor="prerequisites">Prerequisites</Label>
+
+        <Textarea
+          id="prerequisites"
+          className="h-32 resize-none shadow-none px-3 py-2 rounded-[10px] placeholder:text-low text-high text-sm focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-2 focus-visible:border-orange border border-shade-3"
+          placeholder="Add one prerequisite per line"
+          value={prerequisitesValue}
+          onChange={(event) => handlePrerequisitesChange(event.target.value)}
+        />
       </div>
 
       <div className="space-y-2 w-full">
@@ -156,7 +171,7 @@ export function CreateCourseAdditionalInfoForm() {
           className="h-40 resize-none shadow-none px-3 py-2 rounded-[10px] placeholder:text-low text-high text-sm focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-2 focus-visible:border-orange border border-shade-3"
           placeholder="Any Additional notes about the course"
           value={formData.additionalNotes}
-          onChange={(event) => updateFormData({ ...formData, additionalNotes: event.target.value })}
+          onChange={(event) => updateFormData({ additionalNotes: event.target.value })}
         />
       </div>
     </div>

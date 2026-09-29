@@ -18,6 +18,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 
+import { formatOptionalDate } from "@/utils/formatter";
+
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -31,26 +33,72 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 
+import { Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { useDeleteCourse, useUpdateCourse } from "@/hooks/useAdmin";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+
 export function CourseDetails({ course }: { course: Course }) {
-  const studentCount = course.UserCourse.filter((user) => user.role === "student").length;
+  const router = useRouter();
+  const lessons = course.Lesson ?? [];
+  const enrolledUsers = (course.UserCourse ?? []).filter(
+    (enrollment) => enrollment.user?.role === "student" || enrollment.role === "student",
+  );
+  const studentCount = enrolledUsers.length;
+
+  const { mutate: deleteCourse, isPending: isDeleting } = useDeleteCourse();
+  const { mutate: updateCourse, isPending: isUpdating } = useUpdateCourse();
+
+  const handleStatusToggle = () => {
+    const newStatus = course.status === "published" ? "draft" : "published";
+    
+    updateCourse(
+      { courseId: course.id, payload: { status: newStatus } },
+      {
+        onSuccess: () => toast.success(`Course ${newStatus === "published" ? "published" : "moved to draft"}.`),
+        onError: () => toast.error("Failed to update course status."),
+      }
+    );
+  };
+
+  const handleDelete = () => {
+    deleteCourse(course.id, {
+      onSuccess: () => {
+        toast.success("Course deleted successfully.");
+        router.push("/admin/courses");
+      },
+      onError: () => toast.error("Failed to delete course."),
+    });
+  };
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex justify-between items-center">
-        <h3 className="text-high text-lg font-medium">{course.title}</h3>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h3 className="min-w-0 break-words text-lg font-medium text-high">{course.title}</h3>
 
-        <div className="flex gap-3 items-center text-sm">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
           <div className="flex items-center gap-2">
             <span className="font-normal text-sm text-high">Status:</span>
 
             <Switch
               checked={course.status === "published"}
-              disabled
-              aria-readonly
-              className="disabled:opacity-100"
+              onCheckedChange={handleStatusToggle}
+              disabled={isUpdating}
+              className="disabled:opacity-50"
             />
           </div>
 
+          {/*
           <Link
             href={""}
             className="flex gap-2 items-center text-orange font-medium hover:underline"
@@ -58,19 +106,50 @@ export function CourseDetails({ course }: { course: Course }) {
             <Eye className="w-5 h-5 text-inherit shrink-0" />
             <span>Preview</span>
           </Link>
+          */}
 
           <Link
-            href={""}
+            href={`/admin/courses/edit/${course.id}`}
             className="flex gap-2 items-center text-orange font-medium hover:underline"
           >
             <PenLine className="w-5 h-5 text-inherit shrink-0" />
             <span>Edit</span>
           </Link>
+
+          <Dialog>
+            <DialogTrigger asChild>
+              <button className="flex gap-2 items-center text-danger font-medium hover:underline">
+                <Trash2 className="w-5 h-5 text-inherit shrink-0" />
+                <span>Delete</span>
+              </button>
+            </DialogTrigger>
+            <DialogContent className="max-w-[400px]">
+              <DialogHeader>
+                <DialogTitle>Delete Course</DialogTitle>
+              </DialogHeader>
+              <div className="py-4 text-sm text-low">
+                Are you sure you want to delete this course? This action cannot be undone.
+              </div>
+              <DialogFooter>
+                <DialogClose asChild>
+                  <Button variant={"_outline"} className="h-10 px-4 rounded-xl">Cancel</Button>
+                </DialogClose>
+                <Button
+                  variant={"_default"}
+                  className="h-10 px-4 rounded-xl bg-danger hover:bg-red-700 text-white"
+                  onClick={handleDelete}
+                  disabled={isDeleting}
+                >
+                  {isDeleting ? "Deleting..." : "Delete"}
+                </Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
       <Tabs defaultValue="overview">
-        <TabsList className="w-full min-h-12 rounded-xl p-4 border border-shade-2 bg-offwhite justify-start text-sm font-normal text-low mb-3">
+        <TabsList className="mb-3 flex min-h-12 w-full max-w-full justify-start gap-1 overflow-x-auto rounded-xl border border-shade-2 bg-offwhite p-2 text-sm font-normal text-low sm:p-4">
           <TabsTrigger
             value="overview"
             className="data-[state=active]:text-orange data-[state=active]:bg-transparent data-[state=active]:underline
@@ -112,7 +191,7 @@ export function CourseDetails({ course }: { course: Course }) {
           <div className="border border-shade-2 rounded-xl p-4 space-y-5">
             <h4 className="text-high font-semibold text-base">Course Statistics</h4>
 
-            <div className="flex gap-3">
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <div className="bg-offwhite border border-shade-3 rounded-xl p-4 min-h-[72px] w-full space-y-4">
                 <p className="text-low text-sm font-medium">Enrolled Students</p>
                 <p className="text-high text-xl font-semibold">{studentCount}</p>
@@ -158,7 +237,7 @@ export function CourseDetails({ course }: { course: Course }) {
             <h4 className="text-high font-semibold text-base">Course Content</h4>
 
             <div className="space-y-6">
-              {course.Lesson.map((lesson, index) => (
+              {lessons.map((lesson, index) => (
                 <div className="flex gap-3 items-center" key={lesson.id + index}>
                   <div className="w-9 h-9 flex items-center justify-center bg-offwhite rounded-md">
                     <Video className="w-5 h-5 text-orange" />
@@ -220,7 +299,7 @@ export function CourseDetails({ course }: { course: Course }) {
 
             <div className="h-full">
               <div className="h-[390px] overflow-y-scroll hide-scrollbar">
-                {course.UserCourse.length > 0 ? (
+                {enrolledUsers.length > 0 ? (
                   <Table>
                     <TableHeader>
                       <TableRow className="text-low text-sm font-semibold">
@@ -233,14 +312,14 @@ export function CourseDetails({ course }: { course: Course }) {
                     </TableHeader>
 
                     <TableBody className="space-y-3">
-                      {course.UserCourse.map((student, index) => (
+                      {enrolledUsers.map((student, index) => (
                         <TableRow
                           className="text-sm text-high bg-offwhite h-12"
                           key={student.id + index}
                         >
                           <TableCell>{String(index + 1).padStart(3, "0")}</TableCell>
                           <TableCell className="capitalize">
-                            {student.firstName} {student.lastName}
+                            {student.user?.firstName ?? student.firstName} {student.user?.lastName ?? student.lastName}
                           </TableCell>
                           <TableCell
                             className={cn(
@@ -252,11 +331,13 @@ export function CourseDetails({ course }: { course: Course }) {
                             {student.progress === 100 ? "Completed" : `${student.progress}%`}
                           </TableCell>
                           <TableCell className="text-center">
-                            {format(new Date(student.startAt as Date), "PP")}
+                            {formatOptionalDate(student.createdAt)}
                           </TableCell>
                           <TableCell className="text-center">
-                            {format(new Date(student.lastAccessAt as Date), "PP")} |{" "}
-                            {format(new Date(student.lastAccessAt as Date), "h:mm a")}
+                            {formatOptionalDate(student.lastAccessAt ?? student.createdAt)}
+                            {student.lastAccessAt && (
+                              <> | {formatOptionalDate(student.lastAccessAt, "h:mm a")}</>
+                            )}
                           </TableCell>
                         </TableRow>
                       ))}

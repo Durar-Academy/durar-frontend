@@ -1,8 +1,5 @@
 "use client";
 
-import { FileList } from "@/components/admin/file-list";
-
-import { tutorDocuments } from "@/data/mockData";
 
 export default function TutorManagementDocumentPage() {
   return (
@@ -12,11 +9,9 @@ export default function TutorManagementDocumentPage() {
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        {tutorDocuments.map((tutorDocument, index) => (
-          <div key={index}>
-            <FileList filename={tutorDocument.name} />
-          </div>
-        ))}
+        <p className="col-span-2 rounded-lg border border-dashed border-shade-3 p-6 text-sm text-low">
+          No verification documents have been uploaded for this tutor.
+        </p>
       </div>
     </div>
   );

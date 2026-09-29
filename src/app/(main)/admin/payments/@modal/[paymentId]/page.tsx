@@ -22,7 +22,6 @@ export default function PaymentDetails() {
 
   const { data: payment, isLoading: paymentLoading } = usePayment(paymentId as string);
 
-  console.log(paymentId, payment);
 
   return (
     <Dialog open={true} onOpenChange={() => router.back()}>

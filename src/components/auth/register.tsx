@@ -19,6 +19,8 @@ import { createAccount } from "@/lib/auth";
 import { extractDialingCode } from "@/lib/utils";
 import { STORE_EMAIL_KEY, storeItem } from "@/lib/storage";
 
+// Register Page
+
 export function Register() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const registrationFormController = useRegisterForm();
@@ -27,10 +29,10 @@ export function Register() {
 
   async function handleSubmit(values: z.infer<typeof registerFormSchema>) {
     setIsSubmitting(true);
-    console.log("Registration Form Values: ", values);
+    const email = values.email.trim().toLowerCase();
 
     const payload = {
-      email: values.email,
+      email,
       password: values.password,
       firstName: values.firstName,
       lastName: values.lastName,
@@ -40,12 +42,11 @@ export function Register() {
       title: values.title,
       phone: `${extractDialingCode(values.dialingCode)}${values.phoneNumber}`,
     };
-    storeItem(STORE_EMAIL_KEY, values.email);
-    console.log("Registration Form Payload", payload);
+    storeItem(STORE_EMAIL_KEY, email);
 
     try {
       const response = await createAccount(payload);
-      console.log("Registration Form Response Data", response);
+      
 
       if (response.success)
         toast.success("Account created successfully!\nPlease check your email to verify your account.");

@@ -140,7 +140,7 @@ export default function SingleAssignmentPage() {
                     <span>Course</span>
 
                     <span className="capitalize text-orange">
-                      {assignment?.course.title ?? "Course Title"}
+                      {assignment?.course?.title ?? "Course Title"}
                     </span>
                   </>
 

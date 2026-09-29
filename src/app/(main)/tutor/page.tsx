@@ -47,7 +47,7 @@ const Page = () => {
         {metricsLoading ? (
           <Skeleton className="w-full rounded-xl h-[140px]" />
         ) : (
-          <div className="grid grid-cols-3 gap-[18px]">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
             {dashboardMetrics.map((stat, i) => (
               <TutorStatCard
                 key={i}
@@ -60,11 +60,11 @@ const Page = () => {
         )}
       </section>
 
-      <section className="UpcomingClasses grid grid-cols-3 gap-3">
-        <aside className="col-span-2 bg-white p-6 border-[1px] border-[#E7E8EE] rounded-xl">
+      <section className="UpcomingClasses grid grid-cols-1 gap-3 lg:grid-cols-3">
+        <aside className="rounded-xl border border-[#E7E8EE] bg-white p-4 sm:p-6 lg:col-span-2">
           <UpcomingClasses />
         </aside>
-        <aside className="col-span-1 bg-white p-4 border-[1px] border-[#E7E8EE] rounded-xl">
+        <aside className="rounded-xl border border-[#E7E8EE] bg-white p-4 lg:col-span-1">
           <RecentNotificatin />
         </aside>
       </section>
