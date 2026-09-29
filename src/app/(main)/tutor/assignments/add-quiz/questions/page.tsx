@@ -190,11 +190,7 @@ export default function AddNewQuizQuestionsPage() {
               />
 
               <RadioGroup
-                value={
-                  question.correctAnswerId === null
-                    ? undefined
-                    : String(question.correctAnswerId)
-                }
+                value={String(question.correctAnswerId ?? "")}
                 onValueChange={(value) =>
                   handleCorrectAnswerChange(question.id, Number(value))
                 }

@@ -116,7 +116,7 @@ export default function SettingsPage() {
       profileImage: undefined,
     });
 
-    updateImagePreview(nextUser.profilePicture?.url ?? null);
+    updateImagePreview(nextUser.profilePicture?.url ?? nextUser.profilePicture?.src ?? null);
     setRemoveProfileImage(false);
   };
 
@@ -140,7 +140,9 @@ export default function SettingsPage() {
 
     setIsSubmitting(true);
     const payload: Partial<UpdateAccountPayload> = {};
-    const currentProfilePictureStorageId = user.profilePicture?.id ?? null;
+    // DELETE /file/:id is keyed by the storage id while PATCH /user/:id expects
+    // the media id, so both identifiers are tracked separately.
+    const currentProfilePictureStorageId = user.profilePicture?.storageId ?? null;
     let uploadedProfilePictureStorageId: string | null = null;
     let uploadedFileUrl: string | null = null;
 
@@ -158,9 +160,12 @@ export default function SettingsPage() {
     try {
       if (values.profileImage instanceof File) {
         const uploadedFile = await uploadFile(values.profileImage);
-        uploadedProfilePictureStorageId = uploadedFile.id ?? null;
+        uploadedProfilePictureStorageId = uploadedFile.storageId ?? null;
         uploadedFileUrl = uploadedFile.url ?? null;
         
+        // The media id (not the storage id) is what the profile relation stores.
+        if (!uploadedFile.id) throw new Error("Uploaded file has no media id");
+
         payload.profilePictureId = uploadedFile.id;
       } else if (removeProfileImage) {
         payload.profilePictureId = null;
@@ -240,7 +245,7 @@ export default function SettingsPage() {
                 control={updateFormController.control}
                 name="profileImage"
                 render={({ field }) => (
-                  <FormItem className="hidden shrink-0 w-full max-w-80 rounded-xl border border-shade-2 bg-white p-4 xl:flex flex-col gap-3 items-center">
+                  <FormItem className="flex shrink-0 w-full max-w-80 rounded-xl border border-shade-2 bg-white p-4 flex-col gap-3 items-center">
                     <div className="w-full relative h-64 rounded-xl bg-gray-100 flex items-center justify-center overflow-hidden">
                       {imagePreview ? (
                         <img
@@ -356,7 +361,7 @@ export default function SettingsPage() {
                           </FormLabel>
 
                           <FormControl>
-                            <Select onValueChange={field.onChange} value={field.value || undefined}>
+                            <Select onValueChange={field.onChange} value={field.value ?? ""}>
                               <SelectTrigger className="shadow-none px-4 py-2 rounded-xl h-12 placeholder:text-low text-high text-sm focus:ring-0 focus:outline-0 focus:ring-offset-0 focus:border-2 focus:border-orange">
                                 <SelectValue placeholder="Select Title" />
                               </SelectTrigger>
@@ -460,7 +465,7 @@ export default function SettingsPage() {
                           </FormLabel>
 
                           <FormControl>
-                            <Select onValueChange={field.onChange} value={field.value || undefined}>
+                            <Select onValueChange={field.onChange} value={field.value ?? ""}>
                               <SelectTrigger className="shadow-none px-4 py-2 rounded-xl h-12 placeholder:text-low text-high text-sm focus:ring-0 focus:outline-0 focus:ring-offset-0 focus:border-2 focus:border-orange">
                                 <SelectValue placeholder="Select Country" />
                               </SelectTrigger>
@@ -496,7 +501,7 @@ export default function SettingsPage() {
                           <FormControl>
                             <RadioGroup
                               onValueChange={field.onChange}
-                              value={field.value}
+                              value={field.value ?? ""}
                               className="flex justify-between gap-3"
                             >
                               {GENDERS.map((gender) => (
@@ -508,7 +513,6 @@ export default function SettingsPage() {
                                     <FormControl>
                                       <RadioGroupItem
                                         value={gender}
-                                        checked={field.value === gender}
                                         className="h-6 w-6 shadow-none border-shade-1
 
                               focus:outline-0 focus-visible:ring-0 focus:border-2"
@@ -567,7 +571,7 @@ export default function SettingsPage() {
                           </FormLabel>
 
                           <FormControl>
-                            <Select onValueChange={field.onChange} value={field.value || undefined}>
+                            <Select onValueChange={field.onChange} value={field.value ?? ""}>
                               <SelectTrigger className="shadow-none px-4 py-2 rounded-xl h-12 placeholder:text-low text-high text-sm focus:ring-0 focus:outline-0 focus:ring-offset-0 focus:border-2 focus:border-orange">
                                 <SelectValue placeholder="Select Dailing Code" />
                               </SelectTrigger>

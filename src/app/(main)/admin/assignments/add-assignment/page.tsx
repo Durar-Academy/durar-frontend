@@ -60,6 +60,16 @@ export default function AddNewAssignmentPage() {
   const closePreview = () => setOpen(false);
 
   const createAssignment = async () => {
+    if (!assignment.courseId) {
+      toast.error("Select a course before publishing the assignment.");
+      return;
+    }
+
+    if (!assignment.dueAt) {
+      toast.error("Select a due date before publishing the assignment.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -69,7 +79,10 @@ export default function AddNewAssignmentPage() {
         thumbnailResponse = await uploadFile(assignment.thumbnail.file);
       }
 
-      // construct assignment payload
+      // construct assignment payload. The thumbnail is linked through `mediaId`
+      // (the media record id); the schema strips unknown keys, so the old
+      // `storageId` field was silently dropped. Only send `mediaId` when an
+      // upload happened — the schema rejects `null`.
       const payload = {
         title: assignment.title,
         courseId: assignment.courseId,
@@ -77,8 +90,8 @@ export default function AddNewAssignmentPage() {
         type: "assignment",
         description: assignment.description,
         allowLate: assignment.allowLate,
-        storageId: thumbnailResponse?.storageId ?? null,
         totalScore: assignment.totalScore,
+        ...(thumbnailResponse?.id ? { mediaId: thumbnailResponse.id } : {}),
       };
 
 

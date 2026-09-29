@@ -11,7 +11,8 @@ export type AdminProfileUpdate = {
   country?: string;
 };
 
-export async function updateAdminProfile(payload: AdminProfileUpdate) {
-  const response = await axiosInstance.patch('/user/admin', payload);
+export async function updateAdminProfile(userId: string, payload: AdminProfileUpdate) {
+  // The API only exposes `PATCH /user/:id`; `/user/admin` is not a route.
+  const response = await axiosInstance.patch(`/user/${userId}`, payload);
   return response.data?.data ?? response.data;
 }

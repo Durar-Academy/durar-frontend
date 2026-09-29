@@ -1,5 +1,71 @@
 import { axiosInstance } from "@/lib/axios";
 
+export type SubmissionUser = {
+  id?: string;
+  firstName?: string | null;
+  lastName?: string | null;
+  email?: string | null;
+};
+
+export type StudentSubmissionRow = {
+  id: string;
+  assignmentId: string;
+  userId: string;
+  content?: string | null;
+  submissionLink?: string | null;
+  grade: number | null;
+  gradedAt: Date | string | null;
+  createdAt: Date | string;
+  updatedAt: Date | string;
+  user?: SubmissionUser | null;
+  assignment?: {
+    id?: string;
+    title?: string | null;
+    totalScore?: number | null;
+  } | null;
+  gradedBy?: SubmissionUser | null;
+};
+
+export type StudentSubmissionsMetaData = {
+  page: number;
+  perPage: number;
+  pageCount: number;
+  totalCount: number;
+  hasPreviousPages: boolean;
+  hasNextPages: boolean;
+  links: Array<{ number: number; url: string }>;
+};
+
+export type StudentSubmissionsResponse = {
+  records: StudentSubmissionRow[];
+  metaData: StudentSubmissionsMetaData;
+};
+
+export type SubmissionRecording = {
+  id: string;
+  position: number;
+  duration: number;
+  file: Media;
+};
+
+export type SubmissionFeedbackEntry = {
+  id: string;
+  feedback: string;
+  createdAt: Date | string;
+  user?: SubmissionUser | null;
+};
+
+export type SubmissionDetail = StudentSubmissionRow & {
+  files?: Media[] | null;
+  recordings?: SubmissionRecording[] | null;
+  AssignmentFeedback?: SubmissionFeedbackEntry[] | null;
+  feedbacks?: SubmissionFeedbackEntry[] | null;
+};
+
+export type QuizSubmissionRow = QuizSubmission & {
+  user?: SubmissionUser | null;
+};
+
 export const tutorApi = {
   getTutorMetrics: async (options?: { signal?: AbortSignal }) => {
     const response = await axiosInstance.get("/metrics/tutordashboard", {
@@ -84,7 +150,7 @@ export const tutorApi = {
     return response.data.data as TutorClassesResponse;
   },
   getTutorAssignments: async ({
-    limit = 1000,
+    limit = 100,
     page = 1,
     signal,
   }: {
@@ -185,7 +251,7 @@ export const tutorApi = {
   },
 
   getTutorTimetable: async ({
-    limit = 1000,
+    limit = 100,
     page = 1,
     signal,
   }: {
@@ -202,7 +268,7 @@ export const tutorApi = {
 
   getStudentAssignments: async ({
     userId,
-    limit = 1000,
+    limit = 100,
     page = 1,
     signal,
   }: {
@@ -232,7 +298,7 @@ export const tutorApi = {
   getStudentSubmissions: async ({
     userId,
     assignmentId,
-    limit = 1000,
+    limit = 100,
     page = 1,
     signal,
   }: {
@@ -246,17 +312,43 @@ export const tutorApi = {
       params: { userId, assignmentId, limit, page },
       signal,
     });
-    return response.data.data as { 
-      rows: Array<{
-        id: string;
-        assignmentId: string;
-        userId: string;
-        grade: number | null;
-        gradedAt: Date | null;
-        createdAt: Date;
-        updatedAt: Date;
-      }>; 
-      count: number;
-    };
+
+    const payload = response.data.data as {
+      records?: StudentSubmissionRow[];
+      metaData?: StudentSubmissionsMetaData;
+    } | null;
+
+    return {
+      records: payload?.records ?? [],
+      metaData: payload?.metaData ?? {
+        page,
+        perPage: limit,
+        pageCount: 0,
+        totalCount: 0,
+        hasPreviousPages: page > 1,
+        hasNextPages: false,
+        links: [],
+      },
+    } satisfies StudentSubmissionsResponse;
+  },
+
+  getSubmission: async ({ submissionId, signal }: { submissionId: string; signal?: AbortSignal }) => {
+    const response = await axiosInstance.get(`/submission/${submissionId}`, { signal });
+    return response.data.data as SubmissionDetail;
+  },
+
+  gradeSubmission: async ({ submissionId, grade }: { submissionId: string; grade: number }) => {
+    const response = await axiosInstance.post(`/submission/${submissionId}/grade`, { grade });
+    return response.data;
+  },
+
+  createAssignmentFeedback: async ({ feedback, submissionId }: { feedback: string; submissionId: string }) => {
+    const response = await axiosInstance.post("/assignment-feedback", { feedback, submissionId });
+    return response.data;
+  },
+
+  getQuizSubmissions: async ({ assignmentId, signal }: { assignmentId: string; signal?: AbortSignal }) => {
+    const response = await axiosInstance.get(`/quiz/all/${assignmentId}`, { signal });
+    return (response.data.data ?? []) as QuizSubmissionRow[];
   },
 };

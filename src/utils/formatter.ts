@@ -1,22 +1,36 @@
 import { format } from "date-fns";
 
-export function formatAmount(amount: number, currency?: string) {
-  let formattedAmount: string;
+// The academy bills in NGN and USD. Unknown codes fall back to a readable
+// code prefix rather than throwing out of `Intl`.
+const CURRENCY_FORMATS: Record<string, { symbol: string; locale: string }> = {
+  NGN: { symbol: "₦", locale: "en-NG" },
+  USD: { symbol: "US$", locale: "en-US" },
+};
 
-  if (amount >= 1_000_000) {
-    formattedAmount = `₦${(amount / 1_000_000).toFixed(1)}M`;
-  } else if (amount >= 100_000) {
-    formattedAmount = `₦${(amount / 1_000).toFixed(1)}k`;
-  } else {
-    formattedAmount = amount.toLocaleString("en-NG", {
-      style: "currency",
-      currency: currency ? currency.toUpperCase() : "NGN",
+function resolveCurrency(currency?: string) {
+  const code = (currency ?? "NGN").toUpperCase();
+
+  return CURRENCY_FORMATS[code] ?? { symbol: `${code} `, locale: "en-NG" };
+}
+
+export function formatAmount(amount: number, currency?: string) {
+  const { symbol, locale } = resolveCurrency(currency);
+
+  const formatNumber = (value: number) =>
+    `${symbol}${value.toLocaleString(locale, {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    });
+    })}`;
+
+  if (amount >= 1_000_000) {
+    return `${symbol}${(amount / 1_000_000).toFixed(1)}M`;
   }
 
-  return formattedAmount;
+  if (amount >= 100_000) {
+    return `${symbol}${(amount / 1_000).toFixed(1)}k`;
+  }
+
+  return formatNumber(amount);
 }
 
 export function formatDateAndTime(isoDateString: Date) {

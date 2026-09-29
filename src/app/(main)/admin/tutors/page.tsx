@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback, useState } from "react";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 
@@ -14,9 +15,22 @@ import { useTutors, useTutorsMetrics } from "@/hooks/useAdmin";
 import { processTutors, processTutorsMetrics } from "@/utils/processor";
 
 export default function TutorsManagementPage() {
+  const [filters, setFilters] = useState<SearchFilters>({});
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: tutorsMetrics, isLoading: tutorsMetricsLoading } = useTutorsMetrics();
-  const { data: tutors, isLoading: tutorsLoading } = useTutors();
+  // `GET /user/tutors` accepts `search` (first/last name) and `status`. The
+  // unfiltered request keeps its own cache entry, so the timetable editor's
+  // tutor list is unaffected.
+  const tutorQueryFilters =
+    filters.search || filters.status ? { search: filters.search, status: filters.status } : undefined;
+  const { data: tutors, isLoading: tutorsLoading } = useTutors(tutorQueryFilters);
+
+  const handleSearchChange = useCallback((search: string) => {
+    setFilters((current) => ({ ...current, search }));
+  }, []);
+  const handleStatusChange = useCallback((status: SearchFilters["status"] | undefined) => {
+    setFilters((current) => ({ ...current, status }));
+  }, []);
 
   const allTutorsMetrics = processTutorsMetrics(tutorsMetrics ?? []);
   const allTutors = processTutors(tutors?.records ?? []);
@@ -64,7 +78,13 @@ export default function TutorsManagementPage() {
         {tutorsLoading ? (
           <Skeleton className="w-full rounded-xl h-full" />
         ) : (
-          <TutorsTable tutors={allTutors} />
+          <TutorsTable
+            tutors={allTutors}
+            search={filters.search ?? ""}
+            status={filters.status}
+            onSearchChange={handleSearchChange}
+            onStatusChange={handleStatusChange}
+          />
         )}
       </div>
     </section>

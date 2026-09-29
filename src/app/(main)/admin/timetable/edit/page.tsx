@@ -33,6 +33,10 @@ export default function EditTimetable() {
   // Local state for the working copy of schedules being edited
   const [editedSchedules, setEditedSchedules] = useState<Schedule[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // "Edit timings" deep-links here with `?classId=<id>`. The id is read from the
+  // URL directly so this client page needs no Suspense boundary for
+  // `useSearchParams`.
+  const [highlightScheduleId, setHighlightScheduleId] = useState<string | null>(null);
   const originalScheduleIdsRef = useRef<Set<string>>(new Set());
   const initializedRef = useRef(false);
   const router = useRouter();
@@ -53,6 +57,11 @@ export default function EditTimetable() {
 
     setEditedSchedules(schedules);
   }, [schedules]);
+
+  useEffect(() => {
+    const classId = new URLSearchParams(window.location.search).get("classId");
+    if (classId) setHighlightScheduleId(classId);
+  }, []);
 
   /** Compute what needs to be created, updated, and deleted. */
   function computeChanges() {
@@ -214,6 +223,7 @@ export default function EditTimetable() {
               tutors={tutors?.records ?? []}
               students={students ?? []}
               courses={courses ?? []}
+              highlightScheduleId={highlightScheduleId}
               onSave={setEditedSchedules}
             />
           )}

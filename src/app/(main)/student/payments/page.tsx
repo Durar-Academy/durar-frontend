@@ -32,6 +32,18 @@ export default function PaymentsPage() {
   const allPayments = processPayments(paymentsData?.records ?? []);
   const pendingPayments = allPayments.filter((payment) => payment.status === "pending");
 
+  // The table view model drops the charge/course context, but Retry needs it to
+  // re-initialize the same charge, so re-attach it from the raw record.
+  const tablePayments = allPayments.map((payment) => {
+    const record = (paymentsData?.records ?? []).find((item) => item.id === payment.id);
+
+    return {
+      ...payment,
+      courseId: record?.courseId ?? null,
+      billingPlanId: record?.charge?.billingPlanId ?? null,
+    };
+  });
+
   return (
     <section className="flex flex-col gap-5">
       <div className="top-bar">
@@ -56,7 +68,7 @@ export default function PaymentsPage() {
           <Skeleton className="w-full rounded-xl h-40" />
         ) : (
           <PaymentsTable
-            payments={allPayments}
+            payments={tablePayments}
             filters={filters}
             metaData={paymentsData?.metaData}
             onStatusChange={(nextStatus) => {
