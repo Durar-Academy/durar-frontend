@@ -408,8 +408,6 @@ type Course = {
   averageRating: number;
   CourseRating: CourseRating[];
   completionRate: number;
-  // Set by browse mode (`GET /course?browse=true`); `amount` is the price in NGN.
-  amount?: number;
   enrolled?: boolean;
 };
 
@@ -932,7 +930,6 @@ type CourseCardProps = {
   progress: number;
   id: string;
   enrolled?: boolean;
-  amount?: number | null;
 };
 
 // Tutor Types starts here

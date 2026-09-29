@@ -58,19 +58,6 @@ export async function initializeSubscriptionPayment(payload: { billingPlanId: st
   return response.data?.data ?? response.data;
 }
 
-// Course purchase (pay-to-enroll): the backend derives the amount from the
-// course and creates the enrollment once Paystack confirms the charge.
-export async function initializeCoursePayment(payload: { courseId: string; idempotencyKey: string }) {
-  const response = await axiosInstance.post('/payment/initialize', {
-    courseId: payload.courseId,
-    provider: 'paystack',
-    idempotencyKey: payload.idempotencyKey,
-  }, {
-    headers: { 'Idempotency-Key': payload.idempotencyKey },
-  });
-  return response.data?.data ?? response.data;
-}
-
 export async function cancelSubscription(subscriptionId: string, reason?: string) {
   const response = await axiosInstance.put(`/subscription/${subscriptionId}`, { reason });
   return response.data?.data ?? response.data;
