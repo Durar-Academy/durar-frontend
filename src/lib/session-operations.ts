@@ -7,6 +7,7 @@ export interface SessionOccurrence {
   scheduledStart: string;
   scheduledEnd: string;
   status: string;
+  meetingLink?: string | null;
   course?: { id: string; title: string };
   classTemplate?: { id: string; title?: string; userId?: string };
   bookings: Array<{
@@ -63,4 +64,19 @@ export async function getAttendanceWindow() {
 export async function updateAttendanceWindow(minutes: number) {
   const response = await axiosInstance.put('/class/attendance-window', { minutes });
   return unwrap<{ minutes: number }>(response);
+}
+
+export interface ReminderSettings {
+  subscriptionExpiryReminderDays: number;
+  classReminderMinutes: number;
+}
+
+export async function getReminderSettings() {
+  const response = await axiosInstance.get('/class/reminder-settings');
+  return unwrap<ReminderSettings>(response);
+}
+
+export async function updateReminderSettings(settings: ReminderSettings) {
+  const response = await axiosInstance.put('/class/reminder-settings', settings);
+  return unwrap<ReminderSettings>(response);
 }

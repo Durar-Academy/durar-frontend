@@ -11,7 +11,7 @@ import { TopBar } from "@/components/shared/top-bar";
 import { CourseCard } from "@/components/student/courses-card";
 import { AssignmentListItem } from "@/components/student/assignment-list-item";
 import { DashboardTimetable } from "@/components/student/dashboard-timetable";
-import { StudentWelcomeModal } from "@/components/student/welcome-modal";
+import { ArrowRight } from "lucide-react";
 
 import { useCurrentUser } from "@/hooks/useAccount";
 import { formatUserName } from "@/utils/formatter";
@@ -119,13 +119,14 @@ export function StudentPageClient() {
         <div className="flex justify-start">
           <Link
             href="/student/subscription"
-            className="w-[206px] h-10 px-8 py-2 rounded-xl border border-orange bg-orange text-white text-sm font-medium hover:bg-burnt hover:border-burnt transition-colors text-center"
+            className="group inline-flex w-[206px] h-10 items-center justify-center gap-2 rounded-xl border border-orange bg-orange px-8 py-2 text-center text-sm font-medium text-white shadow-sm transition duration-200 hover:border-burnt hover:bg-burnt hover:shadow-md active:translate-y-px focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2"
           >
-            Make Payment Here
+            Subscribe
+            <ArrowRight aria-hidden="true" className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
           </Link>
         </div>
       )}
-      <StudentWelcomeModal />
+      {/* <StudentWelcomeModal /> */}
     </section>
   );
 }

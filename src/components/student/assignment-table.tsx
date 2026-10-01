@@ -21,7 +21,6 @@ export function AssignmentsTable({ assignments }: { assignments: StudentAssignme
               <TableHead>Topic</TableHead>
               <TableHead>Date Issued - Due Date</TableHead>
               <TableHead>Score</TableHead>
-              <TableHead>Class Average</TableHead>
               <TableHead>Status</TableHead>
             </TableRow>
           </TableHeader>
@@ -41,7 +40,6 @@ export function AssignmentsTable({ assignments }: { assignments: StudentAssignme
                   {format(new Date(assignment.dueAt), "PP")}
                 </TableCell>
                 <TableCell>{assignment.grade ?? "-"}</TableCell>
-                <TableCell>-</TableCell>
                 <TableCell
                   className={cn(
                     "capitalize font-medium text-high",

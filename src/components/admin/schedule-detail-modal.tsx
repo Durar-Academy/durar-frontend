@@ -3,6 +3,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -59,6 +60,10 @@ export function ScheduleDetailModal({
       <DialogContent className="max-w-lg">
         <DialogHeader>
           <DialogTitle>Schedule Details</DialogTitle>
+
+          <DialogDescription>
+            Course, tutor, timing, and meeting link for the selected class session.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col gap-5">

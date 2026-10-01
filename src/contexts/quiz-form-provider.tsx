@@ -28,6 +28,28 @@ export function QuizFormProvider({ children }: { children: React.ReactNode }) {
   };
 
   const publishQuiz = async () => {
+    if (!formData.courseId) {
+      toast.error("Select a course before publishing the quiz.");
+      return;
+    }
+
+    if (!formData.dueAt) {
+      toast.error("Select a due date before publishing the quiz.");
+      return;
+    }
+
+    const unansweredQuestion = formData.questions.findIndex(
+      (question) =>
+        !question.options.some(
+          (option) => option.id === question.correctAnswerId && option.optionText.trim(),
+        ),
+    );
+
+    if (unansweredQuestion !== -1) {
+      toast.error(`Select the correct option for question ${unansweredQuestion + 1}.`);
+      return;
+    }
+
     setIsSubmiting(true);
 
     try {
@@ -40,7 +62,7 @@ export function QuizFormProvider({ children }: { children: React.ReactNode }) {
           ? formData.dueAt instanceof Date
             ? formData.dueAt.toISOString().split("T")[0]
             : formData.dueAt
-          : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split("T")[0],
+          : null,
         description: formData.description,
         allowLate: formData.allowLate,
         randomnize: formData.randomnize,
@@ -61,9 +83,9 @@ export function QuizFormProvider({ children }: { children: React.ReactNode }) {
           assignmentId: createAssignmentResponse.data.data.id,
           options: question.options.map((option) => option.optionText),
           answer: {
-            singleChoiceAnswer: question.correctAnswerId
-              ? question.options[question.correctAnswerId - 1].optionText
-              : "",
+            singleChoiceAnswer:
+              question.options.find((option) => option.id === question.correctAnswerId)
+                ?.optionText ?? "",
           },
         };
       });

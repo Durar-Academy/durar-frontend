@@ -1,19 +1,30 @@
 "use client";
 
+import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
+
 import { TopBar } from "@/components/shared/top-bar";
 import { CourseCard } from "@/components/student/courses-card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { useCurrentUser } from "@/hooks/useAccount";
-import { useCourses } from "@/hooks/useAdmin";
+import { getStudentCourses } from "@/lib/student";
 import { getCumulativeProgress } from "@/utils/processor";
 
 export default function CoursesPage() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
-  const { data: courses, isLoading: coursesLoading } = useCourses({ status: "published" });
+  const { data: courses, isLoading: coursesLoading } = useQuery({
+    queryKey: ["student-courses"],
+    queryFn: ({ signal }) => getStudentCourses({ signal }),
+  });
 
-  const learningProgress = getCumulativeProgress(courses);
-
+  // Browse mode also lists courses the student has not paid for yet; the
+  // learning progress only reflects the courses they are enrolled in.
+  const enrolledCourses = useMemo(
+    () => (courses ?? []).filter((course) => course.enrolled ?? ((course.UserCourse?.length ?? 0) > 0)),
+    [courses],
+  );
+  const learningProgress = getCumulativeProgress(enrolledCourses);
 
   return (
     <section className="flex flex-col gap-5">
@@ -43,8 +54,9 @@ export default function CoursesPage() {
                     key={course.title + index}
                     name={course.title}
                     thumbnailId={course.thumbnailId}
-                    progress={course.UserCourse[0].progress}
+                    progress={course.UserCourse?.[0]?.progress ?? 0}
                     id={course.id}
+                    enrolled={course.enrolled ?? ((course.UserCourse?.length ?? 0) > 0)}
                   />
                 ))}
               </div>

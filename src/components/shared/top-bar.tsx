@@ -29,7 +29,7 @@ export function TopBar({
       <div className="flex min-w-0 items-center gap-2 sm:gap-3">
         {!isStudent && (
           <Link
-            href="/admin/notification"
+            href="/admin/notifications"
             className="w-9 h-9 rounded-full flex items-center justify-center bg-orange hover:bg-burnt transition-colors"
           >
             <Bell className="h-5 w-5 text-white" />

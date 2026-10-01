@@ -7,6 +7,9 @@ import {
   reviewSessionAbsence,
   getAttendanceWindow,
   updateAttendanceWindow,
+  getReminderSettings,
+  updateReminderSettings,
+  ReminderSettings,
   SessionAttendanceStatus,
 } from "@/lib/session-operations";
 
@@ -57,5 +60,17 @@ export function useUpdateAttendanceWindow() {
   return useMutation({
     mutationFn: updateAttendanceWindow,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['attendance-window'] }),
+  });
+}
+
+export function useReminderSettings() {
+  return useQuery({ queryKey: ['reminder-settings'], queryFn: getReminderSettings });
+}
+
+export function useUpdateReminderSettings() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (settings: ReminderSettings) => updateReminderSettings(settings),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['reminder-settings'] }),
   });
 }

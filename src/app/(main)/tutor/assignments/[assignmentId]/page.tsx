@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import { format } from "date-fns";
 import {
   Calendar,
@@ -31,6 +33,17 @@ import {
 import { cn } from "@/lib/utils";
 import { processAssignmentMetrics } from "@/utils/processor";
 import { Top_Bar } from "@/components/tutor/top-bar";
+import { GradeSubmissionDialog } from "@/components/tutor/assignment/grade-submission-dialog";
+import {
+  useQuizSubmissions,
+  useStudentSubmissions,
+} from "@/hooks/tutorQueries";
+
+const getStudentName = (
+  user?: { firstName?: string | null; lastName?: string | null } | null
+) =>
+  [user?.firstName, user?.lastName].filter(Boolean).join(" ") ||
+  "Unnamed student";
 
 export default function SingleAssignmentPage() {
   const { assignmentId } = useParams();
@@ -46,6 +59,35 @@ export default function SingleAssignmentPage() {
 
   const allAssignmentsMetrics = processAssignmentMetrics(
     assignmentMetrics ?? []
+  );
+
+  const [submissionsSearch, setSubmissionsSearch] = useState("");
+  const [gradingSubmissionId, setGradingSubmissionId] = useState<string | null>(
+    null
+  );
+
+  const isQuiz = assignment?.type === "quiz";
+
+  const { data: submissionsData, isLoading: submissionsLoading } =
+    useStudentSubmissions({
+      assignmentId: assignmentId as string,
+      limit: 100,
+      enabled: !isQuiz,
+    });
+  const { data: quizSubmissions, isLoading: quizSubmissionsLoading } =
+    useQuizSubmissions({
+      assignmentId: assignmentId as string,
+      enabled: isQuiz,
+    });
+
+  const normalizedSearch = submissionsSearch.trim().toLowerCase();
+
+  const submissionRows = (submissionsData?.records ?? []).filter((submission) =>
+    getStudentName(submission.user).toLowerCase().includes(normalizedSearch)
+  );
+
+  const quizSubmissionRows = (quizSubmissions ?? []).filter((submission) =>
+    getStudentName(submission.user).toLowerCase().includes(normalizedSearch)
   );
 
   return (
@@ -177,13 +219,85 @@ export default function SingleAssignmentPage() {
                   <Input
                     className="w-full text-sm h-10 px-4 pr-10 rounded-lg border border-shade-3 bg-white shadow-none placeholder:text-low focus-visible:outline-0 focus-visible:ring-0 focus-visible:ring-offset-0 focus-visible:border-2 focus-visible:border-orange"
                     placeholder="Search..."
+                    value={submissionsSearch}
+                    onChange={(event) => setSubmissionsSearch(event.target.value)}
                   />
                   <Search className="absolute right-4 top-1/2 -translate-y-1/2 h-4 w-4 text-low" />
                 </div>
               </div>
 
               <div className="min-h-[400px] overflow-y-scroll hide-scrollbar">
-                {assignment && assignment.AssignmentSubmission.length > 0 ? (
+                {assignmentLoading ||
+                (!isQuiz && submissionsLoading) ||
+                (isQuiz && quizSubmissionsLoading) ? (
+                  <Skeleton className="h-[300px] w-full rounded-xl mt-4" />
+                ) : isQuiz ? (
+                  quizSubmissionRows.length > 0 ? (
+                    <Table>
+                      <TableHeader>
+                        <TableRow className="text-low text-sm font-semibold">
+                          <TableHead>Student Name</TableHead>
+                          <TableHead className="text-center">
+                            Submission Date
+                          </TableHead>
+                          <TableHead className="text-center">Score</TableHead>
+                          <TableHead className="text-center">Status</TableHead>
+                        </TableRow>
+                      </TableHeader>
+
+                      <TableBody className="space-y-3">
+                        {quizSubmissionRows.map((submission) => {
+                          const status = submission.gradedAt
+                            ? "graded"
+                            : submission.timeSubmitted
+                              ? "submitted"
+                              : "pending";
+
+                          return (
+                            <TableRow
+                              className="text-sm text-high bg-offwhite h-12"
+                              key={submission.id}
+                            >
+                              <TableCell className="capitalize">
+                                {getStudentName(submission.user)}
+                              </TableCell>
+
+                              <TableCell className="text-center">
+                                {submission.timeSubmitted
+                                  ? format(
+                                      new Date(submission.timeSubmitted),
+                                      "PP"
+                                    )
+                                  : "—"}
+                              </TableCell>
+
+                              <TableCell className="text-center">
+                                {submission.grade ?? "—"}
+                              </TableCell>
+
+                              <TableCell
+                                className={cn(
+                                  "text-high text-center capitalize",
+                                  status === "submitted" && "text-success",
+                                  status === "graded" && "text-high",
+                                  status === "pending" && "text-orange"
+                                )}
+                              >
+                                {status}
+                              </TableCell>
+                            </TableRow>
+                          );
+                        })}
+                      </TableBody>
+                    </Table>
+                  ) : (
+                    <p className="text-sm mt-4 text-low">
+                      {normalizedSearch
+                        ? "No submissions match your search."
+                        : "No Submissions Found"}
+                    </p>
+                  )
+                ) : submissionRows.length > 0 ? (
                   <Table>
                     <TableHeader>
                       <TableRow className="text-low text-sm font-semibold">
@@ -198,49 +312,60 @@ export default function SingleAssignmentPage() {
                     </TableHeader>
 
                     <TableBody className="space-y-3">
-                      {assignment.AssignmentSubmission.map(
-                        (submission, index) => (
+                      {submissionRows.map((submission) => {
+                        const status = submission.gradedAt
+                          ? "graded"
+                          : "submitted";
+
+                        return (
                           <TableRow
                             className="text-sm text-high bg-offwhite h-12"
-                            key={submission.id + index}
+                            key={submission.id}
                           >
                             <TableCell className="capitalize">
-                              Awaiting
+                              {getStudentName(submission.user)}
                             </TableCell>
 
                             <TableCell
                               className={cn(
                                 "text-high text-center capitalize",
-                                submission.status === "submitted" &&
-                                  "text-success",
-                                submission.status === "graded" && "text-high",
-                                submission.status === "pending" && "text-orange"
+                                status === "submitted" && "text-success",
+                                status === "graded" && "text-high"
                               )}
                             >
-                              {submission.status}
+                              {status}
                             </TableCell>
 
                             <TableCell className="text-center">
-                              {format(
-                                new Date(submission.createdAt as Date),
-                                "PP"
-                              )}
+                              {format(new Date(submission.createdAt), "PP")}
                             </TableCell>
 
                             <TableCell className="text-center">
-                              {submission.grade ?? 0}
+                              {submission.grade ?? "—"}
                             </TableCell>
 
-                            <TableCell className="text-center text-orange">
-                              View
+                            <TableCell className="text-center">
+                              <button
+                                type="button"
+                                className="text-orange hover:underline"
+                                onClick={() =>
+                                  setGradingSubmissionId(submission.id)
+                                }
+                              >
+                                View
+                              </button>
                             </TableCell>
                           </TableRow>
-                        )
-                      )}
+                        );
+                      })}
                     </TableBody>
                   </Table>
                 ) : (
-                  <p className="text-sm mt-4 text-low">No Submissions Found</p>
+                  <p className="text-sm mt-4 text-low">
+                    {normalizedSearch
+                      ? "No submissions match your search."
+                      : "No Submissions Found"}
+                  </p>
                 )}
               </div>
             </TabsContent>
@@ -285,6 +410,14 @@ export default function SingleAssignmentPage() {
           </div>
         </Tabs>
       </div>
+      <GradeSubmissionDialog
+        submissionId={gradingSubmissionId}
+        open={!!gradingSubmissionId}
+        onOpenChange={(open) => {
+          if (!open) setGradingSubmissionId(null);
+        }}
+        totalScore={assignment?.totalScore}
+      />
     </section>
   );
 }

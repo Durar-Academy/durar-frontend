@@ -18,18 +18,13 @@ export function AccountVerification() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const abortControllerRef = useRef<AbortController | null>(null);
+  const verifiedTokenRef = useRef<string | null>(null);
 
   const token = searchParams.get("token") ?? "";
 
   const verifyUserAccount = useCallback(
     (token: string) =>
       (async function () {
-        if (!token) {
-          toast.error("Cannot find verification token.\nPlease request for a new verification.");
-          router.push("/auth/request-verification");
-          return;
-        }
-
         setIsVerifying(true);
 
         abortControllerRef.current = new AbortController();
@@ -82,12 +77,33 @@ export function AccountVerification() {
   }, [isVerifying]);
 
   useEffect(() => {
+    // The token search param is empty during the static prerender and only fills
+    // in after the client hydrates; StrictMode also double-invokes effects in
+    // development. Both used to run the verification (and its toasts) more than
+    // once, so wait for the token and verify each token value exactly once.
+    if (!token) {
+      const timeout = setTimeout(() => {
+        toast.error("Cannot find verification token.\nPlease request for a new verification.");
+        router.push("/auth/request-verification");
+      }, 1_000);
+
+      return () => clearTimeout(timeout);
+    }
+
+    if (verifiedTokenRef.current === token) return;
+
+    verifiedTokenRef.current = token;
+
     verifyUserAccount(token);
 
     return () => {
       if (abortControllerRef.current) abortControllerRef.current.abort();
+
+      // The cleanup above aborts this run, so release the guard — a replacing
+      // effect (StrictMode) still has to verify the same token.
+      verifiedTokenRef.current = null;
     };
-  }, [verifyUserAccount, token]);
+  }, [router, token, verifyUserAccount]);
 
   return (
     <Suspense>

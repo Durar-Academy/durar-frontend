@@ -17,6 +17,7 @@ export function AuthenticationProvider({ children }: { children: React.ReactNode
   const [authLoading, setAuthLoading] = useState(false);
   const router = useRouter();
   const abortControllerRef = useRef<AbortController | null>(null);
+  const sessionExpiredToastRef = useRef(false);
 
   const fetchAuth = useCallback(() => {
     (async function () {
@@ -56,7 +57,12 @@ export function AuthenticationProvider({ children }: { children: React.ReactNode
 
         console.error("Unable to refresh Access token with Local Refresh Token", error);
 
-        toast.error("Your session has expired. Please login again to continue.");
+        // A single expired session must not stack the same toast: StrictMode
+        // double-invokes this effect and any repeat 401 re-enters this catch.
+        if (!sessionExpiredToastRef.current) {
+          sessionExpiredToastRef.current = true;
+          toast.error("Your session has expired. Please login again to continue.");
+        }
 
         setLoggedIn(false);
 

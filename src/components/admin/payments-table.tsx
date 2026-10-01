@@ -60,7 +60,7 @@ export function PaymentsTable({ payments }: { payments: PaymentsTableProps }) {
                   <TableCell className="capitalize">
                     {formatToReadableId(payment.id, "INV")}
                   </TableCell>
-                  <TableCell>{formatAmount(payment.amount)}</TableCell>
+                  <TableCell>{formatAmount(payment.amount, payment.currency)}</TableCell>
                   <TableCell className="text-center">
                     {payment.dateIssued} - {payment.dueDate}
                   </TableCell>

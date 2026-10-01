@@ -45,7 +45,7 @@ export function NotificationsTable({ notifications }: { notifications: UserNotif
                 </TableCell>
 
                 <TableCell className="text-center flex justify-center">
-                  <Link href={`/notifications/${notification.notificationId}`}>
+                  <Link href={`/student/notifications/${notification.notificationId}`}>
                     <EyeIcon className="text-orange h-6 w-6" />
                   </Link>
                 </TableCell>

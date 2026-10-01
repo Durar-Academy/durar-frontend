@@ -167,10 +167,12 @@ export const processPayments = (payments: Payment[]) => {
     const { date: dueDate } = formatDateAndTime(payment.charge.dueAt);
     const paymentMethod = payment.provider;
     const status = payment.status;
+    const currency = payment.currency;
 
     return {
       id,
       amount,
+      currency,
       dateIssued,
       dueDate,
       paymentMethod,
@@ -367,12 +369,14 @@ export const processUserPayments = (payments: Payment[]) => {
 
     const amount = payment.amount;
     const status = payment.status;
+    const currency = payment.currency;
 
     return {
       id,
       date,
 
       amount,
+      currency,
       status,
     };
   });
@@ -654,17 +658,35 @@ export const processCoursesMetrics = (coursesMetrics: CoursesMetrics): OverviewC
   ];
 };
 
-export const processPaymentsMetrics = (paymentsMetrics: PaymentsMetrics): OverviewCardProps[] => {
+/**
+ * `GET /metrics/payment` now returns a `byCurrency` map keyed by currency code,
+ * each entry holding the same keys as the legacy top-level payload. Older
+ * deployments return the flat shape only.
+ */
+type PaymentsMetricsPayload = Partial<PaymentsMetrics> & {
+  currency?: string;
+  byCurrency?: Record<string, Partial<PaymentsMetrics>> | null;
+};
+
+export type PaymentsMetricsSummary = {
+  currency: string;
+  cards: OverviewCardProps[];
+};
+
+const buildPaymentsMetricsCards = (
+  paymentsMetrics: Partial<PaymentsMetrics> | undefined,
+  currency: string,
+): OverviewCardProps[] => {
   return [
     {
       title: "Total Revenue",
-      figure: formatAmount(paymentsMetrics.totalRevenue ?? 0, "ngn"),
+      figure: formatAmount(paymentsMetrics?.totalRevenue ?? 0, currency),
       children: React.createElement(List, { key: "icon", className: "w-6 h-6 text-orange" }),
     },
 
     {
       title: "Total Transactions",
-      figure: String(paymentsMetrics.totalTransactions),
+      figure: String(paymentsMetrics?.totalTransactions ?? 0),
       children: React.createElement(CheckCircle, {
         key: "icon",
         className: "w-6 h-6 text-success",
@@ -673,17 +695,43 @@ export const processPaymentsMetrics = (paymentsMetrics: PaymentsMetrics): Overvi
 
     {
       title: "Pending Payments",
-      figure: String(paymentsMetrics.pendingPayments),
+      figure: String(paymentsMetrics?.pendingPayments ?? 0),
       children: React.createElement(Info, { key: "icon", className: "w-6 h-6 text-danger" }),
     },
 
     {
       title: "Refunded Payments",
-      figure: formatAmount(paymentsMetrics.refundedPayments ?? 0, "ngn"),
+      figure: formatAmount(paymentsMetrics?.refundedPayments ?? 0, currency),
       children: React.createElement(CheckCircle, {
         key: "icon",
         className: "w-6 h-6 text-success",
       }),
+    },
+  ];
+};
+
+export const processPaymentsMetrics = (
+  paymentsMetrics?: PaymentsMetricsPayload | null,
+): PaymentsMetricsSummary[] => {
+  const byCurrency = paymentsMetrics?.byCurrency;
+  const currencyEntries =
+    byCurrency && typeof byCurrency === "object" ? Object.entries(byCurrency) : [];
+
+  // Each currency gets its own card set — amounts from two currencies are never
+  // combined in a single card.
+  if (currencyEntries.length > 0) {
+    return currencyEntries.map(([currency, metrics]) => ({
+      currency: currency.toUpperCase(),
+      cards: buildPaymentsMetricsCards(metrics ?? undefined, currency),
+    }));
+  }
+
+  const fallbackCurrency = paymentsMetrics?.currency ?? "ngn";
+
+  return [
+    {
+      currency: fallbackCurrency.toUpperCase(),
+      cards: buildPaymentsMetricsCards(paymentsMetrics ?? undefined, fallbackCurrency),
     },
   ];
 };
@@ -746,7 +794,8 @@ export const processAssignmentsMetrics = (
 
     {
       title: "Overdue",
-      figure: String(assignmentsMetrics.lateAssignments ?? 0),
+      // The metrics payload reports `lateSubmissions`; older builds used `lateAssignments`.
+      figure: String(assignmentsMetrics.lateSubmissions ?? assignmentsMetrics.lateAssignments ?? 0),
       children: React.createElement(Info, {
         key: "icon",
         className: "w-6 h-6 text-danger",

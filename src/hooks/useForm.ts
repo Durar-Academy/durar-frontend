@@ -26,9 +26,11 @@ export const useRegisterForm = () =>
   useForm<z.infer<typeof registerFormSchema>>({
     resolver: zodResolver(registerFormSchema),
     defaultValues: {
+      title: undefined,
       firstName: "",
       middleName: "",
       lastName: "",
+      gender: undefined,
       dialingCode: "",
       phoneNumber: "",
       country: "",

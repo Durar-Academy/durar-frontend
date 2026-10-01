@@ -38,7 +38,7 @@ export function UserPaymentsTable({ payments }: { payments: UsersPaymentsTablePr
                     {formatToReadableId(payment.id, "INV")}
                   </TableCell>
                   <TableCell>{payment.date}</TableCell>
-                  <TableCell>{formatAmount(payment.amount)}</TableCell>
+                  <TableCell>{formatAmount(payment.amount, payment.currency)}</TableCell>
                   <TableCell
                     className={cn(
                       "capitalize font-medium text-high",

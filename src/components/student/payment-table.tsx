@@ -20,10 +20,12 @@ import { PAYMENT_STATUSES } from "@/data/constants";
 import { cn } from "@/lib/utils";
 import { formatAmount, formatToReadableId } from "@/utils/formatter";
 import { Download, RefreshCw, Wallet } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import toast from "react-hot-toast";
 import { AddNewCard } from "./add-new-card";
 import { StudentPaymentMethods } from "./student-payment-methods";
 import { useDownloadStudentTransactions, usePaymentMethods } from "@/hooks/useStudent";
+import { initializeSubscriptionPayment } from "@/lib/subscription";
 import type { PaymentHistoryFilters, PaymentHistoryResponse } from "@/lib/student";
 
 export function PaymentsTable({
@@ -46,6 +48,29 @@ export function PaymentsTable({
 
   const { data: methods } = usePaymentMethods();
   const downloadTransactions = useDownloadStudentTransactions();
+  const retryKeysRef = useRef<Record<string, string>>({});
+
+  const handleRetry = async (payment: PaymentsTableProps[number]) => {
+    if (!payment.billingPlanId) return;
+
+    // A stable key per payment keeps repeat retries from creating new charges.
+    retryKeysRef.current[payment.id] ??=
+      globalThis.crypto?.randomUUID?.() ?? `${Date.now()}-${Math.random()}`;
+
+    const idempotencyKey = retryKeysRef.current[payment.id];
+
+    try {
+      const response = await initializeSubscriptionPayment({ billingPlanId: payment.billingPlanId, idempotencyKey });
+
+      const paymentLink = response?.authorization_url ?? response?.payment_link;
+
+      if (!paymentLink) throw new Error("Payment checkout could not be started");
+
+      window.location.assign(paymentLink);
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Unable to start payment");
+    }
+  };
 
   const handleDownload = async () => {
     try {
@@ -133,7 +158,7 @@ export function PaymentsTable({
                 <TableCell className="capitalize">
                   {formatToReadableId(payment.id, "INV")}
                 </TableCell>
-                <TableCell>{formatAmount(payment.amount)}</TableCell>
+                <TableCell>{formatAmount(payment.amount, payment.currency)}</TableCell>
                 <TableCell className="text-center">
                   {payment.dateIssued} - {payment.dueDate}
                 </TableCell>
@@ -162,10 +187,11 @@ export function PaymentsTable({
                     </button>
                   )}
 
-                  {payment.status === "failed" && (
+                  {payment.status === "failed" && (payment.courseId || payment.billingPlanId) && (
                     <button
-                      className="font-bold text-white bg-danger
-                      rounded-lg py-2 px-4 flex items-center justify-center gap-2"
+                      className="font-bold text-white bg-danger hover:bg-danger/80
+                      rounded-lg py-2 px-4 flex items-center justify-center gap-2 transition-colors"
+                      onClick={() => handleRetry(payment)}
                     >
                       Retry
                       <RefreshCw className="w-5 h-5 text-white" />

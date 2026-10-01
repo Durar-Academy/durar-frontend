@@ -13,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { axiosInstance } from "@/lib/axios";
 
 type Card = {
   id: string;
@@ -61,7 +62,7 @@ export function StudentPaymentMethods({
     setLoading(true);
 
     try {
-      const response = await axios.put(`/payment-method/${cardId}/preferred`);
+      const response = await axiosInstance.put(`/payment-method/${cardId}/preferred`);
 
       if (response.data.success) {
         toast.success(response.data.message || "Card updated as preferred");
@@ -147,26 +148,6 @@ export function StudentPaymentMethods({
               <Plus className="w-6 h-6" />
               <span>Add New Card</span>
             </button>
-          </fieldset>
-
-          <fieldset disabled={loading} className="disabled:opacity-50">
-            <div
-              onClick={() => setSelectedId("bank")}
-              className={`card px-4 py-5 border flex items-center gap-6 rounded-xl cursor-pointer transition-colors ${
-                selectedId === "bank"
-                  ? "border-orange bg-orange/10"
-                  : "border-shade-3 hover:bg-shade-1"
-              }`}
-            >
-              <div className="w-32 h-20 rounded-xl bg-gradient-to-r from-green to-orange flex items-center justify-center">
-                <Image src={"/bank.svg"} width={32} height={32} alt="Bank Icon" />
-              </div>
-
-              <div className="flex flex-col gap-3">
-                <h3 className="text-high font-semibold text-xl">Pay with Bank Transfer</h3>
-                <p className="text-low font-medium text-base">Make Payment</p>
-              </div>
-            </div>
           </fieldset>
         </section>
       </DialogContent>
