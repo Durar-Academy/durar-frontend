@@ -6,19 +6,27 @@ export type BillingPlanInput = {
   amount: number;
   currency: string;
   interval: string;
+  sessionsPerWeek: number;
   gracePeriodDays: number;
   maxCarryForwardSessions: number;
   description?: string;
 };
 
-function unwrap(response: { data: any }) {
-  return response.data?.data ?? response.data;
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+function unwrap(response: { data: unknown }): unknown {
+  if (isRecord(response.data) && 'data' in response.data) {
+    return response.data.data;
+  }
+  return response.data;
 }
 
 export async function getAllBillingPlans() {
   const response = await axiosInstance.get('/plan/admin');
   const data = unwrap(response);
-  return (Array.isArray(data) ? data : data?.records ?? []) as BillingPlan[];
+  return (Array.isArray(data) ? data : isRecord(data) && Array.isArray(data.records) ? data.records : []) as BillingPlan[];
 }
 
 export async function createBillingPlan(payload: BillingPlanInput) {

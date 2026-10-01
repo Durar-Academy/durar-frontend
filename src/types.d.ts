@@ -477,6 +477,7 @@ type BillingPlan = {
   interval: string | null;
   currency: string;
   amount: number;
+  sessionsPerWeek: number;
   description: string;
   active: boolean;
   createdAt: Date;
