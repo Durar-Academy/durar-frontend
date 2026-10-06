@@ -1,6 +1,32 @@
 import axios from "axios";
 import { axiosInstance } from "./axios";
 
+export type SessionWalletSummary = {
+  available: number;
+  reserved: number;
+  used: number;
+  allocated: number;
+  carriedIn: number;
+};
+
+export async function getStudentSessionWallet(studentId: string, options?: { signal?: AbortSignal }) {
+  const response = await axiosInstance.get(`/session-wallet/admin/students/${studentId}/current`, {
+    signal: options?.signal,
+  });
+  return (response.data?.data ?? response.data) as SessionWalletSummary | null;
+}
+
+export async function addSessionCredit(payload: {
+  studentId: string;
+  quantity: number;
+  reason: string;
+  reference?: string;
+  idempotencyKey: string;
+}) {
+  const response = await axiosInstance.post("/session-wallet/admin/adjustments", payload);
+  return response.data?.data ?? response.data;
+}
+
 // ─── Courses ──────────────────────────────────────────────────────────────────
 
 export async function createCourse(
@@ -168,6 +194,7 @@ export async function getPayments(
 ) {
   const params = new URLSearchParams();
   if (options?.filters?.userId) params.append("userId", options.filters.userId);
+  if (options?.filters?.status) params.append("status", options.filters.status);
   if (options?.filters?.startAt) params.append("startAt", options.filters.startAt);
   if (options?.filters?.endAt) params.append("endAt", options.filters.endAt);
   if (options?.filters?.page) params.append("page", String(options.filters.page));
@@ -220,38 +247,68 @@ export async function getStudentsMetrics(options?: { signal?: AbortSignal }) {
   return response.data.data;
 }
 
-// The API clamps `limit` to 100 per response, so accumulate pages at that size.
+// The students table shows one server-paginated page of 10 rows.
+export const STUDENTS_PAGE_LIMIT = 10;
+// The API clamps `limit` to 100 per response, so the walker accumulates pages at that size.
 const STUDENTS_PAGE_SIZE = 100;
 // Hard stop in case the API ever ignores `page` and repeats the same records.
 const STUDENTS_MAX_PAGES = 100;
 
+export type StudentsPage = {
+  records: Student[];
+  metaData: {
+    page: number;
+    perPage: number;
+    pageCount: number;
+    totalCount: number;
+    hasPreviousPages: boolean;
+    hasNextPages: boolean;
+  };
+};
+
+/** Fetches one server-paginated page of students, forwarding `search`/`status`. */
+export async function getStudentsPage(options?: { signal?: AbortSignal; filters?: SearchFilters }): Promise<StudentsPage> {
+  const filters = options?.filters;
+  const params = new URLSearchParams();
+  if (filters?.search) params.append("search", filters.search);
+  if (filters?.status) params.append("status", filters.status);
+  params.append("page", String(filters?.page ?? 1));
+  params.append("limit", String(filters?.limit ?? STUDENTS_PAGE_LIMIT));
+
+  const response = await axiosInstance.get(`/user/students?${params.toString()}`, {
+    signal: options?.signal,
+  });
+
+  const payload = response.data?.data ?? response.data;
+  const records: Student[] = Array.isArray(payload) ? payload : Array.isArray(payload?.records) ? payload.records : [];
+
+  return {
+    records,
+    metaData: {
+      page: Number(payload?.metaData?.page ?? filters?.page ?? 1),
+      perPage: Number(payload?.metaData?.perPage ?? records.length),
+      pageCount: Number(payload?.metaData?.pageCount ?? 1),
+      totalCount: Number(payload?.metaData?.totalCount ?? records.length),
+      hasPreviousPages: Boolean(payload?.metaData?.hasPreviousPages),
+      hasNextPages: Boolean(payload?.metaData?.hasNextPages),
+    },
+  };
+}
+
 /**
  * Fetches *every* student matching `search`/`status`, walking all API pages.
  *
- * Callers always receive the complete list — `page`/`limit` on `filters` are
- * ignored here because display paging is done client-side by the caller. Any
- * `search`/`status` filters passed are forwarded on every page request.
+ * For pickers that need the complete list; the students table itself pages
+ * through `getStudentsPage` one server page at a time.
  */
 export async function getStudents(options?: { signal?: AbortSignal; filters?: SearchFilters }) {
-  const filters = options?.filters;
   const allRecords: Student[] = [];
 
   for (let page = 1; page <= STUDENTS_MAX_PAGES; page += 1) {
-    const params = new URLSearchParams();
-    if (filters?.search) params.append("search", filters.search);
-    if (filters?.status) params.append("status", filters.status);
-    params.append("page", String(page));
-    params.append("limit", String(STUDENTS_PAGE_SIZE));
-
-    const response = await axiosInstance.get(`/user/students?${params.toString()}`, {
+    const { records: currentRecords } = await getStudentsPage({
       signal: options?.signal,
+      filters: { ...options?.filters, page, limit: STUDENTS_PAGE_SIZE },
     });
-
-    const payload = response.data?.data ?? response.data;
-    const records = Array.isArray(payload)
-      ? payload
-      : payload?.records ?? payload?.data?.records ?? payload?.data;
-    const currentRecords = Array.isArray(records) ? records : [];
 
     allRecords.push(...currentRecords);
 
@@ -268,11 +325,35 @@ export async function getStudents(options?: { signal?: AbortSignal; filters?: Se
   return allRecords;
 }
 
+/** Fetches the active students enrolled in one course, across all pages. */
+export async function getCourseStudents(courseId: string, options?: { signal?: AbortSignal }) {
+  const allRecords: Student[] = [];
+
+  for (let page = 1; page <= STUDENTS_MAX_PAGES; page += 1) {
+    const response = await axiosInstance.get(`/course/${courseId}/students?page=${page}&limit=${STUDENTS_PAGE_SIZE}`, {
+      signal: options?.signal,
+    });
+    const payload = response.data?.data ?? response.data;
+    const records = Array.isArray(payload) ? payload : payload?.records ?? payload?.data?.records ?? payload?.data;
+    const currentRecords = Array.isArray(records) ? records : [];
+    allRecords.push(...currentRecords);
+
+    if (currentRecords.length < STUDENTS_PAGE_SIZE) break;
+  }
+
+  return allRecords;
+}
+
 export async function getUser(userId: string, options?: { signal?: AbortSignal }) {
   const response = await axiosInstance.get(`/user/${userId}`, {
     signal: options?.signal,
   });
   return response.data.data;
+}
+
+export async function verifyStudent(studentId: string) {
+  const response = await axiosInstance.post(`/user/students/${studentId}/verify`);
+  return response.data?.data ?? response.data;
 }
 
 export async function getStudentMetrics(studentId: string, options?: { signal?: AbortSignal }) {
@@ -320,6 +401,8 @@ export async function getTutors(options?: { signal?: AbortSignal; filters?: Sear
   const params = new URLSearchParams();
   if (options?.filters?.search) params.append("search", options.filters.search);
   if (options?.filters?.status) params.append("status", options.filters.status);
+  // The API defaults `limit` to 10; one page is fetched here, so ask for the max.
+  params.append("limit", "100");
 
   const response = await axiosInstance.get(`/user/tutors?${params.toString()}`, {
     signal: options?.signal,

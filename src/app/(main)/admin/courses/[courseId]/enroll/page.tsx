@@ -21,7 +21,8 @@ export default function EnrolStudentPage() {
   const courseId = params.courseId;
   const { data: user, isLoading: userLoading } = useCurrentUser();
   const { data: course, isLoading: courseLoading } = useCourse(courseId);
-  const { data: students, isLoading: studentsLoading } = useStudents();
+  // Only active students can be enrolled — the API rejects any other status.
+  const { data: students, isLoading: studentsLoading } = useStudents({ status: "active" });
   const enrollment = useEnrollStudent();
   const [selected, setSelected] = useState<StudentOption | null>(null);
 

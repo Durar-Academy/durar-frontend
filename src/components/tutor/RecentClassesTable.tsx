@@ -253,16 +253,16 @@ export default function RecentClassesTable({
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center w-full gap-3">
-        <h2 className="text-xl font-semibold">Recent Classes</h2>
-        <span className="flex-1"></span>
-        <div className="h-11 rounded-lg border-[#D2D4E0] border-[1px] flex items-center justify-center p-3">
+    <div className="space-y-5">
+      <div className="flex w-full flex-col gap-3 xl:flex-row xl:items-center">
+        <h2 className="text-xl font-semibold text-high">Recent Classes</h2>
+        <div className="flex flex-1 flex-col gap-3 sm:flex-row xl:justify-end">
+        <div className="flex h-11 w-full items-center rounded-lg border border-[#D2D4E0] px-3 sm:max-w-xs">
           <input
             placeholder="Search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="max-w-sm border-none outline-none text-sm"
+            className="min-w-0 flex-1 border-none bg-transparent text-sm outline-none"
           />
           <Image
             src="/SVGs/searchIcon.svg"
@@ -273,7 +273,7 @@ export default function RecentClassesTable({
         </div>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button className="h-11" variant="outline">
+            <Button className="h-11 w-full sm:w-auto" variant="outline">
               Status
             </Button>
           </DropdownMenuTrigger>
@@ -294,7 +294,7 @@ export default function RecentClassesTable({
         </DropdownMenu>
         <button
           onClick={exportToCSV}
-          className="flex gap-3 text-sm text-orange border-[1px] border-orange p-3 rounded-lg justify-center items-center"
+          className="flex h-11 items-center justify-center gap-3 rounded-lg border border-orange px-3 text-sm text-orange"
         >
           Export List
           <Image
@@ -304,27 +304,28 @@ export default function RecentClassesTable({
             height={16}
           />
         </button>
+        </div>
       </div>
 
       {isLoading ? (
         <Skeleton className="w-full h-[300px] rounded-xl" />
       ) : (
         <>
-          <div className="min-w-0 max-w-full overflow-x-auto">
-            <table className="text-sm min-w-max bg-white border-none border-separate border-spacing-y-3">
+          <div className="min-w-0 max-w-full overflow-x-auto rounded-xl border border-shade-2 bg-offwhite p-2 sm:p-3">
+            <table className="w-full min-w-[680px] table-fixed border-separate border-spacing-y-2 bg-transparent text-sm">
               <thead>
                 <tr className="text-low text-sm text-left">
-                  <th className="py-3 px-4 font-semibold">Day</th>
-                  <th className="py-3 px-4 font-semibold">Student</th>
-                  <th className="py-3 px-4 font-semibold">Category</th>
-                  <th className="py-3 px-4 font-semibold">Time</th>
-                  <th className="py-3 px-4 font-semibold">Status</th>
+                  <th className="w-[18%] px-5 py-3 font-semibold">Day</th>
+                  <th className="w-[25%] px-5 py-3 font-semibold">Student</th>
+                  <th className="w-[22%] px-5 py-3 font-semibold">Category</th>
+                  <th className="w-[20%] px-5 py-3 font-semibold">Time</th>
+                  <th className="w-[15%] px-5 py-3 font-semibold">Status</th>
                 </tr>
               </thead>
               <tbody>
                 {filteredClasses.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="text-center py-4 text-sm text-gray-500">
+                    <tr>
+                    <td colSpan={5} className="rounded-lg bg-white px-5 py-8 text-center text-sm text-low">
                       No classes found
                     </td>
                   </tr>
@@ -332,21 +333,21 @@ export default function RecentClassesTable({
                   filteredClasses.map((classItem, index) => (
                     <tr
                       key={index}
-                      className="border-[1px] bg-[#F8F8FA] border-[#D2D4E0] mt-3"
+                      className="bg-white text-high"
                     >
-                      <td className="text-sm py-4 pl-3 border-[1px] border-[#D2D4E0] rounded-l-xl border-r-0">
+                      <td className="rounded-l-xl border-y border-l border-shade-2 px-5 py-4 align-middle text-sm">
                         {classItem.day}
                       </td>
-                      <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0]">
+                      <td className="border-y border-shade-2 px-5 py-4 align-middle text-sm">
                         {classItem.student}
                       </td>
-                      <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0]">
+                      <td className="border-y border-shade-2 px-5 py-4 align-middle text-sm">
                         {classItem.category}
                       </td>
-                      <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0]">
+                      <td className="border-y border-shade-2 px-5 py-4 align-middle text-sm">
                         {classItem.time}
                       </td>
-                      <td className="text-sm py-4 border-[1px] border-[#D2D4E0] border-l-0 rounded-r-xl">
+                      <td className="rounded-r-xl border-y border-r border-shade-2 px-5 py-4 align-middle text-sm">
                         <span
                           className={
                             classItem.status === "Scheduled"
@@ -363,7 +364,7 @@ export default function RecentClassesTable({
               </tbody>
             </table>
           </div>
-          <div className="flex justify-between items-center mt-4">
+          <div className="mt-5 flex flex-wrap items-center justify-between gap-3">
             <Button
               onClick={handlePreviousPage}
               disabled={!classesData?.metaData.hasPreviousPages}

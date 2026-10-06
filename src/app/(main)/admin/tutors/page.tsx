@@ -18,9 +18,9 @@ export default function TutorsManagementPage() {
   const [filters, setFilters] = useState<SearchFilters>({});
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: tutorsMetrics, isLoading: tutorsMetricsLoading } = useTutorsMetrics();
-  // `GET /user/tutors` accepts `search` (first/last name) and `status`. The
-  // unfiltered request keeps its own cache entry, so the timetable editor's
-  // tutor list is unaffected.
+  // `GET /user/tutors` accepts `search` (first/last name/email) and `status`.
+  // The timetable editors request `{ status: "active" }`, which holds its own
+  // cache entry and is unaffected by this page's filters.
   const tutorQueryFilters =
     filters.search || filters.status ? { search: filters.search, status: filters.status } : undefined;
   const { data: tutors, isLoading: tutorsLoading } = useTutors(tutorQueryFilters);

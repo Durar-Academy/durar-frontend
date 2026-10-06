@@ -7,6 +7,7 @@ export interface SessionOccurrence {
   scheduledStart: string;
   scheduledEnd: string;
   status: string;
+  autoChargeStatus?: "pending" | "processing" | "charged" | "insufficient_credit" | "failed";
   meetingLink?: string | null;
   course?: { id: string; title: string };
   classTemplate?: { id: string; title?: string; userId?: string };

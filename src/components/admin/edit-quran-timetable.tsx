@@ -39,14 +39,14 @@ const statusColor: Record<string, string> = {
 export function EditTimeSchedule({
   schedules,
   tutors,
-  students,
+  studentsByCourse,
   courses,
   highlightScheduleId,
   onSave,
 }: {
   schedules: Schedule[];
   tutors: Tutor[];
-  students: Student[];
+  studentsByCourse: Record<string, Student[]>;
   courses: Course[];
   highlightScheduleId?: string | null;
   onSave: (schedules: Schedule[]) => void;
@@ -113,15 +113,6 @@ export function EditTimeSchedule({
     [tutors],
   );
 
-  const studentOptions: SelectOption[] = useMemo(
-    () =>
-      students.map((student) => ({
-        value: student.id,
-        label: `${student.firstName} ${student.lastName}`,
-      })),
-    [students],
-  );
-
   const courseOptions: SelectOption[] = useMemo(
     () =>
       courses.map((course) => ({
@@ -146,6 +137,10 @@ export function EditTimeSchedule({
       const cellEntries = classData[day][timeSlot];
       const targetEntry = cellEntries[entryIndex];
       if (schedule.id !== targetEntry?.id) return schedule;
+
+      if (field === "courseId") {
+        return { ...schedule, courseId: value, studentId: "", student: undefined };
+      }
 
       return { ...schedule, [field]: value };
     });
@@ -242,8 +237,14 @@ export function EditTimeSchedule({
 
   const getEntryStudent = (entry: Schedule) => {
     if (entry.student) return entry.student;
-    return students.find((s) => s.id === entry.studentId);
+    return (studentsByCourse[entry.courseId] ?? []).find((s) => s.id === entry.studentId);
   };
+
+  const getEntryStudentOptions = (entry: Schedule): SelectOption[] =>
+    (studentsByCourse[entry.courseId] ?? []).map((student) => ({
+      value: student.id,
+      label: `${student.firstName} ${student.lastName}`,
+    }));
 
   return (
     <div className="w-full mx-auto">
@@ -410,7 +411,7 @@ export function EditTimeSchedule({
                                 <UserRound className="w-3.5 h-3.5 shrink-0 text-low" />
                                 <div className="flex-1 min-w-0">
                                   <Select
-                                    options={studentOptions}
+                                    options={getEntryStudentOptions(entry)}
                                     value={
                                       entryStudent
                                         ? {
@@ -430,6 +431,10 @@ export function EditTimeSchedule({
                                       )
                                     }
                                     placeholder="Select student..."
+                                    isDisabled={!entry.courseId}
+                                    noOptionsMessage={() =>
+                                      entry.courseId ? "No enrolled students" : "Select a course first"
+                                    }
                                     className="react-select-container text-xs"
                                     classNamePrefix="react-select"
                                     isSearchable

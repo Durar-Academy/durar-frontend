@@ -24,6 +24,8 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { STUDENT_STATUSES } from "@/data/constants";
 import { formatToReadableId } from "@/utils/formatter";
+import { useVerifyStudent } from "@/hooks/useAdmin";
+import toast from "react-hot-toast";
 
 export function StudentsTable({
   students,
@@ -32,6 +34,8 @@ export function StudentsTable({
   onSearchChange,
   onStatusChange,
   page,
+  pageCount,
+  totalCount,
   hasNextPage,
   onPageChange,
 }: {
@@ -41,10 +45,13 @@ export function StudentsTable({
   onSearchChange: (value: string) => void;
   onStatusChange: (value: SearchFilters["status"] | undefined) => void;
   page: number;
+  pageCount: number;
+  totalCount: number;
   hasNextPage: boolean;
   onPageChange: (page: number) => void;
 }) {
   const [searchInput, setSearchInput] = useState(search);
+  const verifyStudent = useVerifyStudent();
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -106,8 +113,8 @@ export function StudentsTable({
                 <TableHead>Name</TableHead>
                 <TableHead>Gender</TableHead>
                 <TableHead>Email</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Action</TableHead>
+              <TableHead>Status</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
             </TableHeader>
 
@@ -136,9 +143,25 @@ export function StudentsTable({
                     {student.status}
                   </TableCell>
                   <TableCell>
-                    <Link href={`/admin/students/${student.id}`}>
-                      <button className="font-bold text-orange hover:underline">View</button>
-                    </Link>
+                    <div className="flex items-center gap-3">
+                      <Link href={`/admin/students/${student.id}`}>
+                        <button className="font-bold text-orange hover:underline">View</button>
+                      </Link>
+                      <button
+                        type="button"
+                        disabled={student.status === "active" || verifyStudent.isPending || !["unverified", "invited"].includes(student.status)}
+                        onClick={() => verifyStudent.mutate(student.id, {
+                          onSuccess: () => toast.success("Student verified successfully."),
+                          onError: (error) => toast.error(error instanceof Error ? error.message : "Unable to verify student."),
+                        })}
+                        className={cn(
+                          "font-bold hover:underline disabled:cursor-not-allowed disabled:no-underline disabled:opacity-60",
+                          student.status === "active" ? "text-success" : "text-orange",
+                        )}
+                      >
+                        {student.status === "active" ? "Verified" : "Verify"}
+                      </button>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -149,6 +172,9 @@ export function StudentsTable({
         )}
       </div>
       <div className="flex items-center justify-end gap-2 pt-4">
+        <span className="text-sm text-low">
+          Page {page} of {pageCount} · {totalCount} {totalCount === 1 ? "student" : "students"}
+        </span>
         <button
           type="button"
           aria-label="Previous page"
@@ -158,7 +184,6 @@ export function StudentsTable({
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
-        <span className="text-sm text-low">Page {page}</span>
         <button
           type="button"
           aria-label="Next page"

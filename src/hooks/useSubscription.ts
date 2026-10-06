@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import type { QueryClient } from '@tanstack/react-query';
 
 import {
   cancelSessionBooking,
@@ -14,6 +15,19 @@ import {
   requestClassAbsence,
   retrySubscriptionPayment,
 } from '@/lib/subscription';
+
+export async function invalidateStudentBillingQueries(queryClient: QueryClient) {
+  await Promise.all([
+    queryClient.invalidateQueries({ queryKey: ['student-subscriptions'] }),
+    queryClient.invalidateQueries({ queryKey: ['student-session-wallet'] }),
+    queryClient.invalidateQueries({ queryKey: ['student-session-bookings'] }),
+    queryClient.invalidateQueries({ queryKey: ['class-occurrences'] }),
+    queryClient.invalidateQueries({ queryKey: ['all-student-payments'] }),
+    queryClient.invalidateQueries({ queryKey: ['all-student-payment-methods'] }),
+    queryClient.invalidateQueries({ queryKey: ['student-courses'] }),
+    queryClient.invalidateQueries({ queryKey: ['all-courses'] }),
+  ]);
+}
 
 export function useBillingPlans() {
   return useQuery({ queryKey: ['billing-plans'], queryFn: getBillingPlans });
@@ -39,12 +53,8 @@ export function useCreateSubscription() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: createSubscription,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['student-subscriptions'] });
-      queryClient.invalidateQueries({ queryKey: ['student-session-wallet'] });
-      queryClient.invalidateQueries({ queryKey: ['student-session-bookings'] });
-      queryClient.invalidateQueries({ queryKey: ['all-student-payments'] });
-      queryClient.invalidateQueries({ queryKey: ['all-courses'] });
+    onSuccess: async () => {
+      await invalidateStudentBillingQueries(queryClient);
     },
   });
 }
@@ -65,11 +75,8 @@ export function useRetrySubscriptionPayment() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: retrySubscriptionPayment,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['student-subscriptions'] });
-      queryClient.invalidateQueries({ queryKey: ['student-session-wallet'] });
-      queryClient.invalidateQueries({ queryKey: ['student-session-bookings'] });
-      queryClient.invalidateQueries({ queryKey: ['all-student-payments'] });
+    onSuccess: async () => {
+      await invalidateStudentBillingQueries(queryClient);
     },
   });
 }

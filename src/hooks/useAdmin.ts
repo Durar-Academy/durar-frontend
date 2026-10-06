@@ -1,4 +1,4 @@
-import { keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { keepPreviousData, useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { registerStudent } from "@/lib/auth";
 
@@ -18,6 +18,7 @@ import {
   getAssignments,
   getAssignmentsMetrics,
   getCourse,
+  getCourseStudents,
   getCourses,
   getCoursesMetrics,
   getMetrics,
@@ -35,6 +36,7 @@ import {
   getStudentMetrics,
   getStudents,
   getStudentsMetrics,
+  getStudentsPage,
   enrollStudent,
   getTutorCourses,
   getTutorMetrics,
@@ -43,12 +45,15 @@ import {
   getUser,
   getUserActivities,
   getUserPayments,
+  verifyStudent,
   updateAssignment,
   updateCourse,
   updateNotification,
   updateSchedules,
   createNote,
   getStudentNotes,
+  getStudentSessionWallet,
+  addSessionCredit,
 } from "@/lib/admin";
 
 // ─── Dashboard Queries ────────────────────────────────────────────────────────
@@ -107,10 +112,61 @@ export function useStudents(filters?: SearchFilters) {
   });
 }
 
+/** One server-paginated page of students, for the admin students table. */
+export function useStudentsPage(filters: SearchFilters) {
+  return useQuery({
+    queryKey: ["students-page", filters],
+    queryFn: () => getStudentsPage({ filters }),
+    placeholderData: keepPreviousData,
+  });
+}
+
+export function useCourseStudents(courseIds: string[]) {
+  const ids = Array.from(new Set(courseIds.filter(Boolean)));
+  const queries = useQueries({
+    queries: ids.map((courseId) => ({
+      queryKey: ["course-students", courseId],
+      queryFn: () => getCourseStudents(courseId),
+      staleTime: 60_000,
+    })),
+  });
+
+  const studentsByCourse = Object.fromEntries(
+    ids.map((courseId, index) => [courseId, queries[index]?.data ?? []]),
+  ) as Record<string, Student[]>;
+
+  return {
+    studentsByCourse,
+    isLoading: queries.some((query) => query.isLoading),
+    error: queries.find((query) => query.error)?.error ?? null,
+  };
+}
+
 export function useStudent(studentId: string) {
   return useQuery({
     queryKey: ["student", studentId],
     queryFn: () => getUser(studentId),
+    enabled: !!studentId,
+  });
+}
+
+export function useVerifyStudent() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: verifyStudent,
+    onSuccess: (_data, studentId) => {
+      queryClient.invalidateQueries({ queryKey: ["student", studentId] });
+      queryClient.invalidateQueries({ queryKey: ["all-students"] });
+      queryClient.invalidateQueries({ queryKey: ["all-students-metrics"] });
+    },
+  });
+}
+
+export function useStudentSessionWallet(studentId: string) {
+  return useQuery({
+    queryKey: ["student-session-wallet", studentId],
+    queryFn: () => getStudentSessionWallet(studentId),
     enabled: !!studentId,
   });
 }
@@ -357,6 +413,18 @@ export function useRegisterStudent() {
       queryClient.invalidateQueries({ queryKey: ["all-students"] });
       queryClient.invalidateQueries({ queryKey: ["all-students-metrics"] });
       queryClient.invalidateQueries({ queryKey: ["dashboard-metrics"] });
+    },
+  });
+}
+
+export function useAddSessionCredit() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: addSessionCredit,
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["student-session-wallet", variables.studentId] });
+      queryClient.invalidateQueries({ queryKey: ["student-session-bookings"] });
+      queryClient.invalidateQueries({ queryKey: ["class-occurrences"] });
     },
   });
 }

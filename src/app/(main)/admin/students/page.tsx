@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ChevronRight, Plus } from "lucide-react";
 import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,19 +10,26 @@ import { OverviewCard } from "@/components/admin/overview-card";
 import { StudentsTable } from "@/components/admin/students-table";
 
 import { useCurrentUser } from "@/hooks/useAccount";
-import { useStudents, useStudentsMetrics } from "@/hooks/useAdmin";
+import { useStudentsMetrics, useStudentsPage } from "@/hooks/useAdmin";
+import { STUDENTS_PAGE_LIMIT } from "@/lib/admin";
 import { processStudents, processStudentsMetrics } from "@/utils/processor";
 
 export default function StudentsManagementPage() {
-  const [filters, setFilters] = useState<SearchFilters>({ page: 1, limit: 20 });
+  const [filters, setFilters] = useState<SearchFilters>({ page: 1 });
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: studentsMetrics, isLoading: studentsMetricsLoading } = useStudentsMetrics();
-  // Keep the unfiltered view broad, but send a selected status to the API.
-  const studentQueryFilters = filters.status ? { status: filters.status } : undefined;
-  const { data: students, isLoading: studentsLoading } = useStudents(studentQueryFilters);
+
+  // The list is server-paginated at STUDENTS_PAGE_LIMIT. `search`/`status` are
+  // only sent when set, so "All statuses" asks the API for every status.
+  const { data: studentsPage, isLoading: studentsLoading } = useStudentsPage({
+    page: filters.page ?? 1,
+    limit: STUDENTS_PAGE_LIMIT,
+    search: filters.search,
+    status: filters.status,
+  });
 
   const handleStatusChange = useCallback((status: SearchFilters["status"] | undefined) => {
-    setFilters((current) => ({ ...current, status, search: current.search, page: 1 }));
+    setFilters((current) => ({ ...current, status, page: 1 }));
   }, []);
   const handleSearchChange = useCallback((search: string) => {
     setFilters((current) => ({ ...current, search, page: 1 }));
@@ -32,25 +39,16 @@ export default function StudentsManagementPage() {
   }, []);
 
   const allStudentsMetrics = processStudentsMetrics(studentsMetrics ?? []);
-  const allStudents = processStudents(students ?? []);
+  const students = processStudents(studentsPage?.records ?? []);
+  const metaData = studentsPage?.metaData;
 
-  // The full list is fetched once and shown unfiltered until a status is picked,
-  // so selecting "All statuses" always returns to every student.
-  const normalizedSearch = (filters.search ?? "").trim().toLowerCase();
-  const filteredStudents = allStudents.filter((student) => {
-    const matchesStatus = !filters.status || student.status === filters.status;
-    const matchesSearch = !normalizedSearch || [student.name, student.email, student.id]
-      .some((value) => value.toLowerCase().includes(normalizedSearch));
-    return matchesStatus && matchesSearch;
-  });
-
-  const pageSize = filters.limit ?? 20;
-  const pageCount = Math.max(1, Math.ceil(filteredStudents.length / pageSize));
-  // Clamp the page so a list that shrinks after a refetch can't leave the admin
-  // stranded on an empty page.
-  const currentPage = Math.min(Math.max(filters.page ?? 1, 1), pageCount);
-  const pageStart = (currentPage - 1) * pageSize;
-  const paginatedStudents = filteredStudents.slice(pageStart, pageStart + pageSize);
+  // Clamp the page so a filter change that shrinks the list can't leave the
+  // admin stranded on an empty page.
+  useEffect(() => {
+    if (metaData && metaData.pageCount >= 1 && (filters.page ?? 1) > metaData.pageCount) {
+      setFilters((current) => ({ ...current, page: metaData.pageCount }));
+    }
+  }, [metaData, filters.page]);
 
   return (
     <section className="flex flex-col gap-5">
@@ -100,13 +98,15 @@ export default function StudentsManagementPage() {
         ) : (
           <div className="h-[500px]">
             <StudentsTable
-              students={paginatedStudents}
+              students={students}
               search={filters.search ?? ""}
               status={filters.status}
               onSearchChange={handleSearchChange}
               onStatusChange={handleStatusChange}
-              page={currentPage}
-              hasNextPage={currentPage < pageCount}
+              page={metaData?.page ?? 1}
+              pageCount={Math.max(1, metaData?.pageCount ?? 1)}
+              totalCount={metaData?.totalCount ?? 0}
+              hasNextPage={metaData?.hasNextPages ?? false}
               onPageChange={handlePageChange}
             />
           </div>

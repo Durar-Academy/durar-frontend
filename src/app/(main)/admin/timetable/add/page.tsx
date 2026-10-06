@@ -12,13 +12,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EditTimeSchedule } from "@/components/admin/edit-quran-timetable";
 
 import { useCurrentUser } from "@/hooks/useAccount";
-import { useTutors, useStudents, useCourses, useCreateSchedules } from "@/hooks/useAdmin";
+import { useTutors, useCourses, useCourseStudents, useCreateSchedules } from "@/hooks/useAdmin";
 import { QURAN_ID } from "@/data/constants";
 
 export default function AddTimetable() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
-  const { data: tutors, isLoading: tutorsLoading, error: tutorsError } = useTutors();
-  const { data: students, isLoading: studentsLoading, error: studentsError } = useStudents();
+  // Only active tutors can be assigned to a class — the API rejects any other status.
+  const { data: tutors, isLoading: tutorsLoading, error: tutorsError } = useTutors({ status: "active" });
   const { data: courses, isLoading: coursesLoading, error: coursesError } = useCourses();
 
   // Start with an empty array — this is an add-only page
@@ -27,6 +27,8 @@ export default function AddTimetable() {
   const router = useRouter();
 
   const createMutation = useCreateSchedules();
+  const courseIds = newSchedules.map((schedule) => schedule.courseId);
+  const { studentsByCourse, isLoading: courseStudentsLoading, error: courseStudentsError } = useCourseStudents(courseIds);
 
   const handleSave = async () => {
     // Only submit entries that have the minimum required fields
@@ -71,8 +73,8 @@ export default function AddTimetable() {
     }
   };
 
-  const isLoading = tutorsLoading || studentsLoading || coursesLoading;
-  const hasError = tutorsError || studentsError || coursesError;
+  const isLoading = tutorsLoading || coursesLoading || courseStudentsLoading;
+  const hasError = tutorsError || coursesError || courseStudentsError;
 
   return (
     <section className="flex flex-col gap-5">
@@ -125,7 +127,7 @@ export default function AddTimetable() {
             <EditTimeSchedule
               schedules={newSchedules}
               tutors={tutors?.records ?? []}
-              students={students ?? []}
+              studentsByCourse={studentsByCourse}
               courses={courses ?? []}
               onSave={setNewSchedules}
             />

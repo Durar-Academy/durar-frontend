@@ -326,7 +326,7 @@ type StudentsTableProps = {
   status: StudentStatus;
 }[];
 
-type StudentStatus = "unverified" | "active" | "suspended" | "deactivated" | "graduated";
+type StudentStatus = "invited" | "unverified" | "active" | "suspended" | "deactivated" | "graduated";
 
 type SearchFilters = {
   search?: string;
@@ -931,6 +931,7 @@ type CourseCardProps = {
   progress: number;
   id: string;
   enrolled?: boolean;
+  subscriptionActive?: boolean;
 };
 
 // Tutor Types starts here
@@ -1568,6 +1569,7 @@ type AssignmentFilters = SearchFilters & {
 
 type PaymentFilters = {
   userId?: string;
+  status?: PaymentStatus;
   startAt?: string;
   endAt?: string;
   page?: number | string;

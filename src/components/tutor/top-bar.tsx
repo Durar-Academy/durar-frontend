@@ -73,7 +73,7 @@ export function Top_Bar({ children, subtext, user }: TopBarProps) {
                 {userFullName}
               </h1>
               <Link
-                href="/admin/settings/profile"
+                href="/tutor/settings"
                 className="hover:underline text-low text-xs font-normal"
               >
                 View Profile

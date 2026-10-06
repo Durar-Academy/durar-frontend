@@ -69,8 +69,10 @@ export function StudentPageClient() {
                     key={course.title + index}
                     name={course.title}
                     thumbnailId={course.thumbnailId}
-                    progress={course.UserCourse[0].progress}
+                    progress={course.UserCourse?.[0]?.progress ?? 0}
                     id={course.id}
+                    enrolled={course.enrolled ?? ((course.UserCourse?.length ?? 0) > 0)}
+                    subscriptionActive={hasActiveSubscription}
                   />
                 ))}
               </div>

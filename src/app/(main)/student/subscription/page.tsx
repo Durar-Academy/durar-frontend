@@ -16,7 +16,9 @@ export default function StudentSubscriptionPage() {
   const cancel = useCancelSubscription();
   const initializePayment = useInitializeSubscriptionPayment();
   const retry = useRetrySubscriptionPayment();
-  const subscription = useMemo(() => (subscriptions ?? []).find((item) => ["active", "past_due", "grace_period", "expired"].includes(item.status)), [subscriptions]);
+  // Grace is a date window on a past_due subscription (`gracePeriodEndsAt`),
+  // not a status of its own.
+  const subscription = useMemo(() => (subscriptions ?? []).find((item) => ["active", "past_due", "expired"].includes(item.status)), [subscriptions]);
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const selectedPlan = plans?.find((item) => item.id === selectedPlanId) ?? plans?.[0];
   const paymentKey = useRef<string | null>(null);
@@ -80,7 +82,7 @@ export default function StudentSubscriptionPage() {
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-4"><div><p className="text-sm text-low">Price</p><p className="font-semibold text-high">{formatAmount(subscription.billingPlan.amount, subscription.billingPlan.currency)}</p></div><div><p className="text-sm text-low">Period ends</p><p className="font-semibold text-high">{subscription.periodEnd ? new Date(subscription.periodEnd).toLocaleDateString() : "—"}</p></div><div><p className="text-sm text-low">Booked this week</p><p className="font-semibold text-high">{wallet?.used ?? 0}</p></div><div><p className="text-sm text-low">Available this week</p><p className="font-semibold text-high">{wallet?.available ?? 0}</p></div></div>
       <div className="rounded-lg bg-offwhite p-4 text-sm text-low">{renewalMode === "automatic" ? "Automatic renewal is enabled for your saved card." : "Manual renewal is required for this payment method. Your next period begins when the current period ends."}</div>
       {needsPlanSelection && planSelection}
-      {subscription.status !== "expired" && <div>{["active", "past_due", "grace_period"].includes(subscription.status) && <button onClick={handleCancel} disabled={cancel.isPending} className="rounded-lg border border-danger px-4 py-2 text-danger disabled:opacity-50">{cancel.isPending ? "Cancelling…" : "Cancel subscription"}</button>}{subscription.status === "past_due" && renewalMode === "automatic" && <button onClick={retryPayment} disabled={retry.isPending} className="ml-2 rounded-lg bg-orange px-4 py-2 text-white disabled:opacity-50">{retry.isPending ? "Retrying payment…" : "Retry payment"}</button>}{canRenew && <button onClick={startPayment} disabled={initializePayment.isPending} className="ml-2 rounded-lg bg-orange px-4 py-2 text-white disabled:opacity-50">{initializePayment.isPending ? "Opening payment…" : "Make renewal payment"}</button>}</div>}
+      {subscription.status !== "expired" && <div>{["active", "past_due"].includes(subscription.status) && <button onClick={handleCancel} disabled={cancel.isPending} className="rounded-lg border border-danger px-4 py-2 text-danger disabled:opacity-50">{cancel.isPending ? "Cancelling…" : "Cancel subscription"}</button>}{subscription.status === "past_due" && renewalMode === "automatic" && <button onClick={retryPayment} disabled={retry.isPending} className="ml-2 rounded-lg bg-orange px-4 py-2 text-white disabled:opacity-50">{retry.isPending ? "Retrying payment…" : "Retry payment"}</button>}{canRenew && <button onClick={startPayment} disabled={initializePayment.isPending} className="ml-2 rounded-lg bg-orange px-4 py-2 text-white disabled:opacity-50">{initializePayment.isPending ? "Opening payment…" : "Make renewal payment"}</button>}</div>}
     </div> : <div className="rounded-xl bg-white p-6 dashboard-shadow">{planSelection}</div>}
   </section>;
 }

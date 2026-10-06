@@ -15,7 +15,7 @@ import { useCurrentUser } from "@/hooks/useAccount";
 import {
   useSchedules,
   useTutors,
-  useStudents,
+  useCourseStudents,
   useCourses,
   useCreateSchedules,
   useUpdateSchedules,
@@ -26,8 +26,8 @@ import { QURAN_ID } from "@/data/constants";
 export default function EditTimetable() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: schedules, isLoading: schedulesLoading, error: schedulesError } = useSchedules();
-  const { data: tutors, isLoading: tutorsLoading, error: tutorsError } = useTutors();
-  const { data: students, isLoading: studentsLoading, error: studentsError } = useStudents();
+  // Only active tutors can be assigned to a class — the API rejects any other status.
+  const { data: tutors, isLoading: tutorsLoading, error: tutorsError } = useTutors({ status: "active" });
   const { data: courses, isLoading: coursesLoading, error: coursesError } = useCourses();
 
   // Local state for the working copy of schedules being edited
@@ -45,6 +45,8 @@ export default function EditTimetable() {
   const createMutation = useCreateSchedules();
   const updateMutation = useUpdateSchedules();
   const deleteMutation = useDeleteSchedule();
+  const courseIds = editedSchedules.map((schedule) => schedule.courseId);
+  const { studentsByCourse, isLoading: courseStudentsLoading, error: courseStudentsError } = useCourseStudents(courseIds);
 
   // Initialise the working copy once from server data
   useEffect(() => {
@@ -166,9 +168,8 @@ export default function EditTimetable() {
     }
   };
 
-  const isLoading =
-    schedulesLoading || tutorsLoading || studentsLoading || coursesLoading;
-  const hasError = schedulesError || tutorsError || studentsError || coursesError;
+  const isLoading = schedulesLoading || tutorsLoading || coursesLoading || courseStudentsLoading;
+  const hasError = schedulesError || tutorsError || coursesError || courseStudentsError;
 
   return (
     <section className="flex flex-col gap-5">
@@ -221,7 +222,7 @@ export default function EditTimetable() {
             <EditTimeSchedule
               schedules={editedSchedules}
               tutors={tutors?.records ?? []}
-              students={students ?? []}
+              studentsByCourse={studentsByCourse}
               courses={courses ?? []}
               highlightScheduleId={highlightScheduleId}
               onSave={setEditedSchedules}

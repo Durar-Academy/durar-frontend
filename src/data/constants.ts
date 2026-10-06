@@ -167,6 +167,11 @@ export const ASSIGNMENT_STATUSES = [
 
 export const STUDENT_STATUSES = [
   {
+    status: "invited",
+    label: "Invited",
+  },
+
+  {
     status: "unverified",
     label: "Unverified",
   },

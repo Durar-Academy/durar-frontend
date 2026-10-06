@@ -11,7 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { axiosInstance } from "@/lib/axios";
+import { updateNotification } from "@/lib/admin";
 import { notificationFormSchema } from "@/lib/schemas";
 import { uploadFile } from "@/lib/storage";
 import { cn } from "@/lib/utils";
@@ -99,7 +99,7 @@ export function EditNotificationDialog({
         mediaId: fileResponse?.id ?? null,
       };
 
-      const response = await axiosInstance.patch(`/notification/${notification.id}`, payload);
+      await updateNotification(notification.id, payload);
       toast.success("Notification updated!");
     } catch (error) {
       console.error("Update Error:", error);

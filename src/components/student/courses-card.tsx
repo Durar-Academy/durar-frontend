@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Progress } from "@/components/ui/progress";
 import { useFile } from "@/hooks/useStudent";
 
-export function CourseCard({ name, thumbnailId, progress, id, enrolled = true }: CourseCardProps) {
+export function CourseCard({ name, thumbnailId, progress, id, enrolled = true, subscriptionActive = true }: CourseCardProps) {
   // thumbnailId is a raw storage ID, not a URL — resolve it to the media src before rendering.
   const { data: media } = useFile(thumbnailId);
   const thumbnail = media?.src;
@@ -23,7 +23,7 @@ export function CourseCard({ name, thumbnailId, progress, id, enrolled = true }:
     </div>
   );
 
-  if (!enrolled) {
+  if (!enrolled || !subscriptionActive) {
     return (
       <div className="rounded-xl bg-white p-3 flex flex-col justify-between gap-3 w-full max-w-60">
         {thumbnailBlock}
