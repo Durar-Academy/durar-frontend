@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { ChevronRight, Lock, Tv, Unlock } from "lucide-react";
@@ -29,6 +29,12 @@ export default function SingleCoursePage() {
   const currentLesson = course?.Lesson.find((lesson) => lesson.id === currentLessonId);
   const courseAccess = (course as (Course & { access?: { allowed: boolean; reason?: string | null } }) | undefined)?.access;
   const isEnrolled = course?.enrolled ?? ((course?.UserCourse?.length ?? 0) > 0);
+
+  useEffect(() => {
+    if (!course?.Lesson?.length) return;
+    const nextLesson = course.Lesson.find((lesson) => lesson.progress < 100) ?? course.Lesson[0];
+    setCurrentLessonId((current) => current || nextLesson.id);
+  }, [course?.Lesson]);
 
   const handleSelectLesson = (lesson: Lesson) => {
     if (lesson.isLocked) return;

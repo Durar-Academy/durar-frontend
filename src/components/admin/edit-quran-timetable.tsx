@@ -39,14 +39,16 @@ const statusColor: Record<string, string> = {
 export function EditTimeSchedule({
   schedules,
   tutors,
-  studentsByCourse,
+  students,
+  coursesByStudent,
   courses,
   highlightScheduleId,
   onSave,
 }: {
   schedules: Schedule[];
   tutors: Tutor[];
-  studentsByCourse: Record<string, Student[]>;
+  students: Student[];
+  coursesByStudent: Record<string, Course[]>;
   courses: Course[];
   highlightScheduleId?: string | null;
   onSave: (schedules: Schedule[]) => void;
@@ -113,15 +115,6 @@ export function EditTimeSchedule({
     [tutors],
   );
 
-  const courseOptions: SelectOption[] = useMemo(
-    () =>
-      courses.map((course) => ({
-        value: course.id,
-        label: course.title,
-      })),
-    [courses],
-  );
-
   const handleUpdateEntry = (
     day: string,
     timeSlot: string,
@@ -139,7 +132,11 @@ export function EditTimeSchedule({
       if (schedule.id !== targetEntry?.id) return schedule;
 
       if (field === "courseId") {
-        return { ...schedule, courseId: value, studentId: "", student: undefined };
+        return { ...schedule, courseId: value };
+      }
+
+      if (field === "studentId") {
+        return { ...schedule, studentId: value, courseId: "" };
       }
 
       return { ...schedule, [field]: value };
@@ -228,7 +225,10 @@ export function EditTimeSchedule({
   };
 
   const getEntryCourse = (entry: Schedule) => {
-    return courses.find((c) => c.id === entry.courseId);
+    return (
+      (coursesByStudent[entry.studentId ?? ""] ?? []).find((course) => course.id === entry.courseId) ??
+      courses.find((course) => course.id === entry.courseId)
+    );
   };
 
   const getEntryTutor = (entry: Schedule) => {
@@ -236,12 +236,17 @@ export function EditTimeSchedule({
   };
 
   const getEntryStudent = (entry: Schedule) => {
-    if (entry.student) return entry.student;
-    return (studentsByCourse[entry.courseId] ?? []).find((s) => s.id === entry.studentId);
+    return students.find((student) => student.id === entry.studentId) ?? entry.student;
   };
 
-  const getEntryStudentOptions = (entry: Schedule): SelectOption[] =>
-    (studentsByCourse[entry.courseId] ?? []).map((student) => ({
+  const getEntryCourseOptions = (entry: Schedule): SelectOption[] =>
+    (coursesByStudent[entry.studentId ?? ""] ?? []).map((course) => ({
+      value: course.id,
+      label: course.title,
+    }));
+
+  const getEntryStudentOptions = (): SelectOption[] =>
+    students.map((student) => ({
       value: student.id,
       label: `${student.firstName} ${student.lastName}`,
     }));
@@ -299,7 +304,7 @@ export function EditTimeSchedule({
                               }`}
                             >
                               {/* Status indicator + Course select */}
-                              <div className="flex items-center gap-2">
+                              <div className="order-2 flex items-center gap-2">
                                 <span
                                   className={`w-2 h-2 rounded-full shrink-0 ${
                                     statusColor[entry.status] ?? "bg-low"
@@ -307,7 +312,7 @@ export function EditTimeSchedule({
                                 />
                                 <div className="flex-1 min-w-0">
                                   <Select
-                                    options={courseOptions}
+                                    options={getEntryCourseOptions(entry)}
                                     value={
                                       entryCourse
                                         ? {
@@ -327,6 +332,9 @@ export function EditTimeSchedule({
                                       )
                                     }
                                     placeholder="Select course..."
+                                    noOptionsMessage={() =>
+                                      entry.studentId ? "No enrolled courses" : "Select a student first"
+                                    }
                                     className="react-select-container text-xs"
                                     classNamePrefix="react-select"
                                     isSearchable
@@ -355,7 +363,7 @@ export function EditTimeSchedule({
                               </div>
 
                               {/* Tutor select */}
-                              <div className="flex items-center gap-1.5">
+                              <div className="order-3 flex items-center gap-1.5">
                                 <GraduationCap className="w-3.5 h-3.5 shrink-0 text-low" />
                                 <div className="flex-1 min-w-0">
                                   <Select
@@ -407,11 +415,11 @@ export function EditTimeSchedule({
                               </div>
 
                               {/* Student select + Remove button */}
-                              <div className="flex items-center gap-1.5">
+                              <div className="order-1 flex items-center gap-1.5">
                                 <UserRound className="w-3.5 h-3.5 shrink-0 text-low" />
                                 <div className="flex-1 min-w-0">
                                   <Select
-                                    options={getEntryStudentOptions(entry)}
+                                    options={getEntryStudentOptions()}
                                     value={
                                       entryStudent
                                         ? {
@@ -431,9 +439,8 @@ export function EditTimeSchedule({
                                       )
                                     }
                                     placeholder="Select student..."
-                                    isDisabled={!entry.courseId}
                                     noOptionsMessage={() =>
-                                      entry.courseId ? "No enrolled students" : "Select a course first"
+                                      "No active students"
                                     }
                                     className="react-select-container text-xs"
                                     classNamePrefix="react-select"
@@ -474,7 +481,7 @@ export function EditTimeSchedule({
                               </div>
 
                               {/* Meeting link */}
-                              <div className="flex items-center gap-1.5">
+                              <div className="order-4 flex items-center gap-1.5">
                                 <Link2 className="w-3.5 h-3.5 shrink-0 text-low" />
                                 <input
                                   type="url"

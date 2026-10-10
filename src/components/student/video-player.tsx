@@ -73,7 +73,9 @@ export function VideoPlayer({ lesson }: { lesson: Lesson | undefined }) {
     );
   }
 
-  if (!lesson.mediaId) {
+  const videoUrl = lesson.media?.src;
+
+  if (!videoUrl) {
     return (
       <div className="w-full h-[450px] flex items-center justify-center rounded-xl border border-shade-2 bg-white text-low text-lg">
         Requested video is unavailable
@@ -87,7 +89,7 @@ export function VideoPlayer({ lesson }: { lesson: Lesson | undefined }) {
         <Skeleton className="w-full h-[450px] rounded-xl" />
       ) : (
         <ReactPlayer
-          url={lesson.mediaId}
+          url={videoUrl}
           controls
           playing
           width="100%"

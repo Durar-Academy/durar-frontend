@@ -70,14 +70,14 @@ export function CourseList({
         </Select>
       </div>
 
-      <div className="h-full flex flex-col gap-4 overflow-hidden">
+      <div className="flex min-h-0 flex-1 flex-col gap-4 overflow-hidden">
         <h5 className="grid grid-cols-[3rem_minmax(0,1fr)] items-center gap-3 text-sm font-semibold text-low">
           <span>ID</span>
           <span>Name</span>
         </h5>
 
         <div
-          className="h-full overflow-y-scroll hide-scrollbar flex flex-col gap-3"
+          className="min-h-0 flex-1 overflow-y-scroll flex flex-col gap-3"
           onClick={handleListClick}
         >
           {(courses ?? []).length > 0 ? (

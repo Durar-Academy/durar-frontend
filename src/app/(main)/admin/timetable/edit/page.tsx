@@ -15,8 +15,9 @@ import { useCurrentUser } from "@/hooks/useAccount";
 import {
   useSchedules,
   useTutors,
-  useCourseStudents,
   useCourses,
+  useStudents,
+  useStudentCoursesByIds,
   useCreateSchedules,
   useUpdateSchedules,
   useDeleteSchedule,
@@ -29,6 +30,7 @@ export default function EditTimetable() {
   // Only active tutors can be assigned to a class — the API rejects any other status.
   const { data: tutors, isLoading: tutorsLoading, error: tutorsError } = useTutors({ status: "active" });
   const { data: courses, isLoading: coursesLoading, error: coursesError } = useCourses();
+  const { data: students, isLoading: studentsLoading, error: studentsError } = useStudents({ status: "active", page: 1, limit: 100 });
 
   // Local state for the working copy of schedules being edited
   const [editedSchedules, setEditedSchedules] = useState<Schedule[]>([]);
@@ -45,8 +47,8 @@ export default function EditTimetable() {
   const createMutation = useCreateSchedules();
   const updateMutation = useUpdateSchedules();
   const deleteMutation = useDeleteSchedule();
-  const courseIds = editedSchedules.map((schedule) => schedule.courseId);
-  const { studentsByCourse, isLoading: courseStudentsLoading, error: courseStudentsError } = useCourseStudents(courseIds);
+  const studentIds = editedSchedules.map((schedule) => schedule.studentId ?? "");
+  const { coursesByStudent } = useStudentCoursesByIds(studentIds);
 
   // Initialise the working copy once from server data
   useEffect(() => {
@@ -168,8 +170,11 @@ export default function EditTimetable() {
     }
   };
 
-  const isLoading = schedulesLoading || tutorsLoading || coursesLoading || courseStudentsLoading;
-  const hasError = schedulesError || tutorsError || coursesError || courseStudentsError;
+  // Student courses are loaded after a student is selected. Keep the editor
+  // mounted while that request runs so changing a student does not look like
+  // a full page refresh or reset the user's current edit state.
+  const isLoading = schedulesLoading || tutorsLoading || coursesLoading || studentsLoading;
+  const hasError = schedulesError || tutorsError || coursesError || studentsError;
 
   return (
     <section className="flex flex-col gap-5">
@@ -222,7 +227,8 @@ export default function EditTimetable() {
             <EditTimeSchedule
               schedules={editedSchedules}
               tutors={tutors?.records ?? []}
-              studentsByCourse={studentsByCourse}
+              students={students ?? []}
+              coursesByStudent={coursesByStudent}
               courses={courses ?? []}
               highlightScheduleId={highlightScheduleId}
               onSave={setEditedSchedules}

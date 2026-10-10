@@ -55,11 +55,9 @@ export function CreateCourseFormProvider({
       if (!category) throw new Error("Course category is required.");
       if (!formData.Lesson.length) throw new Error("Add at least one lesson before publishing.");
 
-      const invalidLesson = formData.Lesson.find(
-        (lesson) => !lesson.name.trim() || (!lesson.video?.file && !lesson.video?.src),
-      );
+      const invalidLesson = formData.Lesson.find((lesson) => !lesson.name.trim());
       if (invalidLesson) {
-        throw new Error("Each lesson needs a title and a video before publishing.");
+        throw new Error("Each lesson needs a title before publishing.");
       }
     }
 
@@ -80,13 +78,12 @@ export function CreateCourseFormProvider({
           const lessonVideoResponse = lesson.video?.file ? await uploadFile(lesson.video.file) : null;
 
           return {
-            ...(lesson.id ? { id: String(lesson.id) } : {}),
+            // Persisted lessons carry server cuid strings; client temp ids are numbers and must never be sent.
+            ...(typeof lesson.id === "string" ? { id: lesson.id } : {}),
             title: lesson.name.trim(),
             duration: Number(lesson.video?.preview ?? 0),
             type: lesson.type,
-            ...(lessonVideoResponse?.storageId
-              ? { storageId: lessonVideoResponse.storageId }
-              : lesson.video?.src ? {} : {}), // If it already has src but no file, we keep it as is, or pass storageId if needed. Wait, backend UpdateCoursePayload accepts id for existing lessons.
+            ...(lessonVideoResponse?.storageId ? { storageId: lessonVideoResponse.storageId } : {}),
           };
         }),
     );

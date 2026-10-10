@@ -28,10 +28,11 @@ type StudentAssignmentFilters = {
   limit?: number;
 };
 
-export function useAssignments(filters?: StudentAssignmentFilters) {
+export function useAssignments(filters?: StudentAssignmentFilters, options?: { enabled?: boolean }) {
   const query = useQuery<StudentAssignment[]>({
     queryKey: ["all-student-assignments", filters],
     queryFn: () => getAssignments({ filters }),
+    enabled: options?.enabled ?? true,
   });
   return query;
 }
@@ -116,10 +117,11 @@ export function useStartQuizAttempt() {
   });
 }
 
-export function useStudentTimetable() {
+export function useStudentTimetable(options?: { enabled?: boolean }) {
   const query = useQuery<any, Error, Schedule[]>({
     queryKey: ["student-timetable"],
     queryFn: getStudentTimetable,
+    enabled: options?.enabled ?? true,
     select: (data) => {
       if (Array.isArray(data)) return data;
       if (data?.records && Array.isArray(data.records)) return data.records;

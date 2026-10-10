@@ -73,6 +73,7 @@ export function StudentPageClient() {
                     id={course.id}
                     enrolled={course.enrolled ?? ((course.UserCourse?.length ?? 0) > 0)}
                     subscriptionActive={hasActiveSubscription}
+                    variant="dashboard"
                   />
                 ))}
               </div>

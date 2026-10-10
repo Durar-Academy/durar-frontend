@@ -62,7 +62,7 @@ export function CourseDetails({ course }: { course: Course }) {
 
   const handleStatusToggle = () => {
     const newStatus = course.status === "published" ? "draft" : "published";
-    
+
     updateCourse(
       { courseId: course.id, payload: { status: newStatus } },
       {
@@ -89,8 +89,14 @@ export function CourseDetails({ course }: { course: Course }) {
 
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm">
           <div className="flex items-center gap-2">
+            <Link
+              href={`/admin/courses/${course.id}/enroll`}
+              className="flex items-center gap-2 rounded-md bg-green px-3 py-2 font-medium text-white hover:bg-dark-green"
+            >
+              <GraduationCap className="h-4 w-4 shrink-0" />
+              <span>Enrol Student</span>
+            </Link>
             <span className="font-normal text-sm text-high">Status:</span>
-
             <Switch
               checked={course.status === "published"}
               onCheckedChange={handleStatusToggle}
@@ -98,7 +104,6 @@ export function CourseDetails({ course }: { course: Course }) {
               className="disabled:opacity-50"
             />
           </div>
-
           {/*
           <Link
             href={""}

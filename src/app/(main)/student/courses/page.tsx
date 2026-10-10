@@ -2,28 +2,27 @@
 
 import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
 
 import { TopBar } from "@/components/shared/top-bar";
 import { CourseCard } from "@/components/student/courses-card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import { useCurrentUser } from "@/hooks/useAccount";
+import { useSubscriptions } from "@/hooks/useSubscription";
 import { getStudentCourses } from "@/lib/student";
 import { getCumulativeProgress } from "@/utils/processor";
 
 export default function CoursesPage() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
+  const { data: subscriptions, isLoading: subscriptionsLoading } = useSubscriptions();
+  const hasActiveSubscription = (subscriptions ?? []).some((subscription) => subscription.status === "active");
   const { data: courses, isLoading: coursesLoading } = useQuery({
     queryKey: ["student-courses"],
     queryFn: ({ signal }) => getStudentCourses({ signal }),
   });
 
-  // Browse mode also lists courses the student has not paid for yet; the
-  // learning progress only reflects the courses they are enrolled in.
-  const enrolledCourses = useMemo(
-    () => (courses ?? []).filter((course) => course.enrolled ?? ((course.UserCourse?.length ?? 0) > 0)),
-    [courses],
-  );
+  const enrolledCourses = useMemo(() => courses ?? [], [courses]);
   const learningProgress = getCumulativeProgress(enrolledCourses);
 
   return (
@@ -47,9 +46,9 @@ export default function CoursesPage() {
           <Skeleton className="rounded-xl h-40" />
         ) : (
           <div className="bg-white rounded-xl p-6 flex flex-col gap-6">
-            {courses && courses.length > 0 ? (
+            {enrolledCourses.length > 0 ? (
               <div className="grid grid-cols-5 gap-3">
-                {courses.map((course, index) => (
+                {enrolledCourses.map((course, index) => (
                   <CourseCard
                     key={course.title + index}
                     name={course.title}
@@ -57,6 +56,7 @@ export default function CoursesPage() {
                     progress={course.UserCourse?.[0]?.progress ?? 0}
                     id={course.id}
                     enrolled={course.enrolled ?? ((course.UserCourse?.length ?? 0) > 0)}
+                    subscriptionActive={subscriptionsLoading || hasActiveSubscription}
                   />
                 ))}
               </div>
@@ -66,6 +66,17 @@ export default function CoursesPage() {
           </div>
         )}
       </div>
+
+      {!subscriptionsLoading && !hasActiveSubscription && (
+        <div className="flex justify-center sm:justify-start">
+          <Link
+            href="/student/subscription"
+            className="rounded-xl bg-orange px-6 py-3 text-center text-sm font-medium text-white hover:bg-burnt"
+          >
+            Subscribe
+          </Link>
+        </div>
+      )}
     </section>
   );
 }

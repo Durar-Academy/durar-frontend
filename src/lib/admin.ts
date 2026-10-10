@@ -388,6 +388,11 @@ export async function enrollStudent(
   return response.data;
 }
 
+export async function assignCoursesToUser(userId: string, courseIds: string[]) {
+  const response = await axiosInstance.post("/user-course/assign", { userId, courseIds });
+  return response.data;
+}
+
 // ─── Tutors ───────────────────────────────────────────────────────────────────
 
 export async function getTutorsMetrics(options?: { signal?: AbortSignal }) {

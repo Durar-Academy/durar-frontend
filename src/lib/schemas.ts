@@ -169,5 +169,14 @@ export const notificationFormSchema = z.object({
     .refine((val) => val !== null, {
       message: "Please select a recipient type.",
     }),
+  recipientIds: z.array(z.string()).optional(),
   file: z.custom<File | null>().optional().nullable(),
+}).superRefine((data, context) => {
+  if (data.recipientType === "selected_users" && !data.recipientIds?.length) {
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ["recipientIds"],
+      message: "Please select at least one student.",
+    });
+  }
 });

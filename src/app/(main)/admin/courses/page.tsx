@@ -1,6 +1,6 @@
 "use client";
 
-import { GraduationCap, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useState } from "react";
 
@@ -59,16 +59,6 @@ export default function CoursesManagementPage() {
           <h3 className="text-low font-medium text-xl">Courses Overview</h3>
 
           <div className="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
-            <Link className="w-full sm:w-auto" href={selectedCourseId ? `/admin/courses/${selectedCourseId}/enroll` : "#"}>
-              <Button
-                variant={"_default"}
-                className="h-10 w-full bg-green px-4 py-2 hover:bg-dark-green sm:w-auto"
-                disabled={!selectedCourseId}
-              >
-                <GraduationCap className="w-5 h-5" />
-                <span>Enrol Student</span>
-              </Button>
-            </Link>
             <Link className="w-full sm:w-auto" href={"/admin/courses/new"}>
               <Button variant={"_default"} className="h-10 w-full bg-orange px-4 py-2 hover:bg-burnt sm:w-auto">
               <Plus className="w-6 h-6" strokeWidth={3} />
@@ -91,7 +81,7 @@ export default function CoursesManagementPage() {
         </div>
       </div>
 
-      <div className="flex w-full flex-col gap-3 lg:grid lg:h-[600px] lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)]">
+      <div className="flex w-full flex-col gap-3 lg:grid lg:h-[600px] lg:min-h-0 lg:grid-cols-[minmax(0,360px)_minmax(0,1fr)]">
         {coursesLoading ? (
           <Skeleton className="w-full rounded-xl h-full" />
         ) : coursesError ? (

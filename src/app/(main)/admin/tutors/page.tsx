@@ -2,9 +2,10 @@
 
 import { useCallback, useState } from "react";
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, UserPlus } from "lucide-react";
 
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import { TopBar } from "@/components/shared/top-bar";
 import { OverviewCard } from "@/components/admin/overview-card";
 import { TutorsTable } from "@/components/admin/tutors-table";
@@ -56,7 +57,13 @@ export default function TutorsManagementPage() {
         <div className="flex justify-between items-center">
           <h3 className="text-low font-medium text-xl">Tutors Overview</h3>
 
-          <div>
+          <div className="flex items-center gap-3">
+            <Button asChild variant="_outline" className="h-10 border-green px-4 py-2 text-green hover:bg-offwhite">
+              <Link href="/admin/tutors/assign">
+                <UserPlus className="h-5 w-5" />
+                <span>Assign Tutor</span>
+              </Link>
+            </Button>
             <AddTutorDialog />
           </div>
         </div>

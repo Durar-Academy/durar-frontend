@@ -201,8 +201,8 @@ export async function getStudentTimetable(options?: { signal?: AbortSignal }) {
 // Browse mode returns every published course, with `Course.enrolled` marking the
 // ones the student already has access to and `Course.amount` carrying the price.
 export async function getStudentCourses(options?: { signal?: AbortSignal }): Promise<Course[]> {
-  const response = await axiosInstance.get("/course", {
-    params: { status: "published", browse: true, limit: 100 },
+  const response = await axiosInstance.get("/course/my-courses", {
+    params: { page: 1, limit: 100 },
     signal: options?.signal,
   });
 
@@ -211,7 +211,9 @@ export async function getStudentCourses(options?: { signal?: AbortSignal }): Pro
     ? payload
     : payload?.records ?? payload?.data?.records ?? payload?.data;
 
-  return Array.isArray(records) ? records : [];
+  return Array.isArray(records)
+    ? records.map((record) => record.course ?? record)
+    : [];
 }
 
 /* -------------------------------------------------------------------------- */

@@ -450,6 +450,7 @@ type Lesson = {
   progress: number;
   type: string;
   mediaId: string | null;
+  media?: Media | null;
   courseId: string;
   deletedAt: Date | null;
   createdAt: Date;
@@ -932,6 +933,7 @@ type CourseCardProps = {
   id: string;
   enrolled?: boolean;
   subscriptionActive?: boolean;
+  variant?: "courses" | "dashboard";
 };
 
 // Tutor Types starts here
@@ -1588,5 +1590,6 @@ type UpdateNotificationPayload = {
   title?: string;
   content?: string;
   recipientType?: RecipientType | string;
+  recipientIds?: string[] | null;
   mediaId?: string | null;
 };

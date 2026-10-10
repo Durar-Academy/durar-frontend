@@ -21,11 +21,16 @@ import { Paperclip, Plus, SendHorizonal, Upload } from "lucide-react";
 import { FormEvent, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import Select, { StylesConfig } from "react-select";
-import { useCreateNotification } from "@/hooks/useAdmin";
+import { useCreateNotification, useStudents } from "@/hooks/useAdmin";
 
 interface OptionType {
   label: string;
   value: RecipientType;
+}
+
+interface StudentOption {
+  label: string;
+  value: string;
 }
 
 const selectStyles: StylesConfig<OptionType, false> = {
@@ -51,7 +56,9 @@ export function AddNotificationDialog() {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [recipientType, setRecipientType] = useState<RecipientType | null>(null);
+  const [recipientIds, setRecipientIds] = useState<string[]>([]);
   const [file, setFile] = useState<File | null>(null);
+  const { data: students = [], isLoading: studentsLoading, isError: studentsError } = useStudents({ status: "active" });
 
   const [errors, setErrors] = useState<
     Partial<Record<keyof typeof notificationFormSchema._type, string>>
@@ -64,7 +71,7 @@ export function AddNotificationDialog() {
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
 
-    const formData = { title, content, recipientType, file };
+    const formData = { title, content, recipientType, recipientIds, file };
 
     const validation = notificationFormSchema.safeParse(formData);
 
@@ -74,6 +81,7 @@ export function AddNotificationDialog() {
         title: fieldErrors.title?.[0],
         content: fieldErrors.content?.[0],
         recipientType: fieldErrors.recipientType?.[0],
+        recipientIds: fieldErrors.recipientIds?.[0],
       });
       return;
     }
@@ -91,6 +99,7 @@ export function AddNotificationDialog() {
         title: formData.title,
         content: formData.content,
         recipientType: formData.recipientType as RecipientType,
+        ...(formData.recipientType === "selected_users" ? { recipientIds } : {}),
       };
       
       if (fileResponse && fileResponse.id) {
@@ -106,6 +115,7 @@ export function AddNotificationDialog() {
       setTitle("");
       setContent("");
       setRecipientType(null);
+      setRecipientIds([]);
       setFile(null);
       setErrors({});
       setIsSubmitting(false);
@@ -121,6 +131,7 @@ export function AddNotificationDialog() {
       setTitle("");
       setContent("");
       setRecipientType(null);
+      setRecipientIds([]);
       setFile(null);
       setErrors({});
       setIsSubmitting(false);
@@ -185,7 +196,11 @@ export function AddNotificationDialog() {
                 isClearable
                 styles={selectStyles}
                 value={recipientTypeOptions.find((opt) => opt.value === recipientType)}
-                onChange={(option) => setRecipientType(option?.value ?? null)}
+                onChange={(option) => {
+                  const nextType = option?.value ?? null;
+                  setRecipientType(nextType);
+                  if (nextType !== "selected_users") setRecipientIds([]);
+                }}
                 placeholder="Select recipient type"
                 className="react-select-container text-sm"
                 classNamePrefix="react-select"
@@ -194,6 +209,37 @@ export function AddNotificationDialog() {
                 <p className="text-sm text-destructive mt-1">{errors.recipientType}</p>
               )}
             </div>
+
+            {recipientType === "selected_users" && (
+              <div>
+                <Label htmlFor="recipientIds">Students</Label>
+                <Select<StudentOption, true>
+                  inputId="recipientIds"
+                  isMulti
+                  isLoading={studentsLoading}
+                  isDisabled={studentsError}
+                  options={students.map((student) => ({
+                    value: student.id,
+                    label: `${student.firstName} ${student.lastName} (${student.email})`,
+                  }))}
+                  value={students
+                    .filter((student) => recipientIds.includes(student.id))
+                    .map((student) => ({
+                      value: student.id,
+                      label: `${student.firstName} ${student.lastName} (${student.email})`,
+                    }))}
+                  onChange={(options) => setRecipientIds(options.map((option) => option.value))}
+                  placeholder={studentsError ? "Unable to load students" : "Select students"}
+                  noOptionsMessage={() => "No active registered students found"}
+                  styles={selectStyles as unknown as StylesConfig<StudentOption, true>}
+                  className="react-select-container text-sm"
+                  classNamePrefix="react-select"
+                />
+                {errors.recipientIds && (
+                  <p className="text-sm text-destructive mt-1">{errors.recipientIds}</p>
+                )}
+              </div>
+            )}
 
             {/* File Upload Field */}
             <div className="flex items-center justify-between border border-shade-3 rounded-[10px] px-4 py-2 h-12 bg-white">

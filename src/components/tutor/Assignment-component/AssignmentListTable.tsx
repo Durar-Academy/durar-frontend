@@ -60,74 +60,83 @@ export default function AssignmentTable({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center w-full gap-3">
+      <div className="flex w-full flex-col gap-3 lg:flex-row lg:items-center">
         <h2 className="text-xl font-semibold">Assignment Lists</h2>
-        <span className="flex-1"></span>
-        <div className="h-11 rounded-lg border-[#D2D4E0] border-[1px] flex items-center justify-center p-3">
-          <input
-            placeholder="Search"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="max-w-sm border-none outline-none text-sm"
-          />
-          <Image
-            src="/SVGs/searchIcon.svg"
-            alt="search Icon"
-            width={16}
-            height={16}
-          />
-        </div>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button className="h-11" variant="outline">
-              {statusFilter === "All" ? "Status" : statusFilter}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => setStatusFilter("All")}>
-              All
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setStatusFilter("Completed")}>
-              Completed
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => setStatusFilter("Pending")}>
-              Pending
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button className="h-11" variant="outline">
-              {courseFilter === "All" ? "Courses" : courseFilter}
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => setCourseFilter("All")}>
-              All Courses
-            </DropdownMenuItem>
-            {courses.map((course, i) => (
-              <DropdownMenuItem key={i} onClick={() => setCourseFilter(course)}>
-                {course}
+        <div className="flex w-full flex-col gap-3 sm:flex-row sm:flex-wrap lg:ml-auto lg:w-auto lg:items-center">
+          <div className="flex h-11 min-w-0 w-full items-center justify-center rounded-lg border border-[#D2D4E0] p-3 sm:w-auto">
+            <input
+              placeholder="Search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="min-w-0 w-full border-none text-sm outline-none sm:w-48"
+            />
+            <Image
+              src="/SVGs/searchIcon.svg"
+              alt="search Icon"
+              width={16}
+              height={16}
+            />
+          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="h-11 w-full sm:w-auto" variant="outline">
+                {statusFilter === "All" ? "Status" : statusFilter}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" sideOffset={6}>
+              <DropdownMenuItem onClick={() => setStatusFilter("All")}>
+                All
               </DropdownMenuItem>
-            ))}
-          </DropdownMenuContent>
-        </DropdownMenu>
+              <DropdownMenuItem onClick={() => setStatusFilter("Completed")}>
+                Completed
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => setStatusFilter("Pending")}>
+                Pending
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="h-11 w-full sm:w-auto" variant="outline">
+                {courseFilter === "All" ? "Courses" : courseFilter}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" sideOffset={6}>
+              <DropdownMenuItem onClick={() => setCourseFilter("All")}>
+                All Courses
+              </DropdownMenuItem>
+              {courses.map((course) => (
+                <DropdownMenuItem key={course} onClick={() => setCourseFilter(course)}>
+                  {course}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
       </div>
 
       {isLoading ? (
         <Skeleton className="w-full h-[300px] rounded-xl" />
       ) : (
         <>
-          <div className="min-w-0 max-w-full overflow-x-auto">
-            <table className="text-sm min-w-max bg-white border-none border-separate border-spacing-y-3">
+          <div className="w-full min-w-0 overflow-x-auto rounded-lg">
+            <table className="w-full min-w-[800px] table-auto border-separate border-spacing-y-3 bg-white text-sm">
+              <colgroup>
+                <col className="w-[28%]" />
+                <col className="w-[22%]" />
+                <col className="w-[14%]" />
+                <col className="w-[16%]" />
+                <col className="w-[12%]" />
+                <col className="w-[8%]" />
+              </colgroup>
               <thead>
                 <tr className="text-low text-sm text-left">
-                  <th className="py-3 px-4 font-semibold">Assignment Title</th>
-                  <th className="py-3 px-4 font-semibold">Course</th>
-                  <th className="py-3 px-4 font-semibold">Status</th>
-                  <th className="py-3 px-4 font-semibold">Due Date</th>
-                  <th className="py-3 px-4 font-semibold">Submissions</th>
-                  <th className="py-3 px-4 font-semibold">Action</th>
+                  <th className="whitespace-nowrap px-4 py-3 font-semibold">Assignment Title</th>
+                  <th className="whitespace-nowrap px-4 py-3 font-semibold">Course</th>
+                  <th className="whitespace-nowrap px-4 py-3 font-semibold">Status</th>
+                  <th className="whitespace-nowrap px-4 py-3 font-semibold">Due Date</th>
+                  <th className="whitespace-nowrap px-4 py-3 font-semibold text-center">Submissions</th>
+                  <th className="whitespace-nowrap px-4 py-3 font-semibold">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -144,15 +153,15 @@ export default function AssignmentTable({
                   filteredAssignments.map((assignment) => (
                     <tr
                       key={assignment.id}
-                      className="border-[1px] bg-[#F8F8FA] border-[#D2D4E0] mt-3"
+                      className="mt-3 border border-[#D2D4E0] bg-[#F8F8FA]"
                     >
-                      <td className="text-sm py-4 pl-3 border-[1px] border-[#D2D4E0] rounded-l-xl border-r-0">
+                      <td className="whitespace-nowrap rounded-l-xl border border-r-0 border-[#D2D4E0] px-4 py-4 text-sm">
                         {assignment.title}
                       </td>
-                      <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0]">
+                      <td className="whitespace-nowrap border-y border-[#D2D4E0] px-4 py-4 text-sm">
                         {assignment.course}
                       </td>
-                      <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0]">
+                      <td className="whitespace-nowrap border-y border-[#D2D4E0] px-4 py-4 text-sm">
                         <span
                           className={
                             assignment.status === "Completed"
@@ -163,13 +172,13 @@ export default function AssignmentTable({
                           {assignment.status}
                         </span>
                       </td>
-                      <td className="text-sm py-4 border-y-[1px] border-[#D2D4E0]">
+                      <td className="whitespace-nowrap border-y border-[#D2D4E0] px-4 py-4 text-sm">
                         {assignment.dueDate}
                       </td>
-                      <td className="text-sm py-4 pl-8 border-y-[1px] border-[#D2D4E0]">
+                      <td className="whitespace-nowrap border-y border-[#D2D4E0] px-4 py-4 text-center text-sm">
                         {assignment.submissions}
                       </td>
-                      <td className="text-sm py-4 border-[1px] border-[#D2D4E0] border-l-0 rounded-r-xl text-orange cursor-pointer hover:underline">
+                      <td className="whitespace-nowrap rounded-r-xl border border-l-0 border-[#D2D4E0] px-4 py-4 text-sm text-orange hover:underline">
                         <Link href={`/tutor/assignments/${assignment.id}`}>
                           View
                         </Link>

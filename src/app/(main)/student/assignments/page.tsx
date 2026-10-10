@@ -1,6 +1,6 @@
 "use client";
 
-import { CalendarIcon, Search } from "lucide-react";
+import { CalendarIcon, LockKeyhole, Search } from "lucide-react";
 import { useState } from "react";
 
 import { TopBar } from "@/components/shared/top-bar";
@@ -17,6 +17,7 @@ import { format } from "date-fns";
 import { useCurrentUser } from "@/hooks/useAccount";
 import { useCourses } from "@/hooks/useAdmin";
 import { useAssignments } from "@/hooks/useStudent";
+import { useSubscriptions } from "@/hooks/useSubscription";
 
 export default function AssignmentsPage() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
@@ -24,6 +25,8 @@ export default function AssignmentsPage() {
   const [status, setStatus] = useState<string | undefined>(undefined);
   const [subject, setSubject] = useState<string | undefined>(undefined);
   const [date, setDate] = useState<Date | undefined>(undefined);
+  const { data: subscriptions, isLoading: subscriptionsLoading } = useSubscriptions();
+  const hasActiveSubscription = (subscriptions ?? []).some((subscription) => subscription.status === "active");
 
   const {
     data: courses,
@@ -31,12 +34,15 @@ export default function AssignmentsPage() {
     isError: coursesError,
   } = useCourses({ status: "published", page: 1, limit: 100 });
 
-  const { data: assignments, isLoading: assignmentsLoading } = useAssignments({
-    status,
-    courseId: subject,
-    page: 1,
-    limit: 20,
-  });
+  const { data: assignments, isLoading: assignmentsLoading } = useAssignments(
+    {
+      status,
+      courseId: subject,
+      page: 1,
+      limit: 20,
+    },
+    { enabled: !subscriptionsLoading && hasActiveSubscription },
+  );
  
   const pendingAssignments: StudentAssignment[] = (assignments ?? []).filter((assignment) => {
     const status = assignment.status?.toLowerCase().replaceAll(" ", "_");
@@ -79,22 +85,27 @@ export default function AssignmentsPage() {
         )}
       </div>
 
-      <div className="flex flex-col gap-3">
-        {pendingAssignments.map((assignment) => (
-          <PendingAssignmentCard
-            key={assignment.id}
-            id={assignment.id}
-            title={assignment.title}
-            mediaId={assignment.mediaId}
-          />
-        ))}
-      </div>
+      {subscriptionsLoading ? (
+        <Skeleton className="h-[500px] w-full rounded-xl" />
+      ) : (
+        <div className="relative">
+          <div className={!hasActiveSubscription ? "pointer-events-none select-none blur-sm" : undefined}>
+            <div className="flex flex-col gap-3">
+              {pendingAssignments.map((assignment) => (
+                <PendingAssignmentCard
+                  key={assignment.id}
+                  id={assignment.id}
+                  title={assignment.title}
+                  mediaId={assignment.mediaId}
+                />
+              ))}
+            </div>
 
-      <div className="rounded-xl p-6 border border-shade-2 bg-white h-full">
-        <div className="flex justify-between items-center mb-6">
-          <h3 className="text-base text-high font-semibold">Assignments List</h3>
+            <div className="rounded-xl border border-shade-2 bg-white p-6">
+              <div className="mb-6 flex items-center justify-between">
+                <h3 className="text-base font-semibold text-high">Assignments List</h3>
 
-          <div className="flex gap-3 items-center">
+                <div className="flex items-center gap-3">
             {/* Search */}
             <div className="relative w-[200px]">
               <Input
@@ -180,15 +191,31 @@ export default function AssignmentsPage() {
                 />
               </PopoverContent>
             </Popover>
-          </div>
-        </div>
+                </div>
+              </div>
 
-        {assignmentsLoading ? (
-          <Skeleton className="rounded-xl w-full h-64" />
-        ) : (
-          <AssignmentsTable assignments={visibleAssignments} />
-        )}
-      </div>
+              {assignmentsLoading ? (
+                <Skeleton className="h-64 w-full rounded-xl" />
+              ) : (
+                <AssignmentsTable assignments={visibleAssignments} />
+              )}
+            </div>
+          </div>
+
+          {!hasActiveSubscription && (
+            <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-white/45 p-6">
+              <div className="flex max-w-sm flex-col items-center gap-3 rounded-xl bg-white p-6 text-center shadow-lg">
+                <LockKeyhole className="h-10 w-10 text-orange" aria-hidden="true" />
+                <h2 className="text-lg font-semibold text-high">Assignments unavailable</h2>
+                <p className="text-sm text-low">Subscribe to access your assignments.</p>
+                <a href="/student/subscription" className="rounded-lg bg-orange px-5 py-2 text-sm font-medium text-white hover:bg-burnt">
+                  Subscribe
+                </a>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </section>
   );
 }

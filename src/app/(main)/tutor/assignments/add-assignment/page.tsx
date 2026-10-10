@@ -515,26 +515,6 @@ export default function AddNewAssignmentPage() {
         {/* Left column - form */}
         <div className="bg-white rounded-xl border border-shade-2 p-6 flex flex-col gap-4">
           <div className="space-y-2">
-            <Label className="text-sm text-low">Select Student</Label>
-            <Select
-              value={selectedStudentId}
-              onValueChange={setSelectedStudentId}
-              disabled={studentsLoading}
-            >
-              <SelectTrigger className="h-11 rounded-lg border border-orange/70 focus:ring-0 focus-visible:ring-0">
-                <SelectValue placeholder={studentsLoading ? "Loading..." : "Select Student"} />
-              </SelectTrigger>
-              <SelectContent>
-                {students.map((student) => (
-                  <SelectItem key={student.id} value={student.id}>
-                    {student.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="space-y-2">
             <Label className="text-sm text-low">Course</Label>
             <Select
               value={selectedCourseId}
@@ -549,6 +529,26 @@ export default function AddNewAssignmentPage() {
                 {courseOptions.map((option) => (
                   <SelectItem key={option.value} value={option.value}>
                     {option.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label className="text-sm text-low">Select Student</Label>
+            <Select
+              value={selectedStudentId}
+              onValueChange={setSelectedStudentId}
+              disabled={studentsLoading}
+            >
+              <SelectTrigger className="h-11 rounded-lg border border-orange/70 focus:ring-0 focus-visible:ring-0">
+                <SelectValue placeholder={studentsLoading ? "Loading..." : "Select Student"} />
+              </SelectTrigger>
+              <SelectContent>
+                {students.map((student) => (
+                  <SelectItem key={student.id} value={student.id}>
+                    {student.name}
                   </SelectItem>
                 ))}
               </SelectContent>

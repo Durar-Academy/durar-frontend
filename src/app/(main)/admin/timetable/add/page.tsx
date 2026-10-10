@@ -12,7 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { EditTimeSchedule } from "@/components/admin/edit-quran-timetable";
 
 import { useCurrentUser } from "@/hooks/useAccount";
-import { useTutors, useCourses, useCourseStudents, useCreateSchedules } from "@/hooks/useAdmin";
+import { useTutors, useCourses, useStudents, useStudentCoursesByIds, useCreateSchedules } from "@/hooks/useAdmin";
 import { QURAN_ID } from "@/data/constants";
 
 export default function AddTimetable() {
@@ -20,6 +20,7 @@ export default function AddTimetable() {
   // Only active tutors can be assigned to a class — the API rejects any other status.
   const { data: tutors, isLoading: tutorsLoading, error: tutorsError } = useTutors({ status: "active" });
   const { data: courses, isLoading: coursesLoading, error: coursesError } = useCourses();
+  const { data: students, isLoading: studentsLoading, error: studentsError } = useStudents({ status: "active", page: 1, limit: 100 });
 
   // Start with an empty array — this is an add-only page
   const [newSchedules, setNewSchedules] = useState<Schedule[]>([]);
@@ -27,8 +28,8 @@ export default function AddTimetable() {
   const router = useRouter();
 
   const createMutation = useCreateSchedules();
-  const courseIds = newSchedules.map((schedule) => schedule.courseId);
-  const { studentsByCourse, isLoading: courseStudentsLoading, error: courseStudentsError } = useCourseStudents(courseIds);
+  const studentIds = newSchedules.map((schedule) => schedule.studentId ?? "");
+  const { coursesByStudent } = useStudentCoursesByIds(studentIds);
 
   const handleSave = async () => {
     // Only submit entries that have the minimum required fields
@@ -73,8 +74,10 @@ export default function AddTimetable() {
     }
   };
 
-  const isLoading = tutorsLoading || coursesLoading || courseStudentsLoading;
-  const hasError = tutorsError || coursesError || courseStudentsError;
+  // Student courses are loaded after a student is selected. They must not
+  // replace the timetable editor with a page-level skeleton on every change.
+  const isLoading = tutorsLoading || coursesLoading || studentsLoading;
+  const hasError = tutorsError || coursesError || studentsError;
 
   return (
     <section className="flex flex-col gap-5">
@@ -127,7 +130,8 @@ export default function AddTimetable() {
             <EditTimeSchedule
               schedules={newSchedules}
               tutors={tutors?.records ?? []}
-              studentsByCourse={studentsByCourse}
+              students={students ?? []}
+              coursesByStudent={coursesByStudent}
               courses={courses ?? []}
               onSave={setNewSchedules}
             />

@@ -38,6 +38,7 @@ import {
   getStudentsMetrics,
   getStudentsPage,
   enrollStudent,
+  assignCoursesToUser,
   getTutorCourses,
   getTutorMetrics,
   getTutors,
@@ -185,6 +186,34 @@ export function useStudentCourses(studentId: string) {
     queryFn: () => getStudentCourses(studentId),
     enabled: !!studentId,
   });
+}
+
+export function useStudentCoursesByIds(studentIds: string[]) {
+  const ids = Array.from(new Set(studentIds.filter(Boolean)));
+  const queries = useQueries({
+    queries: ids.map((studentId) => ({
+      queryKey: ["student-courses", studentId],
+      queryFn: () => getStudentCourses(studentId),
+      staleTime: 60_000,
+    })),
+  });
+
+  const coursesByStudent = Object.fromEntries(
+    ids.map((studentId, index) => {
+      const payload = queries[index]?.data;
+      const records = Array.isArray(payload) ? payload : payload?.records ?? payload?.data ?? [];
+      const courses = records
+        .map((record: Courses | Course) => ("course" in record ? record.course : record))
+        .filter((course: Course | undefined): course is Course => Boolean(course?.id));
+      return [studentId, courses];
+    }),
+  ) as Record<string, Course[]>;
+
+  return {
+    coursesByStudent,
+    isLoading: queries.some((query) => query.isLoading),
+    error: queries.find((query) => query.error)?.error ?? null,
+  };
 }
 
 export function useStudentActivities(studentId: string) {
@@ -465,6 +494,19 @@ export function useEnrollStudent() {
       queryClient.invalidateQueries({ queryKey: ["course", variables.courseId] });
       queryClient.invalidateQueries({ queryKey: ["all-courses"] });
       queryClient.invalidateQueries({ queryKey: ["all-courses-metrics"] });
+    },
+  });
+}
+
+export function useAssignCoursesToUser() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ userId, courseIds }: { userId: string; courseIds: string[] }) =>
+      assignCoursesToUser(userId, courseIds),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["tutor-courses", variables.userId] });
+      queryClient.invalidateQueries({ queryKey: ["all-courses"] });
     },
   });
 }

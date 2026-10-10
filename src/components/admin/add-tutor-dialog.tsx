@@ -30,7 +30,7 @@ interface OptionType {
   value: string;
 }
 
-const selectStyles: StylesConfig<OptionType, true> = {
+export const selectStyles: StylesConfig<OptionType, true> = {
   control: (provided, state) => ({
     ...provided,
     borderRadius: "10px",

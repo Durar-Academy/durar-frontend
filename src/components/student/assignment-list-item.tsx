@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { format } from "date-fns";
 
 import { Checkbox } from "@/components/ui/checkbox";
@@ -22,7 +23,11 @@ export function AssignmentListItem({ id, title, dueDate, isChecked }: Assignment
     formatAssignmentDueDate(parsedDueDate);
 
   return (
-    <div className="flex items-start gap-2">
+    <Link
+      href={`/student/assignments/${id}`}
+      aria-label={`Open assignment: ${title}`}
+      className="flex items-start gap-2 rounded-md transition-colors hover:bg-offwhite focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange focus-visible:ring-offset-2"
+    >
       <Checkbox
         checked={checked}
         className="h-5 w-5 border-shade-3 bg-white shadow-none
@@ -46,6 +51,6 @@ export function AssignmentListItem({ id, title, dueDate, isChecked }: Assignment
           </span>
         )}
       </Label>
-    </div>
+    </Link>
   );
 }
