@@ -125,17 +125,11 @@ export async function uploadFile(file: File): Promise<UploadFileResponse> {
 
     const response = await axiosInstance.post("/file/upload", payload);
     const uploadResult = response.data.data as UploadFileResponse;
-
-    try {
-      const media = await getFileByStorageId(uploadResult.storageId);
-      return {
-        ...uploadResult,
-        id: media.id,
-      };
-    } catch (metadataError) {
-      console.error("Error fetching uploaded file metadata:", metadataError);
-      return uploadResult;
+    if (!uploadResult?.id || !uploadResult.storageId || !uploadResult.url) {
+      throw new Error("Upload response is missing media metadata");
     }
+
+    return uploadResult;
   } catch (error) {
     console.error("Error uploading file:", error);
     if (axios.isAxiosError(error)) {

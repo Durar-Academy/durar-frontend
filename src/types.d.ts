@@ -28,6 +28,8 @@ type UploadFileResponse = {
   id: string;
   url: string;
   storageId: string;
+  fileName?: string;
+  mimeType?: string;
 };
 
 type CreateAccountPayload = {

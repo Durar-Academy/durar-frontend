@@ -19,6 +19,7 @@ import { SUPPORTED_LANGUAGES } from "@/data/constants";
 type Document = {
   id: string;
   label: string;
+  mediaId?: string;
   storageId?: string;
   fileUrl?: string;
   fileName?: string;
@@ -108,6 +109,7 @@ const ProfessionalDetails = ({
             if (index < 5) {
               newDocs[index] = {
                 ...newDocs[index],
+                mediaId: result?.fileData?.id,
                 storageId: result?.storageId,
                 fileUrl: result?.fileData?.src,
                 fileName: result?.fileData?.fileName,
@@ -123,6 +125,7 @@ const ProfessionalDetails = ({
               newDocs.push({
                 id: `certification-${i - 5}`,
                 label: "Additional Certification",
+                mediaId: result?.fileData?.id,
                 storageId: result?.storageId,
                 fileUrl: result?.fileData?.src,
                 fileName: result?.fileData?.fileName,
@@ -188,15 +191,15 @@ const ProfessionalDetails = ({
 
   // Save documents to formData whenever they change
   useEffect(() => {
-    const documentstorageIds = documents
-      .filter((doc) => doc.uploaded && doc.storageId)
-      .map((doc) => doc.storageId as string);
+    const documentReferences = documents
+      .filter((doc) => doc.uploaded && (doc.mediaId || doc.storageId))
+      .map((doc) => doc.mediaId ?? (doc.storageId as string));
 
     // Only update if documentstorageIds has changed
     if (
-      JSON.stringify(documentstorageIds) !== JSON.stringify(formData.documents)
+      JSON.stringify(documentReferences) !== JSON.stringify(formData.documents)
     ) {
-      updateFormData({ documents: documentstorageIds });
+      updateFormData({ documents: documentReferences });
     }
   }, [documents, updateFormData, formData.documents]);
 
@@ -225,6 +228,7 @@ const ProfessionalDetails = ({
     try {
       const response = await uploadFile(file);
 
+      const fileMediaId = response.id;
       const fileStorageId = response.storageId;
       const fileUrl = response.url;
 
@@ -233,6 +237,7 @@ const ProfessionalDetails = ({
           doc.id === docId
             ? {
                 ...doc,
+                mediaId: fileMediaId,
                 storageId: fileStorageId,
                 fileUrl,
                 fileName: file.name,
@@ -283,6 +288,7 @@ const ProfessionalDetails = ({
         doc.id === docId
           ? {
               ...doc,
+              mediaId: undefined,
               storageId: undefined,
               fileUrl: undefined,
               fileName: undefined,
