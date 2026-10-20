@@ -112,7 +112,12 @@ export default function Assignment() {
     try {
       const uploaded = await Promise.all(
         completedRecordings.map((recording, index) =>
-          uploadFile(new File([recording.blob as Blob], `verse-${index + 1}.webm`, { type: "audio/webm" })),
+          (() => {
+            const blob = recording.blob as Blob;
+            const mimeType = blob.type || "audio/webm";
+            const extension = mimeType.split("/", 2)[1]?.split(";", 1)[0] || "webm";
+            return uploadFile(new File([blob], `verse-${index + 1}.${extension}`, { type: mimeType }));
+          })(),
         ),
       );
       await submitAssignment(assignmentId, {

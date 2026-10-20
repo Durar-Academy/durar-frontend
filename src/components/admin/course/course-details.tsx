@@ -17,6 +17,7 @@ import {
   Video,
 } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 import { formatOptionalDate } from "@/utils/formatter";
 
@@ -51,6 +52,7 @@ import { Button } from "@/components/ui/button";
 
 export function CourseDetails({ course }: { course: Course }) {
   const router = useRouter();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const lessons = course.Lesson ?? [];
   const enrolledUsers = (course.UserCourse ?? []).filter(
     (enrollment) => enrollment.user?.role === "student" || enrollment.role === "student",
@@ -75,6 +77,7 @@ export function CourseDetails({ course }: { course: Course }) {
   const handleDelete = () => {
     deleteCourse(course.id, {
       onSuccess: () => {
+        setIsDeleteDialogOpen(false);
         toast.success("Course deleted successfully.");
         router.push("/admin/courses");
       },
@@ -122,7 +125,7 @@ export function CourseDetails({ course }: { course: Course }) {
             <span>Edit</span>
           </Link>
 
-          <Dialog>
+          <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
             <DialogTrigger asChild>
               <button className="flex gap-2 items-center text-danger font-medium hover:underline">
                 <Trash2 className="w-5 h-5 text-inherit shrink-0" />

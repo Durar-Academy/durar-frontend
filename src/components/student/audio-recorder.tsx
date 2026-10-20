@@ -16,6 +16,17 @@ interface RecordingData {
   duration: number;
 }
 
+const getSupportedRecordingMimeType = (): string | undefined => {
+  const candidates = [
+    'audio/webm;codecs=opus',
+    'audio/webm',
+    'audio/ogg;codecs=opus',
+    'audio/mp4',
+  ];
+
+  return candidates.find((mimeType) => MediaRecorder.isTypeSupported(mimeType));
+};
+
 export function AudioRecorder({
   onRecordingComplete,
   onDelete,
@@ -108,7 +119,8 @@ export function AudioRecorder({
           noiseSuppression: true,
         },
       });
-      const recorder = new MediaRecorder(stream);
+      const recordingMimeType = getSupportedRecordingMimeType();
+      const recorder = recordingMimeType ? new MediaRecorder(stream, { mimeType: recordingMimeType }) : new MediaRecorder(stream);
 
       const startTime = Date.now(); // Track actual start time
 
@@ -124,7 +136,9 @@ export function AudioRecorder({
 
       recorder.onstop = () => {
         const duration = (Date.now() - startTime) / 1000; // Calculate actual duration
-        const blob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+        const blob = new Blob(audioChunksRef.current, {
+          type: recorder.mimeType || audioChunksRef.current[0]?.type || "audio/webm",
+        });
         const url = URL.createObjectURL(blob);
 
         const data = { blob, url, duration };
