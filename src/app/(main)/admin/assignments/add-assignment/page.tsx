@@ -39,6 +39,7 @@ export default function AddNewAssignmentPage() {
   const [assignment, setAssignment] = useState(createAssignmentDefaultValues);
   const [open, setOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [audioFiles, setAudioFiles] = useState<File[]>([]);
 
   const router = useRouter();
 
@@ -53,6 +54,7 @@ export default function AddNewAssignmentPage() {
   const cancelCreate = () => {
     // clear state and route back
     setAssignment(createAssignmentDefaultValues);
+    setAudioFiles([]);
     router.back();
   };
 
@@ -70,6 +72,16 @@ export default function AddNewAssignmentPage() {
       return;
     }
 
+    if (audioFiles.length === 0) {
+      toast.error("Add at least one audio attachment before publishing.");
+      return;
+    }
+
+    if (audioFiles.length > 5) {
+      toast.error("You can attach up to 5 audio files.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -78,6 +90,8 @@ export default function AddNewAssignmentPage() {
       if (assignment.thumbnail?.file) {
         thumbnailResponse = await uploadFile(assignment.thumbnail.file);
       }
+
+      const uploadedAudio = await Promise.all(audioFiles.map((file) => uploadFile(file)));
 
       // construct assignment payload. The thumbnail is linked through `mediaId`
       // (the media record id); the schema strips unknown keys, so the old
@@ -91,6 +105,11 @@ export default function AddNewAssignmentPage() {
         description: assignment.description,
         allowLate: assignment.allowLate,
         totalScore: assignment.totalScore,
+        attachments: uploadedAudio.map((file, index) => ({
+          mediaId: file.id,
+          kind: "instruction_audio" as const,
+          position: index + 1,
+        })),
         ...(thumbnailResponse?.id ? { mediaId: thumbnailResponse.id } : {}),
       };
 
@@ -103,6 +122,7 @@ export default function AddNewAssignmentPage() {
 
       // reset form
       setAssignment(createAssignmentDefaultValues);
+      setAudioFiles([]);
       router.push("/admin/assignments");
     } catch (error) {
       console.error("CREATE ASSIGNMENT ERROR: ", error);
@@ -283,6 +303,45 @@ export default function AddNewAssignmentPage() {
               }
             />
           </div>
+        </div>
+
+        <div className="p-6 bg-white rounded-xl border border-shade-2 flex flex-col gap-4">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h3 className="text-high text-base font-medium">Instruction Audio</h3>
+              <p className="text-low text-sm">Add at least one audio recording for this assignment.</p>
+            </div>
+            <Label className="cursor-pointer rounded-lg border border-shade-3 bg-offwhite px-4 py-2 text-sm text-high hover:bg-[#ECECF2]">
+              Choose Files
+              <Input
+                type="file"
+                accept="audio/*"
+                multiple
+                className="hidden"
+                onChange={(event) => {
+                  const selected = Array.from(event.target.files ?? []);
+                  setAudioFiles((current) => [...current, ...selected].slice(0, 5));
+                  event.target.value = "";
+                }}
+              />
+            </Label>
+          </div>
+          {audioFiles.length > 0 && (
+            <div className="flex flex-col gap-2">
+              {audioFiles.map((file, index) => (
+                <div key={`${file.name}-${index}`} className="flex items-center justify-between rounded-lg bg-offwhite px-3 py-2 text-sm text-high">
+                  <span className="truncate">{index + 1}. {file.name}</span>
+                  <button
+                    type="button"
+                    className="ml-3 text-danger"
+                    onClick={() => setAudioFiles((current) => current.filter((_, itemIndex) => itemIndex !== index))}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="mt-3 flex justify-between">

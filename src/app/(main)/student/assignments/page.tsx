@@ -44,7 +44,13 @@ export default function AssignmentsPage() {
     { enabled: !subscriptionsLoading && hasActiveSubscription },
   );
  
-  const pendingAssignments: StudentAssignment[] = (assignments ?? []).filter((assignment) => {
+  // The API should return one row per assignment. Keep the UI resilient to a
+  // duplicate response so React never reconciles two cards with the same key.
+  const uniqueAssignments = Array.from(
+    new Map((assignments ?? []).filter((assignment) => assignment?.id).map((assignment) => [assignment.id, assignment])).values(),
+  );
+
+  const pendingAssignments: StudentAssignment[] = uniqueAssignments.filter((assignment) => {
     const status = assignment.status?.toLowerCase().replaceAll(" ", "_");
     return status === "pending" || status === "not_submitted";
   });
@@ -53,7 +59,7 @@ export default function AssignmentsPage() {
     (course): course is Course => Boolean(course?.id && course?.title),
   );
 
-  const visibleAssignments: StudentAssignment[] = (assignments ?? [])
+  const visibleAssignments: StudentAssignment[] = uniqueAssignments
     .filter((assignment) => {
       const searchTerm = search.trim().toLowerCase();
       if (searchTerm && !assignment.title.toLowerCase().includes(searchTerm)) return false;
@@ -96,7 +102,7 @@ export default function AssignmentsPage() {
                   key={assignment.id}
                   id={assignment.id}
                   title={assignment.title}
-                  mediaId={assignment.mediaId}
+                  media={assignment.media}
                 />
               ))}
             </div>

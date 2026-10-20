@@ -3,20 +3,16 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import { useFile } from "@/hooks/useStudent";
-
 type PendingAssignmentCardProps = {
   id: string;
   title: string;
-  mediaId?: string | null;
+  media?: Media | null;
 };
 
-export function PendingAssignmentCard({ id, title, mediaId }: PendingAssignmentCardProps) {
-  const { data: media } = useFile(mediaId);
-
+export function PendingAssignmentCard({ id, title, media }: PendingAssignmentCardProps) {
   return (
     <article className="relative flex min-h-[176px] items-center overflow-hidden rounded-xl border border-shade-2 bg-green px-14 text-white">
-      {media?.src && (
+      {media?.src && media.fileType?.startsWith("image") && (
         <Image
           src={media.src}
           alt=""

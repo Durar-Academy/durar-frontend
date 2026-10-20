@@ -66,6 +66,8 @@ export default function AddNewAssignmentPage() {
 
   const [audioFile, setAudioFile] = useState<File | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [audioAttachments, setAudioAttachments] = useState<Array<{ file: File; url: string }>>([]);
+  const audioAttachmentsRef = useRef(audioAttachments);
   const [audioDuration, setAudioDuration] = useState(0);
   const [audioCurrentTime, setAudioCurrentTime] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -82,6 +84,10 @@ export default function AddNewAssignmentPage() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    audioAttachmentsRef.current = audioAttachments;
+  }, [audioAttachments]);
 
   const setAudioFromFile = async (file: File) => {
     if (!file.type.startsWith("audio/")) {
@@ -125,23 +131,19 @@ export default function AddNewAssignmentPage() {
       return;
     }
 
-    if (audioUrl) {
-      URL.revokeObjectURL(audioUrl);
-    }
-
     const url = URL.createObjectURL(file);
     setAudioFile(file);
     setAudioUrl(url);
+    setAudioAttachments((previous) => [...previous, { file, url }]);
     setAudioDuration(0);
     setAudioCurrentTime(0);
     setIsPlaying(false);
   };
 
     const handleFileInput = async (event: ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    await setAudioFromFile(file);
+    const files = Array.from(event.target.files ?? []);
+    for (const file of files) await setAudioFromFile(file);
+    event.target.value = "";
   };
 
   const handleDrop = async (event: DragEvent<HTMLDivElement>) => {
@@ -172,6 +174,8 @@ export default function AddNewAssignmentPage() {
     setDueDate("");
     setRecitationCount(2);
     setAudioFile(null);
+    audioAttachments.forEach(({ url }) => URL.revokeObjectURL(url));
+    setAudioAttachments([]);
     setAudioUrl(null);
     setAudioDuration(0);
     setAudioCurrentTime(0);
@@ -401,9 +405,7 @@ export default function AddNewAssignmentPage() {
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (audioUrl) {
-        URL.revokeObjectURL(audioUrl);
-      }
+      audioAttachmentsRef.current.forEach(({ url }) => URL.revokeObjectURL(url));
       if (recordingIntervalRef.current) {
         clearInterval(recordingIntervalRef.current);
       }
@@ -411,7 +413,7 @@ export default function AddNewAssignmentPage() {
         mediaRecorderRef.current.stop();
       }
     };
-  }, [audioUrl]);
+  }, []);
 
   const handleSubmit = async () => {
     if (!selectedStudentId) {
@@ -430,7 +432,7 @@ export default function AddNewAssignmentPage() {
       toast.error("Please select a due date");
       return;
     }
-    if (!audioFile) {
+    if (audioAttachments.length === 0) {
       toast.error("Please upload an audio file or record one");
       return;
     }
@@ -438,10 +440,26 @@ export default function AddNewAssignmentPage() {
     try {
       setIsSubmitting(true);
 
-      // Upload audio file
-      let fileResponse;
       try {
-        fileResponse = await uploadFile(audioFile);
+        const uploadedFiles = await Promise.all(audioAttachments.map(({ file }) => uploadFile(file)));
+        const attachments = uploadedFiles.map((file, index) => ({
+          mediaId: file.id,
+          kind: "instruction_audio" as const,
+          position: index + 1,
+        }));
+
+        const payload = {
+          title,
+          courseId: selectedCourseId,
+          dueAt: format(new Date(dueDate), "yyyy-MM-dd"),
+          type: "assignment",
+          description,
+          allowLate: false,
+          totalScore: 0,
+          attachments,
+        };
+
+        await axiosInstance.post("/assignment", payload);
       } catch (uploadError: unknown) {
         console.error("Error uploading file", uploadError);
         
@@ -458,21 +476,6 @@ export default function AddNewAssignmentPage() {
         }
         return;
       }
-
-      const payload = {
-        title,
-        courseId: selectedCourseId,
-        dueAt: format(new Date(dueDate), "yyyy-MM-dd"),
-        type: "assignment",
-        description,
-        allowLate: false,
-        storageId: fileResponse?.storageId ?? null,
-        totalScore: 0,
-        studentId: selectedStudentId,
-        recitationCount,
-      };
-
-      await axiosInstance.post("/assignment", payload);
 
       toast.success("Assignment sent successfully");
       resetForm();
@@ -613,25 +616,27 @@ export default function AddNewAssignmentPage() {
             </p>
             <label className="relative mt-2 inline-flex items-center justify-center px-4 py-2 rounded-lg border border-shade-3 text-xs cursor-pointer bg-offwhite hover:bg-[#ECECF2] text-high">
               <span className="font-medium mr-1">Choose File</span>
-              <Input
+                <Input
                 type="file"
                 accept="audio/*"
+                 multiple
                 onChange={handleFileInput}
                 className="absolute inset-0 opacity-0 cursor-pointer"
               />
-              {audioFile && (
+              {audioAttachments.length > 0 && (
                 <span className="ml-1 truncate max-w-[160px] text-xs text-low">
-                  {audioFile.name}
+                  {audioAttachments.length} selected
                 </span>
               )}
             </label>
-            {audioFile && (
-              <p className="text-xs text-low mt-1">
-                Selected:{" "}
-                <span className="font-medium truncate max-w-[220px] inline-block align-bottom">
-                  {audioFile.name}
-                </span>
-              </p>
+            {audioAttachments.length > 0 && (
+              <div className="mt-1 flex w-full flex-col gap-1 text-left">
+                {audioAttachments.map(({ file }, index) => (
+                  <p key={`${file.name}-${index}`} className="truncate text-xs text-low">
+                    {index + 1}. <span className="font-medium">{file.name}</span>
+                  </p>
+                ))}
+              </div>
             )}
           </div>
 

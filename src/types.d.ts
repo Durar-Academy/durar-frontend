@@ -549,6 +549,8 @@ type Assignment = {
   description: string | null;
   allowLate: boolean;
   mediaId: string | null;
+  media?: Media | null;
+  attachments?: AssignmentAttachment[];
   totalScore: number;
   createdById: string;
   createdAt: Date;
@@ -566,6 +568,13 @@ type Assignment = {
   // AssignmentFeedback: StudentFeedback[];
 };
 
+type AssignmentAttachment = {
+  id: string;
+  kind: "instruction_audio";
+  position: number;
+  media: Pick<Media, "id" | "src" | "fileType" | "fileName">;
+};
+
 type StudentAssignment = {
   id: string;
   title: string;
@@ -577,6 +586,7 @@ type StudentAssignment = {
   allowLate: boolean;
   mediaId: string | null;
   media?: Media | null;
+  attachments?: AssignmentAttachment[];
   randomnize: boolean;
   autoGraded: boolean;
   duration: number | null;
@@ -1546,6 +1556,11 @@ type CreateAssignmentPayload = {
   description?: string;
   allowLate?: boolean;
   mediaId?: string;
+  attachments?: Array<{
+    mediaId: string;
+    kind: "instruction_audio";
+    position: number;
+  }>;
   randomnize?: boolean;
   autoGraded?: boolean;
   duration?: number;
@@ -1560,6 +1575,11 @@ type UpdateAssignmentPayload = {
   randomnize?: boolean;
   autoGraded?: boolean;
   duration?: number;
+  attachments?: Array<{
+    mediaId: string;
+    kind: "instruction_audio";
+    position: number;
+  }>;
 };
 
 type AssignmentFilters = SearchFilters & {

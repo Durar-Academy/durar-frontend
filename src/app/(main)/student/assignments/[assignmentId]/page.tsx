@@ -14,7 +14,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 
 import { useCurrentUser } from "@/hooks/useAccount";
-import { useFile, useStudentAssignment } from "@/hooks/useStudent";
+import { useStudentAssignment } from "@/hooks/useStudent";
 import {
   findActiveQuizSubmission,
   findSubmittedQuizSubmission,
@@ -44,8 +44,7 @@ export default function Assignment() {
   const router = useRouter();
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: assignment, isLoading: assignmentLoading } = useStudentAssignment(assignmentId);
-  const { data: assignmentMedia } = useFile(assignment?.mediaId);
-  const assignmentAudioUrl = assignment?.media?.src ?? assignmentMedia?.src;
+  const assignmentAttachments = assignment?.attachments ?? [];
 
   // Quizzes replace the submission form with a status card. Their submission
   // rows live under `QuizSubmission` (newest first), because the list payload's
@@ -180,9 +179,11 @@ export default function Assignment() {
             <div className="mt-2">
               <Skeleton className="h-14 w-[360px] rounded-full" />
             </div>
-          ) : assignmentAudioUrl ? (
-            <div className="mt-2">
-              <AudioPlayer audioUrl={assignmentAudioUrl} />
+          ) : assignmentAttachments.length > 0 ? (
+            <div className="mt-2 flex flex-col gap-3">
+              {assignmentAttachments.map((attachment) => (
+                <AudioPlayer key={attachment.id} audioUrl={attachment.media.src} />
+              ))}
             </div>
           ) : null}
         </div>
