@@ -592,6 +592,9 @@ type StudentAssignment = {
   randomnize: boolean;
   autoGraded: boolean;
   duration: number | null;
+  recordingConfig?: {
+    recitationCount?: number;
+  } | null;
   createdAt: string | Date;
   updatedAt: string | Date;
   status?: AssignmentStatus | string;

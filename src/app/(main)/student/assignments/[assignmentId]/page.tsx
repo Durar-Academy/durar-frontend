@@ -45,6 +45,7 @@ export default function Assignment() {
   const { data: user, isLoading: currentUserLoading } = useCurrentUser();
   const { data: assignment, isLoading: assignmentLoading } = useStudentAssignment(assignmentId);
   const assignmentAttachments = assignment?.attachments ?? [];
+  const recitationCount = assignment?.recordingConfig?.recitationCount;
 
   // Quizzes replace the submission form with a status card. Their submission
   // rows live under `QuizSubmission` (newest first), because the list payload's
@@ -103,6 +104,17 @@ export default function Assignment() {
 
   const handleSubmit = async () => {
     const completedRecordings = recordings.filter((recording) => recording.blob);
+
+    if (
+      typeof recitationCount === "number" &&
+      completedRecordings.length < recitationCount
+    ) {
+      toast.error(
+        `Record at least ${recitationCount} recitation${recitationCount === 1 ? "" : "s"} before submitting.`,
+      );
+      return;
+    }
+
     if (!content.trim() && !submissionLink.trim() && completedRecordings.length === 0) {
       toast.error("Add a response or record at least one verse before submitting.");
       return;
@@ -174,11 +186,20 @@ export default function Assignment() {
             {assignmentLoading ? "Loading assignment..." : assignment?.title ?? "Assignment"}
           </h3>
 
-          <p className="text-low text-sm">
-            {assignmentLoading
-              ? "Loading instructions..."
-              : assignment?.description || "No instructions provided."}
-          </p>
+          <div className="space-y-2">
+            <h2 className="text-sm font-semibold text-high">Instructions</h2>
+            <p className="text-low text-sm">
+              {assignmentLoading
+                ? "Loading instructions..."
+                : assignment?.description || "No instructions provided."}
+            </p>
+          </div>
+
+          {!assignmentLoading && typeof recitationCount === "number" && recitationCount > 0 && (
+            <div className="rounded-lg bg-offwhite px-4 py-3 text-sm text-high">
+              Recite <span className="font-semibold">{recitationCount} times</span>.
+            </div>
+          )}
 
           {assignmentLoading ? (
             <div className="mt-2">
@@ -253,60 +274,60 @@ export default function Assignment() {
       )}
 
       {!isQuiz && (
-      <div className="bg-white border border-shade-2 rounded-xl p-6 space-y-4">
-        <h2 className="text-base text-high font-semibold">Written response</h2>
-        <textarea
-          value={content}
-          onChange={(event) => setContent(event.target.value)}
-          placeholder="Write your response..."
-          className="min-h-28 w-full rounded-xl border border-shade-3 p-3 text-sm outline-none focus:border-orange"
-        />
-        <Input value={submissionLink} onChange={(event) => setSubmissionLink(event.target.value)} placeholder="Submission link (optional)" />
-      </div>
+        <div className="bg-white border border-shade-2 rounded-xl p-6 space-y-4">
+          <h2 className="text-base text-high font-semibold">Written response</h2>
+          <textarea
+            value={content}
+            onChange={(event) => setContent(event.target.value)}
+            placeholder="Write your response..."
+            className="min-h-28 w-full rounded-xl border border-shade-3 p-3 text-sm outline-none focus:border-orange"
+          />
+          <Input value={submissionLink} onChange={(event) => setSubmissionLink(event.target.value)} placeholder="Submission link (optional)" />
+        </div>
       )}
 
       {!isQuiz && (
-      <div className="bg-white border border-shade-2 rounded-xl p-6">
-        <div className="space-y-6">
-          {/* Header */}
-          <div className="flex justify-between items-center">
-            <h2 className="text-base text-high font-semibold ">Verse Recordings</h2>
-            <button
-              onClick={addNewVerseRecorder}
-              className="bg-white border border-orange text-orange px-3 py-1 rounded-md flex items-center gap-2"
-            >
-              <Plus size={16} />
-              Add Verse
-            </button>
-          </div>
+        <div className="bg-white border border-shade-2 rounded-xl p-6">
+          <div className="space-y-6">
+            {/* Header */}
+            <div className="flex justify-between items-center">
+              <h2 className="text-base text-high font-semibold ">Verse Recordings</h2>
+              <button
+                onClick={addNewVerseRecorder}
+                className="bg-white border border-orange text-orange px-3 py-1 rounded-md flex items-center gap-2"
+              >
+                <Plus size={16} />
+                Add Verse
+              </button>
+            </div>
 
-          {/* Recording List */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-4">
-            {recordings.map((item, index) => (
-              <div key={item.id} className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <p className="text-sm font-medium text-gray-700">Verse {index + 1}</p>
+            {/* Recording List */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-6 gap-x-4">
+              {recordings.map((item, index) => (
+                <div key={item.id} className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <p className="text-sm font-medium text-gray-700">Verse {index + 1}</p>
 
-                  <button
-                    onClick={() => deleteVerse(item.id)}
-                    className="text-danger text-sm gap-1 flex items-center"
-                    title="Delete this verse"
-                  >
-                    <Trash2 size={16} />
-                    Verse {index + 1}
-                  </button>
+                    <button
+                      onClick={() => deleteVerse(item.id)}
+                      className="text-danger text-sm gap-1 flex items-center"
+                      title="Delete this verse"
+                    >
+                      <Trash2 size={16} />
+                      Verse {index + 1}
+                    </button>
+                  </div>
+
+                  <AudioRecorder
+                    onRecordingComplete={(blob, duration) =>
+                      handleRecordingComplete(item.id, blob, duration)
+                    }
+                  />
                 </div>
-
-                <AudioRecorder
-                  onRecordingComplete={(blob, duration) =>
-                    handleRecordingComplete(item.id, blob, duration)
-                  }
-                />
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
-      </div>
       )}
     </section>
   );

@@ -7,6 +7,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { format } from "date-fns";
+import Link from "next/link";
 
 import { cn } from "@/lib/utils";
 
@@ -22,6 +23,7 @@ export function AssignmentsTable({ assignments }: { assignments: StudentAssignme
               <TableHead>Date Issued - Due Date</TableHead>
               <TableHead>Score</TableHead>
               <TableHead>Status</TableHead>
+              <TableHead>Action</TableHead>
             </TableRow>
           </TableHeader>
 
@@ -48,6 +50,14 @@ export function AssignmentsTable({ assignments }: { assignments: StudentAssignme
                   )}
                 >
                   {assignment.status ?? "unknown"}
+                </TableCell>
+                <TableCell>
+                  <Link
+                    href={`/student/assignments/${assignment.id}`}
+                    className="inline-flex rounded-lg bg-orange px-3 py-2 text-xs font-medium text-white transition-colors hover:bg-burnt"
+                  >
+                    Go to Assignment
+                  </Link>
                 </TableCell>
               </TableRow>
             ))}

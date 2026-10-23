@@ -5,7 +5,6 @@ import { useState } from "react";
 
 import { TopBar } from "@/components/shared/top-bar";
 import { AssignmentsTable } from "@/components/student/assignment-table";
-import { PendingAssignmentCard } from "@/components/student/pending-assignment-card";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Input } from "@/components/ui/input";
@@ -96,17 +95,6 @@ export default function AssignmentsPage() {
       ) : (
         <div className="relative">
           <div className={!hasActiveSubscription ? "pointer-events-none select-none blur-sm" : undefined}>
-            <div className="flex flex-col gap-3">
-              {pendingAssignments.map((assignment) => (
-                <PendingAssignmentCard
-                  key={assignment.id}
-                  id={assignment.id}
-                  title={assignment.title}
-                  media={assignment.media}
-                />
-              ))}
-            </div>
-
             <div className="rounded-xl border border-shade-2 bg-white p-6">
               <div className="mb-6 flex items-center justify-between">
                 <h3 className="text-base font-semibold text-high">Assignments List</h3>

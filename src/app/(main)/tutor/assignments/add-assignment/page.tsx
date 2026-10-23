@@ -456,6 +456,7 @@ export default function AddNewAssignmentPage() {
           description,
           allowLate: false,
           totalScore: 0,
+          recordingConfig: { recitationCount },
           attachments,
         };
 

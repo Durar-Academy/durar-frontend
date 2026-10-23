@@ -53,12 +53,6 @@ export function CreateCourseFormProvider({
 
     if (status === "published") {
       if (!category) throw new Error("Course category is required.");
-      if (!formData.Lesson.length) throw new Error("Add at least one lesson before publishing.");
-
-      const invalidLesson = formData.Lesson.find((lesson) => !lesson.name.trim());
-      if (invalidLesson) {
-        throw new Error("Each lesson needs a title before publishing.");
-      }
     }
 
     let thumbnailStorageId: string | undefined;
@@ -69,12 +63,10 @@ export function CreateCourseFormProvider({
 
     const lessons = await Promise.all(
       formData.Lesson
-        .filter((lesson) => lesson.name.trim() || lesson.video?.file || lesson.video?.src)
+        // Lesson rows are optional. Ignore untouched or incomplete rows rather
+        // than blocking course publication when no lessons were added.
+        .filter((lesson) => lesson.name.trim())
         .map(async (lesson) => {
-          if (!lesson.name.trim()) {
-            throw new Error("Each lesson with media must have a title.");
-          }
-
           const lessonVideoResponse = lesson.video?.file ? await uploadFile(lesson.video.file) : null;
 
           return {
