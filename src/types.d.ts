@@ -1555,6 +1555,7 @@ type UpdateCoursePayload = {
 type CreateAssignmentPayload = {
   title: string;
   courseId: string;
+  studentId: string;
   totalScore: number;
   dueAt: string | Date;
   type: "quiz" | "assignment";

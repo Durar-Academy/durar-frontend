@@ -451,6 +451,7 @@ export default function AddNewAssignmentPage() {
         const payload = {
           title,
           courseId: selectedCourseId,
+          studentId: selectedStudentId,
           dueAt: format(new Date(dueDate), "yyyy-MM-dd"),
           type: "assignment",
           description,
